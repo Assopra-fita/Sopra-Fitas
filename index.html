@@ -45,8 +45,21 @@
           'div-gpt-ad-1775680168607-0'
         ).addService(googletag.pubads());
 
+        var interstitialSlot = googletag.defineOutOfPageSlot(
+          '/23340104016/assoprafitas.com/interstitial',
+          googletag.enums.OutOfPageFormat.INTERSTITIAL
+        );
+
+        if (interstitialSlot) {
+          interstitialSlot.addService(googletag.pubads());
+        }
+
         googletag.pubads().enableSingleRequest();
         googletag.enableServices();
+
+        if (interstitialSlot) {
+          googletag.display(interstitialSlot);
+        }
       });
     </script>
 
