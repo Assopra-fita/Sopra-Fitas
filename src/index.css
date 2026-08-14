@@ -24,6 +24,19 @@ body {
   display: block;
 }
 
+/* Container da tela de jogo. A primeira declaração de cada par é o
+   fallback para navegadores sem dvh (Chrome < 108 / Safari < 15.4) */
+.game-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Celular deitado: altura travada na tela, o emulador ocupa o resto */
+.game-shell--focus {
+  height: 100vh;
+  height: 100dvh;
+}
+
 /* A BARRA DO TOPO (LINHA VERMELHA) */
 .banner-topo-fixo {
   width: 100%;
