@@ -19,19 +19,36 @@ const AdminDesafios = () => {
   const [recompensa, setRecompensa] = useState('');
   const [desafios, setDesafios] = useState([]);
 
-  const buscarDesafios = async () => {
+  const consultarDesafios = async () => {
     const { data, error } = await supabase
       .from('missoes_globais')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (error) console.error('Erro ao buscar desafios:', error.message);
-    else if (data) setDesafios(data);
+    return error ? null : data;
   };
 
+  // A guarda `ativo` existe porque a resposta pode chegar depois de sair da
+  // tela, e aí o estado seria escrito num componente já desmontado.
   useEffect(() => {
-    buscarDesafios();
+    let ativo = true;
+
+    const carregar = async () => {
+      const lista = await consultarDesafios();
+      if (ativo && lista) setDesafios(lista);
+    };
+
+    carregar();
+    return () => {
+      ativo = false;
+    };
   }, []);
+
+  const buscarDesafios = async () => {
+    const lista = await consultarDesafios();
+    if (lista) setDesafios(lista);
+  };
 
   const lancar = async (e) => {
     e.preventDefault();
