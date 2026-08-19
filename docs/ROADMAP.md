@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-17 de 93 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+21 de 92 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
 | **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
-| **1** | Quebrado para o usuário | Alta | `██████░░░░` | 15/26 |
+| **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
 | **2** | Peso e velocidade | Alta | `░░░░░░░░░░` | 0/9 |
-| **3** | Limpeza estrutural | Média | `░░░░░░░░░░` | 1/23 |
+| **3** | Limpeza estrutural | Média | `█░░░░░░░░░` | 2/23 |
 | **4** | Layout e navegação | Média | `░░░░░░░░░░` | 0/11 |
 | **5** | SEO, acessibilidade e qualidade | Baixa | `░░░░░░░░░░` | 0/18 |
-| | **Total** | | `██░░░░░░░░` | **17/93** |
+| | **Total** | | `██░░░░░░░░` | **21/92** |
 
 ---
 
@@ -174,8 +174,8 @@ Correções, em ordem de custo:
 - [x] Super Mario 64: `rom_url` → `/mario64.z64`
 - [ ] Corrigir os 29 jogos com `rom_url` apontando para PNG
 - [ ] Corrigir os 20 jogos com `core` incompatível com a extensão
-- [ ] Validar tipo e extensão do arquivo no formulário de cadastro
-- [ ] Derivar o `core` da extensão em vez de deixá-lo livre
+- [x] Validar tipo e extensão do arquivo no formulário de cadastro
+- [x] Derivar o `core` do console escolhido em vez de deixá-lo livre
 
 ### 1.3 — As 22 ROMs de Mega Drive em `public/` estão corrompidas
 
@@ -193,7 +193,7 @@ A corrupção atingiu especificamente a extensão `.md`. **Os binários precisam
 **Tarefas**
 
 - [ ] Substituir as 22 ROMs `.md` por cópias íntegras
-- [ ] Enquanto não houver ROM válida, remover do catálogo os 3 cards da SEGA
+- [x] Enquanto não houver ROM válida, remover do catálogo os 3 cards da SEGA
 
 ### 1.4 — 67 dos 160 jogos não aparecem em nenhum filtro
 
@@ -215,7 +215,7 @@ Correção em duas frentes: normalizar a coluna com um `UPDATE`, e trocar o camp
 
 - [x] Normalizar o valor de console na comparação do filtro
 - [ ] `UPDATE` normalizando a coluna `console` na tabela `jogos`
-- [ ] Trocar o campo de texto livre por `<select>` fechado no cadastro
+- [x] Trocar o campo de texto livre por `<select>` fechado no cadastro
 - [ ] Definir a que console pertence o registro gravado como `Nintendo`
 
 ### 1.5 — Falhas que deixam o usuário preso
@@ -241,7 +241,6 @@ Correção em duas frentes: normalizar a coluna com um `UPDATE`, e trocar o camp
 - [x] Fazer a busca ignorar acentos
 - [x] Distinguir erro de estado vazio no Ranking
 - [ ] Implementar recuperação de senha
-- [x] Criar ponto de entrada para `/loja`
 - [ ] Criar tela de acompanhamento das missões enviadas
 
 ### 1.6 — O CDN do emulador já está quebrado
@@ -411,7 +410,7 @@ Como a Home lê uma estrutura e a sala de jogo lê a outra, **a capa e o nome mu
 **Tarefas**
 
 - [ ] Unificar `games[]` e `gamesDb{}` numa fonte única
-- [ ] Corrigir as 4 divergências que já existem entre as duas
+- [x] Corrigir as 4 divergências que já existem entre as duas
 
 ### 3.4 — Nenhuma camada entre a tela e o banco
 
