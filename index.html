@@ -8,6 +8,11 @@
       content="ydWvfOgu1UHLxJMyANsOeDiULgjdDuhsij1aTOOKIdU"
     />
 
+    <!-- As capas e o banco vêm do Supabase; abrir a conexão cedo economiza o
+         DNS + TLS quando a primeira imagem for pedida. -->
+    <link rel="preconnect" href="https://maataycmixcmozjhezfe.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.emulatorjs.org" />
+
     <link rel="icon" href="/logo.png" />
     <link rel="apple-touch-icon" href="/logo.png" />
 
@@ -94,13 +99,6 @@
       fbq('track', 'PageView');
       fbq('track', 'CompleteRegistration');
     </script>
-    <noscript
-      ><img
-        height="1"
-        width="1"
-        style="display: none"
-        src="https://www.facebook.com/tr?id=2296012391231311&ev=PageView&noscript=1"
-    /></noscript>
     <!-- End Meta Pixel Code -->
 
     <style>
@@ -113,6 +111,13 @@
     </style>
   </head>
   <body>
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=2296012391231311&ev=PageView&noscript=1"
+    /></noscript>
     <div id="root"></div>
 
     <script type="module" src="/src/main.jsx"></script>
