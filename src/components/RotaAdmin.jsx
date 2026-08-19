@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { obterUsuario } from '../services/sessao';
+import { obterPapel } from '../services/perfis';
 import { Loader2 } from 'lucide-react';
 
 // Guarda única das telas administrativas.
@@ -28,22 +29,21 @@ const RotaAdmin = ({ children }) => {
         return;
       }
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      try {
+        const usuario = await obterUsuario();
 
-      if (!user) {
-        if (ativo) setSituacao('sem-sessao');
-        return;
+        if (!usuario) {
+          if (ativo) setSituacao('sem-sessao');
+          return;
+        }
+
+        const papel = await obterPapel(usuario.id);
+        if (ativo) setSituacao(papel === 'admin' ? 'liberado' : 'sem-permissao');
+      } catch (e) {
+        console.error('Erro ao verificar a permissão:', e);
+        // Na dúvida, fecha: quem não conseguiu provar que é admin não entra.
+        if (ativo) setSituacao('sem-permissao');
       }
-
-      const { data } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (ativo) setSituacao(data?.role === 'admin' ? 'liberado' : 'sem-permissao');
     };
 
     verificar();

@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import {
+  listarJogadores,
+  atualizarPontos,
+  definirPapel,
+} from '../services/perfis';
 import { Users, Shield, ShieldOff, Save } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import {
@@ -20,12 +24,12 @@ const AdminUsuarios = () => {
   const [editandoPontos, setEditandoPontos] = useState({});
 
   const consultarUsuarios = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .order('pontos', { ascending: false });
-
-    return error ? null : data;
+    try {
+      return await listarJogadores();
+    } catch (e) {
+      console.error('Erro ao buscar os jogadores:', e);
+      return null;
+    }
   };
 
   const aplicarUsuarios = (lista) => {
@@ -59,29 +63,26 @@ const AdminUsuarios = () => {
     if (lista) aplicarUsuarios(lista);
   };
 
-  const atualizarPontos = async (id) => {
+  const salvarPontos = async (id) => {
     const novosPontos = parseInt(editandoPontos[id], 10);
     if (Number.isNaN(novosPontos)) return alert('Informe um número de pontos.');
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ pontos: novosPontos })
-      .eq('id', id);
-
-    if (error) return alert('Erro: ' + error.message);
-
-    alert('Pontuação atualizada!');
-    recarregar();
+    try {
+      await atualizarPontos(id, novosPontos);
+      alert('Pontuação atualizada!');
+      recarregar();
+    } catch (e) {
+      alert('Erro ao salvar os pontos: ' + e.message);
+    }
   };
 
   const alternarPapel = async (id, papelAtual) => {
-    const novoPapel = papelAtual === 'admin' ? 'user' : 'admin';
-    const { error } = await supabase
-      .from('profiles')
-      .update({ role: novoPapel })
-      .eq('id', id);
-
-    if (!error) recarregar();
+    try {
+      await definirPapel(id, papelAtual === 'admin' ? 'user' : 'admin');
+      recarregar();
+    } catch (e) {
+      alert('Erro ao mudar o cargo: ' + e.message);
+    }
   };
 
   const colunas = [
@@ -118,7 +119,7 @@ const AdminUsuarios = () => {
           <Botao
             variante="sucesso"
             className="btn--icone"
-            onClick={() => atualizarPontos(u.id)}
+            onClick={() => salvarPontos(u.id)}
             aria-label={`Salvar os pontos de ${u.nome || 'jogador sem nome'}`}
           >
             <Save size={16} aria-hidden="true" />

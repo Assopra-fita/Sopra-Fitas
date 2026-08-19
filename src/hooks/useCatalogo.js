@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { listarParaVitrine } from '../services/jogos';
 import { games } from '../constants/games';
 
 // Junta o catálogo do banco com o estático, sem repetir id. Antes era uma
@@ -22,11 +22,8 @@ export const useCatalogo = () => {
 
     const buscar = async () => {
       try {
-        const { data, error } = await supabase
-          .from('jogos')
-          .select('id, nome, console, core, rom_url, capa_url');
-        if (error) throw error;
-        if (ativo && data?.length) setJogos(juntar(data));
+        const doBanco = await listarParaVitrine();
+        if (ativo && doBanco?.length) setJogos(juntar(doBanco));
       } catch (e) {
         console.error('Erro ao buscar jogos:', e);
       } finally {

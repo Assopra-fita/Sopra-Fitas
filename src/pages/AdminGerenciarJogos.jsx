@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { listarAcervo, atualizarJogo, removerJogo } from '../services/jogos';
 import { Edit, Trash2, X, Check, Library } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { paraComparar } from '../lib/texto';
@@ -24,13 +24,12 @@ const AdminGerenciarJogos = () => {
   const [dadosEditados, setDadosEditados] = useState({});
 
   const consultarJogos = async () => {
-    const { data, error } = await supabase
-      .from('jogos')
-      .select('*')
-      .order('nome', { ascending: true });
-
-    if (error) console.error('Erro ao buscar jogos:', error);
-    return error ? null : data;
+    try {
+      return await listarAcervo();
+    } catch (e) {
+      console.error('Erro ao buscar jogos:', e);
+      return null;
+    }
   };
 
   useEffect(() => {
@@ -61,25 +60,25 @@ const AdminGerenciarJogos = () => {
   };
 
   const salvarEdicao = async (id) => {
-    const { error } = await supabase
-      .from('jogos')
-      .update(dadosEditados)
-      .eq('id', id);
-
-    if (error) return alert('Erro ao atualizar: ' + error.message);
-
-    setEditandoId(null);
-    recarregar();
+    try {
+      await atualizarJogo(id, dadosEditados);
+      setEditandoId(null);
+      recarregar();
+    } catch (e) {
+      alert('Erro ao atualizar: ' + e.message);
+    }
   };
 
   const deletarJogo = async (id, nome) => {
     if (!window.confirm(`Tem certeza que deseja deletar o jogo "${nome}"?`))
       return;
 
-    const { error } = await supabase.from('jogos').delete().eq('id', id);
-    if (error) return alert('Erro ao deletar: ' + error.message);
-
-    recarregar();
+    try {
+      await removerJogo(id);
+      recarregar();
+    } catch (e) {
+      alert('Erro ao deletar: ' + e.message);
+    }
   };
 
   // Içado para fora do predicado: sem isso a normalização roda uma vez por

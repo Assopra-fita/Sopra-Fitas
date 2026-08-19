@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { listarRanking } from '../services/perfis';
+import { listarDesafios } from '../services/desafios';
 import {
   Search,
   Heart,
@@ -48,31 +49,36 @@ const Home = () => {
   const [paginaAtual, setPaginaAtual] = useState(1);
 
   useEffect(() => {
-    const fetchRanking = async () => {
-      setLoadingRanking(true);
-      const { data } = await supabase
-        .from('profiles')
-        .select('nome, pontos')
-        .order('pontos', { ascending: false })
-        .limit(5);
+    let ativo = true;
 
-      if (data) setRanking(data);
-      setLoadingRanking(false);
+    const buscarRanking = async () => {
+      try {
+        const top = await listarRanking(5);
+        if (ativo && top) setRanking(top);
+      } catch (e) {
+        console.error('Erro ao buscar o ranking:', e);
+      } finally {
+        if (ativo) setLoadingRanking(false);
+      }
     };
 
-    const fetchMissoes = async () => {
-      setLoadingMissoes(true);
-      const { data } = await supabase
-        .from('missoes_globais')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (data) setMissoes(data);
-      setLoadingMissoes(false);
+    const buscarDesafios = async () => {
+      try {
+        const lista = await listarDesafios();
+        if (ativo && lista) setMissoes(lista);
+      } catch (e) {
+        console.error('Erro ao buscar os desafios:', e);
+      } finally {
+        if (ativo) setLoadingMissoes(false);
+      }
     };
 
-    fetchRanking();
-    fetchMissoes();
+    buscarRanking();
+    buscarDesafios();
+
+    return () => {
+      ativo = false;
+    };
   }, []);
 
   const jogosPorPagina = 12;

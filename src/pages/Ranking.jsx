@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { obterUsuario } from '../services/sessao';
+import { listarRanking, obterPapel } from '../services/perfis';
 import { Trophy, Crown, Medal, Loader2 } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { CascaDePagina, LinkVoltar } from '../components/ui';
@@ -8,8 +9,8 @@ import { CascaDePagina, LinkVoltar } from '../components/ui';
 const iconeDaPosicao = (index) => {
   if (index === 0)
     return <Crown size={24} color="var(--primaria)" fill="var(--primaria)" />;
-  if (index === 1) return <Medal size={24} color="#C0C0C0" />;
-  if (index === 2) return <Medal size={24} color="#CD7F32" />;
+  if (index === 1) return <Medal size={24} color="var(--medalha-prata)" />;
+  if (index === 2) return <Medal size={24} color="var(--medalha-bronze)" />;
 
   return <span className="ranking__numero">#{index + 1}</span>;
 };
@@ -23,43 +24,42 @@ const Ranking = () => {
   const [ehAdmin, setEhAdmin] = useState(false);
 
   useEffect(() => {
+    let ativo = true;
+
+    // Só decide para onde o link "voltar" aponta. Falhar aqui não é motivo
+    // para estragar a tela: o visitante volta para a Home, que é o padrão.
     const verificarPapel = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const usuario = await obterUsuario();
+        if (!usuario) return;
 
-      const { data } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (data?.role === 'admin') setEhAdmin(true);
+        const papel = await obterPapel(usuario.id);
+        if (ativo && papel === 'admin') setEhAdmin(true);
+      } catch (e) {
+        console.error('Erro ao verificar o papel:', e);
+      }
     };
 
     const buscarRanking = async () => {
-      // Não pedir 'email': a coluna trafegava para o navegador de qualquer
-      // visitante e o ranking não precisa dela.
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, nome, pontos')
-        .order('pontos', { ascending: false })
-        .limit(50);
-
-      if (error) {
-        console.error('Erro ao buscar ranking:', error);
-        setErro(true);
-      } else {
+      try {
+        const lista = await listarRanking(50);
+        if (!ativo) return;
+        setUsuarios(lista);
         setErro(false);
-        setUsuarios(data);
+      } catch (e) {
+        console.error('Erro ao buscar o ranking:', e);
+        if (ativo) setErro(true);
+      } finally {
+        if (ativo) setCarregando(false);
       }
-
-      setCarregando(false);
     };
 
     verificarPapel();
     buscarRanking();
+
+    return () => {
+      ativo = false;
+    };
   }, []);
 
   return (

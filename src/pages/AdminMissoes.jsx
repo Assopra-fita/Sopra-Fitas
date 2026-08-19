@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import {
+  listarPendentes,
+  aprovarMissao,
+  rejeitarMissao,
+} from '../services/missoes';
 import { CheckCircle, User, Shield, Coins } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import {
@@ -24,13 +28,12 @@ const AdminMissoes = () => {
   const [pontos, setPontos] = useState({});
 
   const consultarPendentes = async () => {
-    const { data, error } = await supabase
-      .from('missoes')
-      .select(`*, profiles (nome)`)
-      .eq('status', 'pendente')
-      .order('created_at', { ascending: false });
-
-    return error ? null : data;
+    try {
+      return await listarPendentes();
+    } catch (e) {
+      console.error('Erro ao buscar as missões pendentes:', e);
+      return null;
+    }
   };
 
   const aplicar = (lista) => {
@@ -71,14 +74,15 @@ const AdminMissoes = () => {
     if (!window.confirm(`Confirmar depósito de ${valor} pontos para ${jogador}?`))
       return;
 
-    // É o único ponto do sistema que credita pontos, e quem soma é o banco.
-    const { error } = await supabase.rpc('aprovar_missao_gm', {
-      id_missao: missao.id,
-      id_jogador: missao.user_id,
-      qtd_pontos: valor,
-    });
-
-    if (error) return alert('Erro no banco: ' + error.message);
+    try {
+      await aprovarMissao({
+        idMissao: missao.id,
+        idJogador: missao.user_id,
+        pontos: valor,
+      });
+    } catch (e) {
+      return alert('Erro no banco: ' + e.message);
+    }
 
     alert('Pontos depositados.');
     recarregar();
@@ -87,8 +91,12 @@ const AdminMissoes = () => {
   const rejeitar = async (id) => {
     if (!window.confirm('Tem certeza que deseja rejeitar este print?')) return;
 
-    await supabase.from('missoes').update({ status: 'rejeitado' }).eq('id', id);
-    recarregar();
+    try {
+      await rejeitarMissao(id);
+      recarregar();
+    } catch (e) {
+      alert('Erro ao rejeitar: ' + e.message);
+    }
   };
 
   return (

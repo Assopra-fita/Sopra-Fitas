@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { entrar, cadastrar } from '../services/sessao';
 import { useNavigate, Link } from 'react-router-dom';
 import { Gamepad2, ArrowLeft, Info, Loader2, CheckCircle2 } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
@@ -22,19 +22,14 @@ const Login = () => {
 
     try {
       if (criandoConta) {
-        const { error } = await supabase.auth.signUp({ email, password: senha });
-        if (error) throw error;
+        await cadastrar(email, senha);
 
         alert(
           'Conta criada! O link de confirmação foi enviado para o seu e-mail — confira também a caixa de spam.'
         );
         setCriandoConta(false);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password: senha,
-        });
-        if (error) throw error;
+        await entrar(email, senha);
         navigate('/');
       }
     } catch (erro) {

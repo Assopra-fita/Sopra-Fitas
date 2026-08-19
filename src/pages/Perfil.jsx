@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { obterSessao } from '../services/sessao';
+import { obterPerfil, atualizarNome } from '../services/perfis';
 import { Link, useNavigate } from 'react-router-dom';
 import { Coins, Trophy, Shield } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
@@ -14,48 +15,50 @@ const Perfil = () => {
   const [pontos, setPontos] = useState(0);
   const [papel, setPapel] = useState('user');
   const [salvando, setSalvando] = useState(false);
+  // Guardado no carregamento: antes a tela consultava a sessão de novo a
+  // cada clique em salvar, para chegar ao mesmo id.
+  const [usuarioId, setUsuarioId] = useState(null);
 
   useEffect(() => {
-    const buscarPerfil = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+    let ativo = true;
 
-      if (!session) {
-        navigate('/login');
-        return;
+    const buscar = async () => {
+      try {
+        const sessao = await obterSessao();
+
+        if (!sessao) {
+          navigate('/login');
+          return;
+        }
+
+        if (!ativo) return;
+        setUsuarioId(sessao.user.id);
+
+        const perfil = await obterPerfil(sessao.user.id);
+        if (!ativo || !perfil) return;
+
+        setNome(perfil.nome || '');
+        setPontos(perfil.pontos ?? 0);
+        setPapel(perfil.role || 'user');
+      } catch (e) {
+        console.error('Erro ao buscar o perfil:', e);
+      } finally {
+        if (ativo) setCarregando(false);
       }
-
-      const { data } = await supabase
-        .from('profiles')
-        .select('nome, pontos, role')
-        .eq('id', session.user.id)
-        .single();
-
-      if (data) {
-        setNome(data.nome || '');
-        setPontos(data.pontos ?? 0);
-        setPapel(data.role || 'user');
-      }
-      setCarregando(false);
     };
 
-    buscarPerfil();
+    buscar();
+    return () => {
+      ativo = false;
+    };
   }, [navigate]);
 
   const salvarNome = async () => {
+    if (!usuarioId) return;
+
     setSalvando(true);
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({ nome })
-        .eq('id', session.user.id);
-
-      if (error) throw error;
+      await atualizarNome(usuarioId, nome);
       alert('Nickname atualizado com sucesso!');
     } catch (e) {
       console.error('Erro ao atualizar:', e);
@@ -89,7 +92,7 @@ const Perfil = () => {
           </div>
 
           <Link className="perfil__numero" to="/ranking">
-            <Trophy color="#00d4ff" aria-hidden="true" />
+            <Trophy color="var(--conquista)" aria-hidden="true" />
             <div className="perfil__numero-valor">Ver</div>
             <small>Ranking</small>
           </Link>

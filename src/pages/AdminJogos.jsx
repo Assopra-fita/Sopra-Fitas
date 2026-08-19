@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { cadastrarJogo } from '../services/jogos';
+import {
+  validarImagem,
+  validarRom,
+  ArquivoInvalido,
+} from '../services/armazenamento';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { CONSOLES, acharConsole, aceitarRom } from '../constants/consoles';
@@ -41,63 +46,29 @@ const AdminJogos = () => {
       return;
     }
 
-    // A capa já foi enviada no campo da ROM 29 vezes; sem esta checagem o
-    // emulador recebe um PNG e o jogo abre em tela preta.
-    if (!capaFile?.type.startsWith('image/')) {
-      setAviso({ erro: true, texto: 'A capa precisa ser uma imagem.' });
-      return;
-    }
-
-    const extRom = romFile?.name.split('.').pop()?.toLowerCase() ?? '';
-    if (!definicao.extensoes.includes(extRom)) {
-      setAviso({
-        erro: true,
-        texto: `ROM de ${definicao.rotulo} precisa ser ${definicao.extensoes
-          .map((x) => '.' + x)
-          .join(', ')} — o arquivo enviado é .${extRom}`,
-      });
-      return;
+    // Valida ANTES de subir: sem isto, a capa já foi enviada no campo da ROM
+    // 29 vezes, e o emulador recebe um PNG onde esperava o jogo.
+    try {
+      validarImagem(capaFile, 'A capa');
+      validarRom(romFile, definicao.extensoes, definicao.rotulo);
+    } catch (erro) {
+      if (erro instanceof ArquivoInvalido) {
+        setAviso({ erro: true, texto: erro.message });
+        return;
+      }
+      throw erro;
     }
 
     setEnviando(true);
     setAviso({ erro: false, texto: 'Enviando arquivos...' });
 
     try {
-      const capaExt = capaFile.name.split('.').pop();
-      const capaPath = `${id}-capa.${capaExt}`;
-      const { error: capaError } = await supabase.storage
-        .from('capas')
-        .upload(capaPath, capaFile, { upsert: true });
-
-      if (capaError) throw capaError;
-      const capaUrl = supabase.storage.from('capas').getPublicUrl(capaPath)
-        .data.publicUrl;
-
-      const romExt = romFile.name.split('.').pop();
-      const romPath = `${id}.${romExt}`;
-      const { error: romError } = await supabase.storage
-        .from('roms')
-        .upload(romPath, romFile, { upsert: true });
-
-      if (romError) throw romError;
-      const romUrl = supabase.storage.from('roms').getPublicUrl(romPath)
-        .data.publicUrl;
-
-      const { error: dbError } = await supabase.from('jogos').insert([
-        {
-          id,
-          nome,
-          console: consoleNome,
-          core,
-          ano,
-          fabricante,
-          descricao,
-          capa_url: capaUrl,
-          rom_url: romUrl,
-        },
-      ]);
-
-      if (dbError) throw dbError;
+      await cadastrarJogo({
+        id,
+        capa: capaFile,
+        rom: romFile,
+        dados: { nome, console: consoleNome, core, ano, fabricante, descricao },
+      });
 
       setAviso({ erro: false, texto: 'Jogo cadastrado com sucesso.' });
       setId('');
@@ -109,9 +80,9 @@ const AdminJogos = () => {
       setCapaFile(null);
       setRomFile(null);
       e.target.reset();
-    } catch (error) {
-      console.error(error);
-      setAviso({ erro: true, texto: 'Erro: ' + error.message });
+    } catch (erro) {
+      console.error(erro);
+      setAviso({ erro: true, texto: 'Erro: ' + erro.message });
     } finally {
       setEnviando(false);
     }

@@ -6,8 +6,8 @@ import { Crown, Medal } from 'lucide-react';
 const iconeDaPosicao = (index) => {
   if (index === 0)
     return <Crown size={14} color="var(--primaria)" fill="var(--primaria)" />;
-  if (index === 1) return <Medal size={14} color="#C0C0C0" />;
-  if (index === 2) return <Medal size={14} color="#CD7F32" />;
+  if (index === 1) return <Medal size={14} color="var(--medalha-prata)" />;
+  if (index === 2) return <Medal size={14} color="var(--medalha-bronze)" />;
 
   return <span className="top5__posicao">#{index + 1}</span>;
 };
@@ -29,7 +29,7 @@ const CardTop5 = ({ ranking, carregando }) => (
 
     {!carregando &&
       ranking.map((usuario, posicao) => (
-        <div className="top5__linha" key={usuario.nome ?? posicao}>
+        <div className="top5__linha" key={usuario.id ?? posicao}>
           <span className="top5__jogador">
             {iconeDaPosicao(posicao)}
             <span className="top5__nome">{usuario.nome || '---'}</span>

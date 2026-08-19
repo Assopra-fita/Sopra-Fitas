@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Emulator from '../components/Emulator';
-import { supabase } from '../supabaseClient';
+import { obterSessao } from '../services/sessao';
+import { obterJogo, listarOutros } from '../services/jogos';
+import { enviarPrint as enviarPrintDaMissao } from '../services/missoes';
+import { ArquivoInvalido } from '../services/armazenamento';
 import {
   Calendar,
   Gamepad,
@@ -54,9 +57,11 @@ const GameRoom = () => {
     window.scrollTo(0, 0);
 
     let ativo = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (ativo) setSessao(data.session);
-    });
+    obterSessao()
+      .then((s) => {
+        if (ativo) setSessao(s);
+      })
+      .catch((e) => console.error('Erro ao obter a sessão:', e));
 
     return () => {
       ativo = false;
@@ -140,38 +145,29 @@ const GameRoom = () => {
 
   const enviarPrint = async (e) => {
     e.preventDefault();
-    if (!arquivo) return mostrarAviso('Selecione um print primeiro', true);
     if (!sessao) return mostrarAviso('Você precisa estar logado', true);
 
     setEnviando(true);
     try {
-      const extensao = arquivo.name.split('.').pop();
-      const nomeArquivo = `${sessao.user.id}_${Date.now()}.${extensao}`;
-
-      const { error: erroUpload } = await supabase.storage
-        .from('prints')
-        .upload(nomeArquivo, arquivo);
-      if (erroUpload) throw erroUpload;
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('prints').getPublicUrl(nomeArquivo);
-
-      const { error: erroBanco } = await supabase.from('missoes').insert({
-        user_id: sessao.user.id,
-        game_id: gameId,
-        game_nome: jogoAtual.nome,
-        print_url: publicUrl,
-        status: 'pendente',
+      await enviarPrintDaMissao({
+        userId: sessao.user.id,
+        gameId,
+        gameNome: jogoAtual.nome,
+        arquivo,
       });
-
-      if (erroBanco) throw erroBanco;
 
       setModalAberto(false);
       setArquivo(null);
       mostrarAviso('Missão enviada! O GM vai analisar seu print.');
     } catch (error) {
-      mostrarAviso('Erro ao enviar: ' + error.message, true);
+      // Arquivo errado tem mensagem própria e já explica o que fazer; o resto
+      // é falha de rede ou do banco.
+      mostrarAviso(
+        error instanceof ArquivoInvalido
+          ? error.message
+          : 'Erro ao enviar: ' + error.message,
+        true
+      );
     } finally {
       setEnviando(false);
     }
@@ -192,36 +188,34 @@ const GameRoom = () => {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('jogos')
-        .select('*')
-        .eq('id', gameId)
-        .single();
+      try {
+        const doBanco = await obterJogo(gameId);
+        if (!ativo) return;
 
-      if (!ativo) return;
+        if (!doBanco) {
+          setErroJogo('Não encontramos esse jogo no acervo.');
+          return;
+        }
 
-      if (error || !data) {
-        console.error('Erro ao obter o jogo:', error);
-        setErroJogo('Não encontramos esse jogo no acervo.');
-        return;
+        setJogoAtual(doBanco);
+      } catch (e) {
+        console.error('Erro ao obter o jogo:', e);
+        if (ativo) setErroJogo('Não encontramos esse jogo no acervo.');
       }
-
-      setJogoAtual(data);
     };
 
     const buscarOutrosJogos = async () => {
-      const { data, error } = await supabase
-        .from('jogos')
-        .select('*')
-        .neq('id', gameId)
-        .limit(8);
-
       const doCatalogo = outrosDoAcervo(gameId);
-      if (!ativo) return;
 
-      setOutrosJogos(
-        data?.length && !error ? [...data, ...doCatalogo] : doCatalogo
-      );
+      try {
+        const doBanco = await listarOutros(gameId, 8);
+        if (!ativo) return;
+        setOutrosJogos(doBanco?.length ? [...doBanco, ...doCatalogo] : doCatalogo);
+      } catch (e) {
+        console.error('Erro ao buscar outros jogos:', e);
+        // O acervo do código sozinho já enche a lista de relacionados.
+        if (ativo) setOutrosJogos(doCatalogo);
+      }
     };
 
     buscarJogoAtual();

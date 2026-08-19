@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { contarJogos } from '../services/jogos';
+import { contarJogadores } from '../services/perfis';
+import { contarPendentes } from '../services/missoes';
 import {
   Shield,
   Gamepad2,
@@ -78,32 +80,30 @@ const AdminDashboard = () => {
   const [numeros, setNumeros] = useState({ jogos: 0, usuarios: 0, missoes: 0 });
 
   useEffect(() => {
+    let ativo = true;
+
     const buscarNumeros = async () => {
-      const contar = (tabela, filtro) => {
-        let consulta = supabase
-          .from(tabela)
-          .select('*', { count: 'exact', head: true });
-        if (filtro) consulta = consulta.eq(filtro.coluna, filtro.valor);
-        return consulta;
-      };
+      try {
+        // As três consultas são independentes: em série somavam três idas ao
+        // servidor, em paralelo a espera é a da mais lenta.
+        const [jogos, usuarios, missoes] = await Promise.all([
+          contarJogos(),
+          contarJogadores(),
+          contarPendentes(),
+        ]);
 
-      // As três consultas são independentes: em série somavam três idas ao
-      // servidor, em paralelo a espera é a da mais lenta.
-      const [jogos, usuarios, missoes] = await Promise.all([
-        contar('jogos'),
-        contar('profiles'),
-        contar('missoes', { coluna: 'status', valor: 'pendente' }),
-      ]);
-
-      setNumeros({
-        jogos: jogos.count || 0,
-        usuarios: usuarios.count || 0,
-        missoes: missoes.count || 0,
-      });
-      setCarregando(false);
+        if (ativo) setNumeros({ jogos, usuarios, missoes });
+      } catch (e) {
+        console.error('Erro ao buscar os números do painel:', e);
+      } finally {
+        if (ativo) setCarregando(false);
+      }
     };
 
     buscarNumeros();
+    return () => {
+      ativo = false;
+    };
   }, []);
 
   return (

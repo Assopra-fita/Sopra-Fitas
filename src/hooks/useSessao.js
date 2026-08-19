@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { assinarSessao, sair as encerrarSessao } from '../services/sessao';
+import { obterResumo } from '../services/perfis';
 
 // Sessão do jogador mais os dados de perfil que o cabeçalho mostra.
 // É a única assinatura de onAuthStateChange do projeto.
@@ -10,15 +11,14 @@ export const useSessao = () => {
 
   useEffect(() => {
     const buscarPerfil = async (userId) => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('pontos, nome')
-        .eq('id', userId)
-        .single();
-
-      if (data) {
-        setPontos(data.pontos ?? 0);
-        setNome(data.nome ?? '');
+      try {
+        const perfil = await obterResumo(userId);
+        if (perfil) {
+          setPontos(perfil.pontos ?? 0);
+          setNome(perfil.nome ?? '');
+        }
+      } catch (e) {
+        console.error('Erro ao buscar o perfil:', e);
       }
     };
 
@@ -35,14 +35,10 @@ export const useSessao = () => {
     // O onAuthStateChange dispara INITIAL_SESSION logo ao assinar, então ele
     // já cobre a leitura inicial: chamar getSession aqui duplicava a consulta
     // ao perfil no carregamento da página.
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_evento, sessao) => aplicar(sessao));
-
-    return () => subscription.unsubscribe();
+    return assinarSessao(aplicar);
   }, []);
 
-  const sair = () => supabase.auth.signOut();
+  const sair = () => encerrarSessao();
 
   return { session, pontos, nome, sair };
 };

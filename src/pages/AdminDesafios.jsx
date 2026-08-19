@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { listarDesafios, criarDesafio, removerDesafio } from '../services/desafios';
 import { Target, PlusCircle, Trash2 } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import {
@@ -20,13 +20,12 @@ const AdminDesafios = () => {
   const [desafios, setDesafios] = useState([]);
 
   const consultarDesafios = async () => {
-    const { data, error } = await supabase
-      .from('missoes_globais')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) console.error('Erro ao buscar desafios:', error.message);
-    return error ? null : data;
+    try {
+      return await listarDesafios();
+    } catch (e) {
+      console.error('Erro ao buscar desafios:', e);
+      return null;
+    }
   };
 
   // A guarda `ativo` existe porque a resposta pode chegar depois de sair da
@@ -55,16 +54,15 @@ const AdminDesafios = () => {
     if (!titulo || !objetivo || !recompensa)
       return alert('Preencha todos os campos.');
 
-    const { error } = await supabase.from('missoes_globais').insert([
-      {
+    try {
+      await criarDesafio({
         titulo,
         objetivo,
         recompensa: parseInt(recompensa, 10),
-        tipo: 'mensal',
-      },
-    ]);
-
-    if (error) return alert('Erro ao lançar: ' + error.message);
+      });
+    } catch (e) {
+      return alert('Erro ao lançar: ' + e.message);
+    }
 
     alert('Desafio publicado no topo da Home.');
     setTitulo('');
@@ -76,13 +74,12 @@ const AdminDesafios = () => {
   const remover = async (id) => {
     if (!window.confirm('Remover este desafio da Home definitivamente?')) return;
 
-    const { error } = await supabase
-      .from('missoes_globais')
-      .delete()
-      .eq('id', id);
-
-    if (error) alert('Erro ao remover: ' + error.message);
-    else buscarDesafios();
+    try {
+      await removerDesafio(id);
+      buscarDesafios();
+    } catch (e) {
+      alert('Erro ao remover: ' + e.message);
+    }
   };
 
   return (

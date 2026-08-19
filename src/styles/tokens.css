@@ -35,6 +35,13 @@
   --sucesso-fundo: #16301f;
   --erro-fundo: #3a1c1e;
 
+  /* Cores de significado fixo, usadas como atributo de ícone SVG. O lucide
+     aceita var(), então elas também moram aqui e não soltas no JSX. */
+  --medalha-prata: #c0c0c0;
+  --medalha-bronze: #cd7f32;
+  --favorito: #ff4d4d;
+  --conquista: #00d4ff;
+
   /* Formas */
   --raio-p: 6px;
   --raio-m: 8px;

@@ -18,8 +18,8 @@ const CardDeJogo = ({ jogo, favorito, aoAlternarFavorito }) => (
     >
       <Heart
         size={18}
-        color={favorito ? '#ff4d4d' : 'white'}
-        fill={favorito ? '#ff4d4d' : 'none'}
+        color={favorito ? 'var(--favorito)' : 'currentColor'}
+        fill={favorito ? 'var(--favorito)' : 'none'}
       />
     </button>
 
