@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-54 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+61 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
 | **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
 | **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
-| **3** | Limpeza estrutural | Média | `███████░░░` | 15/23 |
+| **3** | Limpeza estrutural | Média | `█████████░` | 22/23 |
 | **4** | Layout e navegação | Média | `███░░░░░░░` | 3/12 |
 | **5** | SEO, acessibilidade e qualidade | Baixa | `█████░░░░░` | 9/18 |
-| | **Total** | | `██████░░░░` | **54/94** |
+| | **Total** | | `██████░░░░` | **61/94** |
 
 ---
 
@@ -400,7 +400,7 @@ E **379 cores hexadecimais escritas à mão**, 54 valores distintos. O [`index.c
 **Tarefas**
 
 - [x] Criar `components/ui` com Botão, Card, Input, Layout e link de voltar
-- [ ] Criar tokens de cor e substituir as 379 cores escritas à mão
+- [x] Criar tokens de cor e substituir as 379 cores escritas à mão
 - [x] Migrar as telas para os componentes compartilhados
   <br>11 das 12 telas usam `components/ui`. A Home é a exceção de propósito:
   busca, filtros e paginação dela são peças próprias, já extraídas para
@@ -445,8 +445,8 @@ Consequência direta: os três blocos de upload (`AdminJogos`, `AdminLoja`, `Gam
 
 **Tarefas**
 
-- [ ] Criar `services/` como único lugar que monta consulta
-- [ ] Unificar os 3 blocos de upload, com validação de tipo e tamanho
+- [x] Criar `services/` como único lugar que monta consulta
+- [x] Unificar os 3 blocos de upload, com validação de tipo e tamanho
 - [x] Criar um guard de rota único para as telas administrativas
 
 ### 3.5 — Responsividade: duas implementações que discordam
@@ -503,11 +503,11 @@ A conferência derrubou a retórica de três itens, e isso importa mais do que p
 - [x] Içar `busca.toLowerCase()` para fora do predicado do filtro
 - [x] Deduplicar por `id` a união dos catálogos
 - [x] Corrigir o sorteio de relacionados: copiar antes e usar Fisher-Yates
-- [ ] Paralelizar as três consultas do painel administrativo
-- [ ] Paralelizar os uploads de capa e ROM, depois de validar o id
+- [x] Paralelizar as três consultas do painel administrativo
+- [x] Paralelizar os uploads de capa e ROM, depois de validar o id
 - [x] Guardar o booleano de breakpoint em vez da largura em pixels
-- [ ] Trocar `key={idx}` por chave natural nas duas listas que reordenam
-- [ ] Adicionar guarda de nulo no filtro do admin
+- [x] Trocar `key={idx}` por chave natural nas duas listas que reordenam
+- [x] Adicionar guarda de nulo no filtro do admin
 - [x] Enxugar as colunas do `select` da Home
 
 ### 3.7 — Alvo estrutural
