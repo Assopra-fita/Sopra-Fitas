@@ -1,18 +1,78 @@
 import { semAcento } from '../lib/texto';
 
+// Fonte única do que o site suporta. O filtro da Home e o formulário de
+// cadastro saem daqui, então não podem mais divergir — foi essa divergência
+// que deixou 67 jogos invisíveis em qualquer categoria.
+//
+// `core` é o nome do núcleo do EmulatorJS e precisa existir no catálogo oficial
+// dele: um nome inválido abre o jogo em tela preta sem erro nenhum, que foi o
+// que aconteceu com 'stella' (o correto é 'stella2014').
+export const CONSOLES = [
+  {
+    valor: 'SNES',
+    rotulo: 'Super Nintendo',
+    core: 'snes9x',
+    extensoes: ['sfc', 'smc', 'fig', 'swc'],
+  },
+  {
+    valor: 'MASTER SYSTEM',
+    rotulo: 'Master System',
+    core: 'smsplus',
+    extensoes: ['sms'],
+  },
+  {
+    valor: 'MEGA DRIVE',
+    rotulo: 'Mega Drive',
+    core: 'genesis_plus_gx',
+    extensoes: ['md', 'bin', 'gen', 'smd'],
+  },
+  {
+    valor: 'NES',
+    rotulo: 'Nintendo (NES)',
+    core: 'nestopia',
+    extensoes: ['nes', 'fds', 'unf'],
+  },
+  {
+    valor: 'GBA',
+    rotulo: 'Game Boy Advance',
+    core: 'mgba',
+    extensoes: ['gba'],
+  },
+  {
+    valor: 'GAME BOY',
+    rotulo: 'Game Boy / Color',
+    core: 'gambatte',
+    extensoes: ['gb', 'gbc'],
+  },
+  {
+    valor: 'NINTENDO 64',
+    rotulo: 'Nintendo 64',
+    core: 'mupen64plus_next',
+    extensoes: ['z64', 'n64', 'v64'],
+  },
+  {
+    valor: 'ATARI',
+    rotulo: 'Atari 2600',
+    core: 'stella2014',
+    extensoes: ['a26', 'bin'],
+  },
+];
+
 // Categorias exibidas nos filtros da Home, na ordem em que aparecem.
 export const CATEGORIAS = [
   'Todos',
   '❤️ Favoritos',
-  'SNES',
-  'MASTER SYSTEM',
-  'MEGA DRIVE',
-  'NES',
-  'GBA',
-  'GAME BOY',
-  'NINTENDO 64',
-  'ATARI',
+  ...CONSOLES.map((c) => c.valor),
 ];
+
+export const acharConsole = (valor) =>
+  CONSOLES.find((c) => c.valor === normalizarConsole(valor)) || null;
+
+// Extensões aceitas para o console escolhido, prontas para o atributo accept.
+export const aceitarRom = (valor) => {
+  const alvo = acharConsole(valor);
+  return alvo ? alvo.extensoes.map((e) => `.${e}`).join(',') : '';
+};
 
 // O campo `console` da tabela `jogos` é texto livre, então o mesmo videogame
 // chega gravado de várias formas ('Super Nintendo', 'Super Nitendo', 'game Boy').
@@ -32,6 +92,7 @@ const SINONIMOS = {
   MASTERSYSTEM: 'MASTER SYSTEM',
 
   NES: 'NES',
+  NINTENDO: 'NES',
   NINTENDINHO: 'NES',
 
   'GAME BOY': 'GAME BOY',

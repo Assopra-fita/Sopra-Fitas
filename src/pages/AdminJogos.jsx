@@ -9,6 +9,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { CONSOLES, acharConsole, aceitarRom } from '../constants/consoles';
 
 const AdminJogos = () => {
   const [loading, setLoading] = useState(false);
@@ -17,8 +18,11 @@ const AdminJogos = () => {
   // Estados do Formulário
   const [id, setId] = useState('');
   const [nome, setNome] = useState('');
-  const [consoleNome, setConsoleNome] = useState('Super Nintendo'); // Novo estado para a coluna console
-  const [core, setCore] = useState('snes');
+  // O console é escolhido numa lista fechada e o core sai dele. Antes os dois
+  // eram livres e divergiam: 55 jogos ficaram gravados como 'Super Nintendo',
+  // valor que nenhum filtro da Home reconhecia.
+  const [consoleNome, setConsoleNome] = useState(CONSOLES[0].valor);
+  const core = acharConsole(consoleNome)?.core ?? '';
   const [ano, setAno] = useState('');
   const [fabricante, setFabricante] = useState('');
   const [descricao, setDescricao] = useState('');
@@ -29,6 +33,30 @@ const AdminJogos = () => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
+
+    const definicao = acharConsole(consoleNome);
+    if (!definicao) {
+      setStatus('❌ Escolha um console da lista.');
+      return;
+    }
+
+    // A capa já foi enviada no campo da ROM 29 vezes; sem esta checagem o
+    // emulador recebe um PNG e o jogo abre em tela preta.
+    if (!capaFile?.type.startsWith('image/')) {
+      setStatus('❌ A capa precisa ser uma imagem.');
+      return;
+    }
+
+    const extRom = romFile?.name.split('.').pop()?.toLowerCase() ?? '';
+    if (!definicao.extensoes.includes(extRom)) {
+      setStatus(
+        `❌ ROM de ${definicao.rotulo} precisa ser ${definicao.extensoes
+          .map((x) => '.' + x)
+          .join(', ')} — o arquivo enviado é .${extRom}`
+      );
+      return;
+    }
+
     setLoading(true);
     setStatus('Enviando arquivos...');
 
@@ -36,7 +64,7 @@ const AdminJogos = () => {
       // 1. Upload da Capa
       const capaExt = capaFile.name.split('.').pop();
       const capaPath = `${id}-capa.${capaExt}`;
-      const { data: capaData, error: capaError } = await supabase.storage
+      const { error: capaError } = await supabase.storage
         .from('capas')
         .upload(capaPath, capaFile, { upsert: true });
 
@@ -47,7 +75,7 @@ const AdminJogos = () => {
       // 2. Upload da ROM
       const romExt = romFile.name.split('.').pop();
       const romPath = `${id}.${romExt}`;
-      const { data: romData, error: romError } = await supabase.storage
+      const { error: romError } = await supabase.storage
         .from('roms')
         .upload(romPath, romFile, { upsert: true });
 
@@ -76,11 +104,10 @@ const AdminJogos = () => {
       // Resetar campos
       setId('');
       setNome('');
-      setConsoleNome('Super Nintendo');
+      setConsoleNome(CONSOLES[0].valor);
       setAno('');
       setFabricante('');
       setDescricao('');
-      setCore('snes');
       setCapaFile(null);
       setRomFile(null);
       e.target.reset();
@@ -161,47 +188,27 @@ const AdminJogos = () => {
               style={inputStyle}
             />
 
-            {/* CAMPO CONSOLE ADICIONADO AQUI */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-              <label style={{ fontSize: '0.8rem', color: '#fca311', marginLeft: '5px' }}>Nome do Console (Exibido no site)</label>
-              <input
-                placeholder="Ex: Super Nintendo, Master System"
+              <label style={{ fontSize: '0.8rem', color: '#fca311', marginLeft: '5px' }}>Console</label>
+              <select
                 value={consoleNome}
                 onChange={(e) => setConsoleNome(e.target.value)}
                 required
                 style={inputStyle}
-              />
+              >
+                {CONSOLES.map((c) => (
+                  <option key={c.valor} value={c.valor}>
+                    {c.rotulo}
+                  </option>
+                ))}
+              </select>
+              <span style={{ fontSize: '0.75rem', color: '#666', marginLeft: '5px' }}>
+                Emulador: <strong>{core}</strong> · ROM aceita:{' '}
+                {aceitarRom(consoleNome).replaceAll(',', ', ')}
+              </span>
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
-              <div style={{ flex: 2 }}>
-                <label style={{ fontSize: '0.8rem', color: '#aaa', marginLeft: '5px' }}>Core (Emulador)</label>
-                <select
-                  value={core}
-                  onChange={(e) => setCore(e.target.value)}
-                  style={inputStyle}
-                >
-                  <optgroup label="Nintendo" style={{ background: '#1e1e1e' }}>
-                    <option value="snes">Super Nintendo</option>
-                    <option value="nes">Nintendo (NES)</option>
-                    <option value="gba">GameBoy Advance</option>
-                    <option value="gbc">GameBoy Color</option>
-                    <option value="n64">Nintendo 64</option>
-                  </optgroup>
-                  <optgroup label="Sega" style={{ background: '#1e1e1e' }}>
-                    <option value="segaMD">Mega Drive</option>
-                    <option value="sms">Master System</option>
-                    <option value="gg">Game Gear</option>
-                  </optgroup>
-                  <optgroup label="Outros" style={{ background: '#1e1e1e' }}>
-                    <option value="atari">Atari 2600</option>
-                    <option value="psx">PlayStation 1</option>
-                    <option value="neogeo">Neo Geo</option>
-                    <option value="mame">Arcade (MAME)</option>
-                  </optgroup>
-                </select>
-              </div>
-              
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: '0.8rem', color: '#aaa', marginLeft: '5px' }}>Ano</label>
                 <input
@@ -240,6 +247,7 @@ const AdminJogos = () => {
               <p style={labelFileStyle}>Arquivo da ROM:</p>
               <input
                 type="file"
+                accept={aceitarRom(consoleNome)}
                 onChange={(e) => setRomFile(e.target.files[0])}
                 required
               />
