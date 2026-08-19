@@ -14,6 +14,7 @@ import {
   Star,
 } from 'lucide-react';
 import { games } from '../constants/games';
+import { CATEGORIAS, normalizarConsole } from '../constants/consoles';
 import AnuncioGPT from '../components/AnuncioGPT';
 
 const Home = () => {
@@ -157,28 +158,20 @@ const Home = () => {
     navigate(`/jogar/${jogoSorteado.id}`);
   };
 
-  const categorias = [
-    'Todos',
-    '❤️ Favoritos',
-    'SNES',
-    'MASTER SYSTEM',
-    'MEGA DRIVE',
-    'NES',
-    'GBA',
-    'GAME BOY',
-    'NINTENDO 64',
-    'ATARI',
-  ];
+  const categorias = CATEGORIAS;
+
+  const termoBusca = busca.toLowerCase();
 
   const jogosFiltrados = jogos.filter((jogo) => {
     const nomeJogo = jogo.nome || '';
-    const bateBusca = nomeJogo.toLowerCase().includes(busca.toLowerCase());
+    const bateBusca = nomeJogo.toLowerCase().includes(termoBusca);
 
     let bateCategoria = true;
     if (filtroConsole === '❤️ Favoritos') {
       bateCategoria = favoritos.includes(jogo.id);
     } else if (filtroConsole !== 'Todos') {
-      bateCategoria = jogo.console === filtroConsole;
+      // O console vem do banco como texto livre; normalizar antes de comparar
+      bateCategoria = normalizarConsole(jogo.console) === filtroConsole;
     }
 
     return bateBusca && bateCategoria;
