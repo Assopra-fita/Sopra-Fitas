@@ -1,3 +1,14 @@
+// Acervo estático do site: os jogos cujas ROMs vivem em public/ e viajam no
+// repositório. O acervo do painel do GM fica na tabela `jogos` do Supabase.
+//
+// FONTE ÚNICA. Antes eram duas estruturas com os mesmos jogos e campos
+// diferentes: um array lido só pela vitrine e um objeto lido só pela sala de
+// jogo. Editar uma e esquecer a outra produzia um jogo que aparece na vitrine e
+// não abre, ou que abre por link direto e não aparece na vitrine.
+//
+// Para adicionar um jogo: uma entrada aqui, com os nove campos, e a ROM e a
+// capa na raiz de public/. O valor de `console` precisa existir em
+// constants/consoles.js, senão o jogo some de todos os filtros.
 export const games = [
   // MASTER SYSTEM
   {
@@ -6,8 +17,10 @@ export const games = [
     console: 'MASTER SYSTEM',
     core: 'smsplus',
     rom_url: '/sonicthehedgehog.sms',
-    capa_url:
-      'https://upload.wikimedia.org/wikipedia/en/b/ba/Sonic_the_Hedgehog_1_Genesis_box_art.jpg',
+    capa_url: 'https://upload.wikimedia.org/wikipedia/en/b/ba/Sonic_the_Hedgehog_1_Genesis_box_art.jpg',
+    ano: '1991',
+    fabricante: 'SEGA',
+    descricao: 'A estreia do ouriço mais rápido do mundo no Master System!',
   },
   {
     id: 'sms-alex-kidd',
@@ -16,16 +29,22 @@ export const games = [
     core: 'smsplus',
     rom_url: '/alexkidd.sms',
     capa_url: '/alexkidd.webp',
+    ano: '1986',
+    fabricante: 'SEGA',
+    descricao: 'O maior clássico do Master System! Use o Jokenpô para vencer!',
   },
 
   // SNES
   {
     id: 'snes-aladdin',
-    nome: "Disney's Aladdin",
+    nome: 'Disney\'s Aladdin',
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/aladdin.sfc',
     capa_url: '/aladdin.webp',
+    ano: '1993',
+    fabricante: 'Capcom',
+    descricao: 'A versão clássica da Capcom baseada no filme da Disney.',
   },
   {
     id: 'snes-chrono-trigger',
@@ -34,6 +53,9 @@ export const games = [
     core: 'snes9x',
     rom_url: '/chrono-trigger.sfc',
     capa_url: '/chrono-trigger.webp',
+    ano: '1995',
+    fabricante: 'Square',
+    descricao: 'Uma das maiores aventuras RPG de todos os tempos!',
   },
   {
     id: 'snes-contra3',
@@ -42,6 +64,9 @@ export const games = [
     core: 'snes9x',
     rom_url: '/contra-3.sfc',
     capa_url: '/contra-3.webp',
+    ano: '1992',
+    fabricante: 'Konami',
+    descricao: 'A maior aventura dos Contra Brothers no futuro!',
   },
   {
     id: 'snes-dkc',
@@ -50,6 +75,9 @@ export const games = [
     core: 'snes9x',
     rom_url: '/dkc.sfc',
     capa_url: '/dkc.webp',
+    ano: '1994',
+    fabricante: 'Rare/Nintendo',
+    descricao: 'Donkey e Diddy em uma aventura revolucionária em 3D!',
   },
   {
     id: 'snes-fatal-fury2',
@@ -58,6 +86,9 @@ export const games = [
     core: 'snes9x',
     rom_url: '/fatal-fury-2.sfc',
     capa_url: '/fatal-fury-2.webp',
+    ano: '1992',
+    fabricante: 'SNK',
+    descricao: 'Terry Bogard e cia no torneio do Rei das Trevas!',
   },
   {
     id: 'snes-goof-troop',
@@ -66,6 +97,9 @@ export const games = [
     core: 'snes9x',
     rom_url: '/goof-troop.sfc',
     capa_url: '/goof-troop.webp',
+    ano: '1993',
+    fabricante: 'Capcom/Disney',
+    descricao: 'Max e PJ salvam o Prefeito X com truques malucos!',
   },
   {
     id: 'snes-harvest-moon',
@@ -74,14 +108,20 @@ export const games = [
     core: 'snes9x',
     rom_url: '/harvest-moon.sfc',
     capa_url: '/harvest-moon.webp',
+    ano: '1996',
+    fabricante: 'Natsume',
+    descricao: 'Reconstrua a fazenda e encontre o amor verdadeiro!',
   },
   {
     id: 'snes-kirbys-avalanche',
-    nome: "Kirby's Avalanche",
+    nome: 'Kirby\'s Avalanche',
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/kirbys-avalanche.sfc',
     capa_url: '/kirbys-avalanche.webp',
+    ano: '1995',
+    fabricante: 'HAL',
+    descricao: 'Kirby no puzzle game estilo Puyo Puyo!',
   },
   {
     id: 'snes-kirby-super-star',
@@ -90,6 +130,9 @@ export const games = [
     core: 'snes9x',
     rom_url: '/kirby-super-star.sfc',
     capa_url: '/kirby-super-star.webp',
+    ano: '1996',
+    fabricante: 'HAL/Nintendo',
+    descricao: 'Múltiplas aventuras do Kirby rosa e faminto!',
   },
   {
     id: 'snes-megaman-x',
@@ -98,6 +141,9 @@ export const games = [
     core: 'snes9x',
     rom_url: '/megaman-x.sfc',
     capa_url: '/megaman-x.webp',
+    ano: '1993',
+    fabricante: 'Capcom',
+    descricao: 'O futuro dos Mavericks começa aqui com X!',
   },
   {
     id: 'snes-megaman-x2',
@@ -106,6 +152,9 @@ export const games = [
     core: 'snes9x',
     rom_url: '/megaman-x2.sfc',
     capa_url: '/megaman-x2.webp',
+    ano: '1994',
+    fabricante: 'Capcom',
+    descricao: 'Wire Sponge, Wheel Gator e mais 6 Mavericks!',
   },
   {
     id: 'snes-megaman-x3',
@@ -114,14 +163,20 @@ export const games = [
     core: 'snes9x',
     rom_url: '/megaman-x3.sfc',
     capa_url: '/megaman-x3.webp',
+    ano: '1995',
+    fabricante: 'Capcom',
+    descricao: 'O último grande X do SNES com escolhas morais!',
   },
   {
     id: 'snes-rrr',
-    nome: "Rock n' Roll Racing",
+    nome: 'Rock n\' Roll Racing',
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/rrr.sfc',
     capa_url: '/rrr.webp',
+    ano: '1993',
+    fabricante: 'Blizzard',
+    descricao: 'Acelere ao som de rock em corridas intergalácticas!',
   },
   {
     id: 'snes-supermarioworld',
@@ -129,8 +184,10 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/supermarioworld.sfc',
-    capa_url:
-      'https://upload.wikimedia.org/wikipedia/en/3/32/Super_Mario_World_Coverart.png',
+    capa_url: 'https://upload.wikimedia.org/wikipedia/en/3/32/Super_Mario_World_Coverart.png',
+    ano: '1990',
+    fabricante: 'Nintendo',
+    descricao: 'O clássico absoluto que definiu o SNES!',
   },
   {
     id: 'snes-topgear',
@@ -139,6 +196,9 @@ export const games = [
     core: 'snes9x',
     rom_url: '/topgear.smc',
     capa_url: '/Capa_de_Top_Gear.webp',
+    ano: '1992',
+    fabricante: 'Kemco/Gremlin',
+    descricao: 'O jogo de corrida mais amado do Brasil!',
   },
 
   // NES
@@ -149,6 +209,9 @@ export const games = [
     core: 'nestopia',
     rom_url: '/contra.nes',
     capa_url: '/contra.webp',
+    ano: '1987',
+    fabricante: 'Konami',
+    descricao: 'Bill Rizer e Lance Bean contra os aliens!',
   },
   {
     id: 'nes-duck-hunt',
@@ -157,6 +220,9 @@ export const games = [
     core: 'nestopia',
     rom_url: '/duck-hunt.nes',
     capa_url: '/duck-hunt.webp',
+    ano: '1984',
+    fabricante: 'Nintendo',
+    descricao: 'O cão zoeiro e sua Zapper na caça aos patos!',
   },
 
   // GBA
@@ -167,6 +233,9 @@ export const games = [
     core: 'mgba',
     rom_url: '/LegendOfZeldaTheMinishCap.gba',
     capa_url: '/zelda.webp',
+    ano: '2004',
+    fabricante: 'Capcom/Nintendo',
+    descricao: 'Link encolhe com Ezlo para salvar Hyrule!',
   },
   {
     id: 'gba-pokemon-fire-red',
@@ -175,6 +244,9 @@ export const games = [
     core: 'mgba',
     rom_url: '/pokemon-fire-red.gba',
     capa_url: '/pokemon-fire-red.webp',
+    ano: '2004',
+    fabricante: 'Game Freak',
+    descricao: 'Kanto em 3D com Pokémon até a Geração III!',
   },
 
   // GAME BOY
@@ -185,9 +257,12 @@ export const games = [
     core: 'gambatte',
     rom_url: '/PokémonSilver.gbc',
     capa_url: '/pokemon-silver.webp',
+    ano: '1999',
+    fabricante: 'Game Freak',
+    descricao: 'Gold e Silver na região de Johto e Kanto!',
   },
 
-  // N64
+  // NINTENDO 64
   {
     id: 'n64-super-mario-64',
     nome: 'Super Mario 64',
@@ -195,6 +270,9 @@ export const games = [
     core: 'mupen64plus_next',
     rom_url: '/mario64.z64',
     capa_url: '/Super_Mario_64.webp',
+    ano: '1996',
+    fabricante: 'Nintendo',
+    descricao: 'A revolução 3D que mudou os games para sempre!',
   },
 
   // ATARI
@@ -205,263 +283,18 @@ export const games = [
     core: 'stella2014',
     rom_url: '/asteroids.a26',
     capa_url: '/asteroids.webp',
+    ano: '1979',
+    fabricante: 'Atari',
+    descricao: 'O clássico arcade que definiu os shoot em up!',
   },
 ];
 
-export const gamesDb = {
-  // MASTER SYSTEM
-  'sms-sonic': {
-    id: 'sms-sonic',
-    rom_url: '/sonicthehedgehog.sms',
-    core: 'smsplus',
-    nome: 'Sonic The Hedgehog',
-    ano: '1991',
-    fabricante: 'SEGA',
-    capa_url:
-      'https://upload.wikimedia.org/wikipedia/en/b/ba/Sonic_the_Hedgehog_1_Genesis_box_art.jpg',
-    descricao: 'A estreia do ouriço mais rápido do mundo no Master System!',
-  },
-  'sms-alex-kidd': {
-    id: 'sms-alex-kidd',
-    rom_url: '/alexkidd.sms',
-    core: 'smsplus',
-    nome: 'Alex Kidd in Miracle World',
-    ano: '1986',
-    fabricante: 'SEGA',
-    capa_url: '/alexkidd.webp',
-    descricao: 'O maior clássico do Master System! Use o Jokenpô para vencer!',
-  },
+// Índice por id, montado uma vez no carregamento do módulo. A sala de jogo
+// resolve a ROM por id a cada abertura: com busca linear seriam 24
+// comparações por jogo aberto, e o índice deixa isso em O(1).
+const porId = new Map(games.map((jogo) => [jogo.id, jogo]));
 
-  // SNES
-  'snes-aladdin': {
-    id: 'snes-aladdin',
-    rom_url: '/aladdin.sfc',
-    core: 'snes9x',
-    nome: "Disney's Aladdin",
-    ano: '1993',
-    fabricante: 'Capcom',
-    capa_url: '/aladdin.webp',
-    descricao: 'A versão clássica da Capcom baseada no filme da Disney.',
-  },
-  'snes-chrono-trigger': {
-    id: 'snes-chrono-trigger',
-    rom_url: '/chrono-trigger.sfc',
-    core: 'snes9x',
-    nome: 'Chrono Trigger',
-    ano: '1995',
-    fabricante: 'Square',
-    capa_url: '/chrono-trigger.webp',
-    descricao: 'Uma das maiores aventuras RPG de todos os tempos!',
-  },
-  'snes-contra3': {
-    id: 'snes-contra3',
-    rom_url: '/contra-3.sfc',
-    core: 'snes9x',
-    nome: 'Contra III: The Alien Wars',
-    ano: '1992',
-    fabricante: 'Konami',
-    capa_url: '/contra-3.webp',
-    descricao: 'A maior aventura dos Contra Brothers no futuro!',
-  },
-  'snes-dkc': {
-    id: 'snes-dkc',
-    rom_url: '/dkc.sfc',
-    core: 'snes9x',
-    nome: 'Donkey Kong Country',
-    ano: '1994',
-    fabricante: 'Rare/Nintendo',
-    capa_url: '/dkc.webp',
-    descricao: 'Donkey e Diddy em uma aventura revolucionária em 3D!',
-  },
-  'snes-fatal-fury2': {
-    id: 'snes-fatal-fury2',
-    rom_url: '/fatal-fury-2.sfc',
-    core: 'snes9x',
-    nome: 'Fatal Fury 2',
-    ano: '1992',
-    fabricante: 'SNK',
-    capa_url: '/fatal-fury-2.webp',
-    descricao: 'Terry Bogard e cia no torneio do Rei das Trevas!',
-  },
-  'snes-goof-troop': {
-    id: 'snes-goof-troop',
-    rom_url: '/goof-troop.sfc',
-    core: 'snes9x',
-    nome: 'Goof Troop',
-    ano: '1993',
-    fabricante: 'Capcom/Disney',
-    capa_url: '/goof-troop.webp',
-    descricao: 'Max e PJ salvam o Prefeito X com truques malucos!',
-  },
-  'snes-harvest-moon': {
-    id: 'snes-harvest-moon',
-    rom_url: '/harvest-moon.sfc',
-    core: 'snes9x',
-    nome: 'Harvest Moon',
-    ano: '1996',
-    fabricante: 'Natsume',
-    capa_url: '/harvest-moon.webp',
-    descricao: 'Reconstrua a fazenda e encontre o amor verdadeiro!',
-  },
-  'snes-kirbys-avalanche': {
-    id: 'snes-kirbys-avalanche',
-    rom_url: '/kirbys-avalanche.sfc',
-    core: 'snes9x',
-    nome: "Kirby's Avalanche",
-    ano: '1995',
-    fabricante: 'HAL',
-    capa_url: '/kirbys-avalanche.webp',
-    descricao: 'Kirby no puzzle game estilo Puyo Puyo!',
-  },
-  'snes-kirby-super-star': {
-    id: 'snes-kirby-super-star',
-    rom_url: '/kirby-super-star.sfc',
-    core: 'snes9x',
-    nome: 'Kirby Super Star',
-    ano: '1996',
-    fabricante: 'HAL/Nintendo',
-    capa_url: '/kirby-super-star.webp',
-    descricao: 'Múltiplas aventuras do Kirby rosa e faminto!',
-  },
-  'snes-megaman-x': {
-    id: 'snes-megaman-x',
-    rom_url: '/megaman-x.sfc',
-    core: 'snes9x',
-    nome: 'Mega Man X',
-    ano: '1993',
-    fabricante: 'Capcom',
-    capa_url: '/megaman-x.webp',
-    descricao: 'O futuro dos Mavericks começa aqui com X!',
-  },
-  'snes-megaman-x2': {
-    id: 'snes-megaman-x2',
-    rom_url: '/megaman-x2.sfc',
-    core: 'snes9x',
-    nome: 'Mega Man X2',
-    ano: '1994',
-    fabricante: 'Capcom',
-    capa_url: '/megaman-x2.webp',
-    descricao: 'Wire Sponge, Wheel Gator e mais 6 Mavericks!',
-  },
-  'snes-megaman-x3': {
-    id: 'snes-megaman-x3',
-    rom_url: '/megaman-x3.sfc',
-    core: 'snes9x',
-    nome: 'Mega Man X3',
-    ano: '1995',
-    fabricante: 'Capcom',
-    capa_url: '/megaman-x3.webp',
-    descricao: 'O último grande X do SNES com escolhas morais!',
-  },
-  'snes-rrr': {
-    id: 'snes-rrr',
-    rom_url: '/rrr.sfc',
-    core: 'snes9x',
-    nome: "Rock n' Roll Racing",
-    ano: '1993',
-    fabricante: 'Blizzard',
-    capa_url: '/rrr.webp',
-    descricao: 'Acelere ao som de rock em corridas intergalácticas!',
-  },
-  'snes-supermarioworld': {
-    id: 'snes-supermarioworld',
-    rom_url: '/supermarioworld.sfc',
-    core: 'snes9x',
-    nome: 'Super Mario World',
-    ano: '1990',
-    fabricante: 'Nintendo',
-    capa_url:
-      'https://upload.wikimedia.org/wikipedia/en/3/32/Super_Mario_World_Coverart.png',
-    descricao: 'O clássico absoluto que definiu o SNES!',
-  },
-  'snes-topgear': {
-    id: 'snes-topgear',
-    rom_url: '/topgear.smc',
-    core: 'snes9x',
-    nome: 'Top Gear',
-    ano: '1992',
-    fabricante: 'Kemco/Gremlin',
-    capa_url: '/Capa_de_Top_Gear.webp',
-    descricao: 'O jogo de corrida mais amado do Brasil!',
-  },
+export const acharJogo = (id) => porId.get(id);
 
-  // NES
-  'nes-contra': {
-    id: 'nes-contra',
-    rom_url: '/contra.nes',
-    core: 'nestopia',
-    nome: 'Contra',
-    ano: '1987',
-    fabricante: 'Konami',
-    capa_url: '/contra.webp',
-    descricao: 'Bill Rizer e Lance Bean contra os aliens!',
-  },
-  'nes-duck-hunt': {
-    id: 'nes-duck-hunt',
-    rom_url: '/duck-hunt.nes',
-    core: 'nestopia',
-    nome: 'Duck Hunt',
-    ano: '1984',
-    fabricante: 'Nintendo',
-    capa_url: '/duck-hunt.webp',
-    descricao: 'O cão zoeiro e sua Zapper na caça aos patos!',
-  },
-
-  // GBA
-  'gba-zelda-minish-cap': {
-    id: 'gba-zelda-minish-cap',
-    rom_url: '/LegendOfZeldaTheMinishCap.gba',
-    core: 'mgba',
-    nome: 'The Legend of Zelda: The Minish Cap',
-    ano: '2004',
-    fabricante: 'Capcom/Nintendo',
-    capa_url: '/zelda.webp',
-    descricao: 'Link encolhe com Ezlo para salvar Hyrule!',
-  },
-  'gba-pokemon-fire-red': {
-    id: 'gba-pokemon-fire-red',
-    rom_url: '/pokemon-fire-red.gba',
-    core: 'mgba',
-    nome: 'Pokémon Fire Red',
-    ano: '2004',
-    fabricante: 'Game Freak',
-    capa_url: '/pokemon-fire-red.webp',
-    descricao: 'Kanto em 3D com Pokémon até a Geração III!',
-  },
-
-  // GAME BOY
-  'gb-pokemon-silver': {
-    id: 'gb-pokemon-silver',
-    rom_url: '/PokémonSilver.gbc',
-    core: 'gambatte',
-    nome: 'Pokémon Silver',
-    ano: '1999',
-    fabricante: 'Game Freak',
-    capa_url: '/pokemon-silver.webp',
-    descricao: 'Gold e Silver na região de Johto e Kanto!',
-  },
-
-  // N64
-  'n64-super-mario-64': {
-    id: 'n64-super-mario-64',
-    rom_url: '/mario64.z64',
-    core: 'mupen64plus_next',
-    nome: 'Super Mario 64',
-    ano: '1996',
-    fabricante: 'Nintendo',
-    capa_url: '/Super_Mario_64.webp',
-    descricao: 'A revolução 3D que mudou os games para sempre!',
-  },
-
-  // ATARI
-  'atari-asteroids': {
-    id: 'atari-asteroids',
-    rom_url: '/asteroids.a26',
-    core: 'stella2014',
-    nome: 'Asteroids',
-    ano: '1979',
-    fabricante: 'Atari',
-    capa_url: '/asteroids.webp',
-    descricao: 'O clássico arcade que definiu os shoot em up!',
-  },
-};
+// Todos menos um, para a lista de relacionados da sala de jogo.
+export const outrosJogos = (id) => games.filter((jogo) => jogo.id !== id);

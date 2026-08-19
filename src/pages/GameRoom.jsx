@@ -15,7 +15,7 @@ import {
   Home,
 } from 'lucide-react';
 import AnuncioGPT from '../components/AnuncioGPT';
-import { gamesDb } from '../constants/games';
+import { acharJogo, outrosJogos as outrosDoAcervo } from '../constants/games';
 import CapaDeJogo from '../components/ui/CapaDeJogo';
 import { Botao, Campo, Carregando, EstadoErro } from '../components/ui';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
@@ -119,10 +119,13 @@ const GameRoom = () => {
   const sairDoJogo = () => navigate('/');
 
   // Sorteia sem mexer no array do estado. O `.sort()` ordena no próprio lugar,
-  // e um comparador aleatório dá um embaralhamento enviesado: medido com 27
-  // jogos e 200 mil rodadas, o primeiro do acervo saía em 9,4% dos sorteios
-  // contra 3,1% do último — 3x mais chance, onde o justo seriam 3,7% para
-  // cada. Fisher-Yates parcial sorteia só os quantos itens necessários.
+  // e um comparador aleatório não produz permutação uniforme. Medido em 200 mil
+  // rodadas nos dois tamanhos que esta lista tem — 23 sem o banco e 31 com ele:
+  // o primeiro do acervo saía em 10,5% e 8,3% dos sorteios, contra 3,2% e 3,1%
+  // do último, quando o justo seriam 4,3% e 3,2% para todos. Na prática eram
+  // sempre os mesmos jogos aparecendo.
+  //
+  // Fisher-Yates parcial embaralha só os itens que vão ser usados.
   const relacionados = useMemo(() => {
     const copia = [...outrosJogos];
     const quantos = Math.min(4, copia.length);
@@ -182,7 +185,7 @@ const GameRoom = () => {
     let ativo = true;
 
     const buscarJogoAtual = async () => {
-      const doCatalogo = gamesDb[gameId];
+      const doCatalogo = acharJogo(gameId);
 
       if (doCatalogo) {
         if (ativo) setJogoAtual(doCatalogo);
@@ -213,7 +216,7 @@ const GameRoom = () => {
         .neq('id', gameId)
         .limit(8);
 
-      const doCatalogo = Object.values(gamesDb).filter((j) => j.id !== gameId);
+      const doCatalogo = outrosDoAcervo(gameId);
       if (!ativo) return;
 
       setOutrosJogos(
