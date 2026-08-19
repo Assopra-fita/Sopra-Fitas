@@ -962,10 +962,10 @@
     height: 130px;
   }
 
-  /* No celular a logo do cabeçalho já identifica o site: repetir a grande aqui
-     empurraria os jogos mais 200px para baixo sem informar nada de novo. */
+  /* Menor no celular: em 420px ela empurraria os jogos 224px para baixo, numa
+     tela onde a rolagem até o primeiro jogo já é o problema. */
   .home__logo {
-    display: none;
+    max-width: 220px;
   }
 
   .home__busca {
