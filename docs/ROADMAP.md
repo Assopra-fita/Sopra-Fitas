@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-9 de 93 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+17 de 93 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
-| **0** | Dado pessoal exposto | Urgente | `░░░░░░░░░░` | 0/6 |
-| **1** | Quebrado para o usuário | Alta | `███░░░░░░░` | 8/26 |
+| **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
+| **1** | Quebrado para o usuário | Alta | `██████░░░░` | 15/26 |
 | **2** | Peso e velocidade | Alta | `░░░░░░░░░░` | 0/9 |
 | **3** | Limpeza estrutural | Média | `░░░░░░░░░░` | 1/23 |
 | **4** | Layout e navegação | Média | `░░░░░░░░░░` | 0/11 |
 | **5** | SEO, acessibilidade e qualidade | Baixa | `░░░░░░░░░░` | 0/18 |
-| | **Total** | | `█░░░░░░░░░` | **9/93** |
+| | **Total** | | `██░░░░░░░░` | **17/93** |
 
 ---
 
@@ -109,7 +109,7 @@ A correção tem **duas camadas, ambas necessárias**: remover `email` do `selec
 
 **Tarefas**
 
-- [ ] Remover `email` do `select` em [`Ranking.jsx:34`](../src/pages/Ranking.jsx#L34)
+- [x] Remover `email` do `select` em [`Ranking.jsx:34`](../src/pages/Ranking.jsx#L34)
 - [ ] Restringir o `SELECT` em `profiles` por RLS ao próprio usuário
 - [ ] Criar view pública de ranking expondo só `id`, `nome` e `pontos`
 
@@ -234,14 +234,14 @@ Correção em duas frentes: normalizar a coluna com um `UPDATE`, e trocar o camp
 
 **Tarefas**
 
-- [ ] Adicionar rota de 404
-- [ ] Dar estado de erro à sala de jogo, com link de saída
-- [ ] Exigir login antes de abrir o modal de envio de print
-- [ ] Resetar a paginação ao desfavoritar
-- [ ] Fazer a busca ignorar acentos
-- [ ] Distinguir erro de estado vazio no Ranking
+- [x] Adicionar rota de 404
+- [x] Dar estado de erro à sala de jogo, com link de saída
+- [x] Exigir login antes de abrir o modal de envio de print
+- [x] Limitar a página atual ao total válido, para desfavoritar não esvaziar a tela
+- [x] Fazer a busca ignorar acentos
+- [x] Distinguir erro de estado vazio no Ranking
 - [ ] Implementar recuperação de senha
-- [ ] Criar ponto de entrada para `/loja`
+- [x] Criar ponto de entrada para `/loja`
 - [ ] Criar tela de acompanhamento das missões enviadas
 
 ### 1.6 — O CDN do emulador já está quebrado
