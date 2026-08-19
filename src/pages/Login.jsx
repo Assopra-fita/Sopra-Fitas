@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate, Link } from 'react-router-dom';
 import { Gamepad2, ArrowLeft, Info, Loader2, CheckCircle2 } from 'lucide-react';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { Botao, Campo } from '../components/ui';
 
 const Login = () => {
+  useTituloDaPagina('Entrar');
+
   const navigate = useNavigate();
   const [enviando, setEnviando] = useState(false);
   const [email, setEmail] = useState('');

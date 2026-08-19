@@ -10,6 +10,7 @@ import {
   Target,
   Settings,
 } from 'lucide-react';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import {
   CabecalhoPagina,
   Carregando,
@@ -71,6 +72,8 @@ const Atalho = ({ para, icone, titulo, texto, variante }) => (
 );
 
 const AdminDashboard = () => {
+  useTituloDaPagina('Painel do GM');
+
   const [carregando, setCarregando] = useState(true);
   const [numeros, setNumeros] = useState({ jogos: 0, usuarios: 0, missoes: 0 });
 

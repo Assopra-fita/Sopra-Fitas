@@ -1,10 +1,13 @@
 import React from 'react';
 import { Gamepad2, ArrowLeft } from 'lucide-react';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { Botao } from '../components/ui';
 
 // Antes desta tela, qualquer URL errada renderizava uma página em branco:
 // não havia rota curinga no App.jsx.
 const NaoEncontrada = () => {
+  useTituloDaPagina('Página não encontrada');
+
   return (
     <main className="nao-encontrada">
       <Gamepad2 size={64} color="var(--primaria)" aria-hidden="true" />

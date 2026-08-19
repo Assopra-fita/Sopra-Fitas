@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Target, PlusCircle, Trash2 } from 'lucide-react';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import {
   Botao,
   CabecalhoPagina,
@@ -11,6 +12,8 @@ import {
 } from '../components/ui';
 
 const AdminDesafios = () => {
+  useTituloDaPagina('Lançar desafios');
+
   const [titulo, setTitulo] = useState('');
   const [objetivo, setObjetivo] = useState('');
   const [recompensa, setRecompensa] = useState('');

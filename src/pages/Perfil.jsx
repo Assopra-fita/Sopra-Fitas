@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Link, useNavigate } from 'react-router-dom';
 import { Coins, Trophy, Shield } from 'lucide-react';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { Botao, Campo, Card, CascaDePagina, LinkVoltar } from '../components/ui';
 
 const Perfil = () => {
+  useTituloDaPagina('Meu perfil');
+
   const navigate = useNavigate();
   const [carregando, setCarregando] = useState(true);
   const [nome, setNome] = useState('');

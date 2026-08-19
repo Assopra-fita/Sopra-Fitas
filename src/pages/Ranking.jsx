@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { Trophy, Crown, Medal, Loader2 } from 'lucide-react';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { CascaDePagina, LinkVoltar } from '../components/ui';
 
 // Coroa para o 1º, medalha para 2º e 3º, número para o resto.
@@ -14,6 +15,8 @@ const iconeDaPosicao = (index) => {
 };
 
 const Ranking = () => {
+  useTituloDaPagina('Ranking');
+
   const [usuarios, setUsuarios] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);

@@ -25,8 +25,11 @@ import CardDesafios from '../components/home/CardDesafios';
 import CardTop5 from '../components/home/CardTop5';
 import CardDeJogo from '../components/home/CardDeJogo';
 import Paginacao from '../components/home/Paginacao';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 
 const Home = () => {
+  useTituloDaPagina();
+
   const navigate = useNavigate();
 
   const { isMobile, isTablet } = useBreakpoint();

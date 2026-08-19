@@ -18,6 +18,7 @@ import {
 import AnuncioGPT from '../components/AnuncioGPT';
 import { gamesDb } from '../constants/games';
 import CapaDeJogo from '../components/ui/CapaDeJogo';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { gravarEstado, lerEstado } from '../lib/estadoDeJogo';
 
 // Lê as dimensões atuais da janela para decidir o layout.
@@ -45,6 +46,8 @@ const GameRoom = () => {
   const [jogoAtual, setJogoAtual] = useState(null);
   const [erroJogo, setErroJogo] = useState(null);
   const [outrosJogos, setOutrosJogos] = useState([]);
+
+  useTituloDaPagina(jogoAtual?.nome);
 
   // A instância real do emulador, entregue pelo componente Emulator quando o
   // EmulatorJS termina de carregar. Antes daqui os botões chamavam métodos em
