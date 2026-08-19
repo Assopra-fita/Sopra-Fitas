@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-52 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+53 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
 | **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
 | **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
-| **3** | Limpeza estrutural | Média | `██████░░░░` | 13/23 |
+| **3** | Limpeza estrutural | Média | `██████░░░░` | 14/23 |
 | **4** | Layout e navegação | Média | `███░░░░░░░` | 3/12 |
 | **5** | SEO, acessibilidade e qualidade | Baixa | `█████░░░░░` | 9/18 |
-| | **Total** | | `██████░░░░` | **52/94** |
+| | **Total** | | `██████░░░░` | **53/94** |
 
 ---
 
@@ -412,7 +412,7 @@ Dois números que provam a consequência prática em vez de apontar o cheiro:
 
 **53% dos erros de lint são dois defeitos multiplicados por copy-paste.** Dos 19 achados do ESLint, 7 são o mesmo bloco `useEffect(() => { fetchX() }, [])` copiado em cinco arquivos, e 3 são a mesma destruturação inútil dentro do bloco de upload copiado duas vezes. Não são 19 problemas: são 2, colados 10 vezes. Cada correção hoje precisa ser feita cinco vezes.
 
-**A duplicação de dados já está causando bug em produção.** Os 27 jogos do catálogo estático existem em duas estruturas (`games[]` e `gamesDb{}`), com 5 campos duplicados por jogo — 135 pares. **Quatro já estão dessincronizados:**
+**A duplicação de dados já esteve causando bug em produção.** Os jogos do catálogo estático viviam em duas estruturas (`games[]` e `gamesDb{}`), com 5 campos duplicados por jogo. **Quatro chegaram a divergir:**
 
 | Jogo | Divergência |
 | --- | --- |
@@ -421,11 +421,13 @@ Dois números que provam a consequência prática em vez de apontar o cheiro:
 | Donkey Kong Country | `/dkc.png` × `/dkc.jpg` |
 | Super Mario World | Wikipédia × `/supermarioworld.jpg` |
 
-Como a Home lê uma estrutura e a sala de jogo lê a outra, **a capa e o nome mudam entre a listagem e a tela do jogo, hoje, no ar**. 137 das 234 linhas do `games[]` (58,5%) são pura repetição.
+Como a Home lia uma estrutura e a sala de jogo lia a outra, **a capa e o nome mudavam entre a listagem e a tela do jogo, no ar**.
+
+✅ **Resolvido.** O arquivo passou a ter uma entrada por jogo, com os nove campos, e exporta `games` para a vitrine e `acharJogo(id)` para a sala de jogo, sobre um índice montado uma vez. Adicionar um jogo virou uma edição em vez de duas.
 
 **Tarefas**
 
-- [ ] Unificar `games[]` e `gamesDb{}` numa fonte única
+- [x] Unificar `games[]` e `gamesDb{}` numa fonte única
 - [x] Corrigir as 4 divergências que já existem entre as duas
 
 ### 3.4 — Nenhuma camada entre a tela e o banco
@@ -490,7 +492,7 @@ A conferência derrubou a retórica de três itens, e isso importa mais do que p
 
 - **`favoritos` como Array em vez de `Set`.** Medido no tamanho real: **0,874 µs contra 0,381 µs**. Chamar isso de "o trecho quadrático do projeto" é dramatização — com 27 jogos e no máximo 27 favoritos, a diferença é imperceptível. A troca continua certa, mas o argumento é **semântico** (um conjunto deve ser modelado como conjunto), não de velocidade.
 - **`useMemo` no `jogosFiltrados`.** Medido: **1,84 µs por render**, ordens de grandeza abaixo do custo de reconciliar os 12 cards que estão na tela. Recomendar `useMemo` aqui é otimização sem alvo. O que paga sozinho é apenas içar o `busca.toLowerCase()` para fora do predicado — uma linha.
-- **`Object.values(gamesDb).filter()` a cada troca de jogo.** São ~2 µs e dois arrays pequenos, uma vez por navegação, ao lado de uma requisição de rede na mesma função. **Isto não é uma tarefa** — vira subproduto grátis quando o `games.js` for unificado.
+- **`Object.values(gamesDb).filter()` a cada troca de jogo.** Eram ~2 µs e dois arrays pequenos, uma vez por navegação, ao lado de uma requisição de rede na mesma função. **Nunca foi uma tarefa** — saiu de graça junto com a unificação do `games.js`, que trocou a varredura do objeto por `outrosJogos(id)`.
 
 **Item derrubado na conferência:** trocar o *refetch* da tabela após uma edição por atualização otimista. O veredito foi que hoje isso seria **trocar correção por microtimização** — quatro caminhos de escrita não reportam erro e os `update` não usam `.select()`, então a tela mostraria uma alteração que pode não ter acontecido no banco. Só faz sentido depois que o tratamento de erro existir.
 

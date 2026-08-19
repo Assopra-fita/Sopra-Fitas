@@ -152,7 +152,7 @@ Como 100% do estilo é inline no JSX e não há componente compartilhado, não e
 | --- | --- |
 | Adicionar ou remover uma rota | [`src/App.jsx:27-57`](src/App.jsx#L27-L57) — única tabela de rotas |
 | Apontar para outro projeto Supabase | [`src/supabaseClient.js:4-7`](src/supabaseClient.js#L4-L7) — único lugar |
-| Adicionar um jogo pelo código | **duas** edições em [`src/constants/games.js`](src/constants/games.js) — ver [CATALOGO-DE-JOGOS.md](docs/CATALOGO-DE-JOGOS.md) |
+| Adicionar um jogo pelo código | **uma** entrada em [`src/constants/games.js`](src/constants/games.js), com os nove campos — ver [CATALOGO-DE-JOGOS.md](docs/CATALOGO-DE-JOGOS.md) |
 | Grade, busca, filtros ou paginação da vitrine | [`src/pages/Home.jsx`](src/pages/Home.jsx) — filtro em `:173`, `jogosPorPagina` em `:136`, categorias em `:160`, card em `:700` |
 | Barra de controles do emulador | [`src/pages/GameRoom.jsx:349-382`](src/pages/GameRoom.jsx#L349-L382), estilo em `:123-136` |
 | Versão ou CDN do EmulatorJS | [`src/components/Emulator.jsx:39`](src/components/Emulator.jsx#L39) e `:45` — os dois únicos pontos |
