@@ -271,11 +271,7 @@ const Home = () => {
           flexWrap: isMobile ? 'wrap' : 'nowrap',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <Link to="/loja" className="botao-loja-topo">
-            Loja
-          </Link>
-        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }} />
 
         <div
           style={{

@@ -2,7 +2,7 @@
 // O quickSave do EmulatorJS grava no sistema de arquivos em memória e some
 // no refresh, então a persistência entre sessões fica por nossa conta.
 const BANCO = 'sopra-fitas';
-const LOJA = 'estados';
+const ARMAZEM = 'estados';
 const VERSAO = 1;
 
 const abrir = () =>
@@ -10,7 +10,7 @@ const abrir = () =>
     const pedido = indexedDB.open(BANCO, VERSAO);
     pedido.onupgradeneeded = () => {
       const db = pedido.result;
-      if (!db.objectStoreNames.contains(LOJA)) db.createObjectStore(LOJA);
+      if (!db.objectStoreNames.contains(ARMAZEM)) db.createObjectStore(ARMAZEM);
     };
     pedido.onsuccess = () => resolve(pedido.result);
     pedido.onerror = () => reject(pedido.error);
@@ -20,7 +20,7 @@ const transacao = async (modo, executar) => {
   const db = await abrir();
   try {
     return await new Promise((resolve, reject) => {
-      const pedido = executar(db.transaction(LOJA, modo).objectStore(LOJA));
+      const pedido = executar(db.transaction(ARMAZEM, modo).objectStore(ARMAZEM));
       pedido.onsuccess = () => resolve(pedido.result);
       pedido.onerror = () => reject(pedido.error);
     });
@@ -30,7 +30,7 @@ const transacao = async (modo, executar) => {
 };
 
 export const gravarEstado = (gameId, bytes) =>
-  transacao('readwrite', (loja) => loja.put(bytes, gameId));
+  transacao('readwrite', (armazem) => armazem.put(bytes, gameId));
 
 export const lerEstado = (gameId) =>
-  transacao('readonly', (loja) => loja.get(gameId));
+  transacao('readonly', (armazem) => armazem.get(gameId));

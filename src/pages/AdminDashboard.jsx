@@ -11,7 +11,6 @@ import {
   LayoutDashboard,
   UserPlus,
   Target,
-  ShoppingBag,
   Settings, // Adicionado para o ícone de gerenciar
 } from 'lucide-react';
 
@@ -218,14 +217,6 @@ const AdminDashboard = () => {
             title="Validar Missões"
             desc="Revisar prints de tela e distribuir pontos para os players."
             color="#00ff88"
-          />
-
-          <MenuButton
-            to="/admin-loja"
-            icon={<ShoppingBag size={32} />}
-            title="Gerenciar Loja"
-            desc="Cadastrar produtos e seus links de afiliado da Shopee."
-            color="#ee4d2d"
           />
 
           <MenuButton

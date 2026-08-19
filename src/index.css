@@ -5,7 +5,6 @@
   --bg-color: #121212;
   --text-color: rgba(255, 255, 255, 0.87);
   --primary-color: #646cff;
-  --shopee-orange: #ee4d2d;
 }
 
 /* RESET TOTAL - Garante que nada empurre o banner para baixo */
@@ -55,22 +54,6 @@ body {
   gap: 20px;
   font-size: 0.85rem;
   font-weight: 500;
-}
-
-.botao-loja-topo {
-  background-color: var(--shopee-orange) !important;
-  color: white !important;
-  padding: 4px 12px !important;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 0.75rem !important;
-  font-weight: bold;
-  transition: 0.2s;
-}
-
-.botao-loja-topo:hover {
-  filter: brightness(1.2);
-  transform: scale(1.05);
 }
 
 /* Estilo dos Links */
