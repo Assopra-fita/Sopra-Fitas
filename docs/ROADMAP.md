@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-37 de 93 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+48 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
 | **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
 | **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
-| **3** | Limpeza estrutural | Média | `███░░░░░░░` | 8/23 |
-| **4** | Layout e navegação | Média | `░░░░░░░░░░` | 0/11 |
-| **5** | SEO, acessibilidade e qualidade | Baixa | `█░░░░░░░░░` | 2/18 |
-| | **Total** | | `████░░░░░░` | **37/93** |
+| **3** | Limpeza estrutural | Média | `█████░░░░░` | 11/23 |
+| **4** | Layout e navegação | Média | `███░░░░░░░` | 3/12 |
+| **5** | SEO, acessibilidade e qualidade | Baixa | `████░░░░░░` | 7/18 |
+| | **Total** | | `█████░░░░░` | **48/94** |
 
 ---
 
@@ -399,7 +399,7 @@ E **379 cores hexadecimais escritas à mão**, 54 valores distintos. O [`index.c
 
 **Tarefas**
 
-- [ ] Criar `components/ui` com Botão, Card, Input, Layout e link de voltar
+- [x] Criar `components/ui` com Botão, Card, Input, Layout e link de voltar
 - [ ] Criar tokens de cor e substituir as 379 cores escritas à mão
 - [ ] Migrar as telas para os componentes compartilhados
 
@@ -442,7 +442,7 @@ Consequência direta: os três blocos de upload (`AdminJogos`, `AdminLoja`, `Gam
 
 - [ ] Criar `services/` como único lugar que monta consulta
 - [ ] Unificar os 3 blocos de upload, com validação de tipo e tamanho
-- [ ] Criar um guard de rota único para as telas administrativas
+- [x] Criar um guard de rota único para as telas administrativas
 
 ### 3.5 — Responsividade: duas implementações que discordam
 
@@ -494,7 +494,7 @@ A conferência derrubou a retórica de três itens, e isso importa mais do que p
 
 - [x] Içar `busca.toLowerCase()` para fora do predicado do filtro
 - [x] Deduplicar por `id` a união dos catálogos
-- [ ] Corrigir o sorteio de relacionados: copiar antes e usar Fisher-Yates
+- [x] Corrigir o sorteio de relacionados: copiar antes e usar Fisher-Yates
 - [ ] Paralelizar as três consultas do painel administrativo
 - [ ] Paralelizar os uploads de capa e ROM, depois de validar o id
 - [x] Guardar o booleano de breakpoint em vez da largura em pixels
@@ -546,17 +546,18 @@ flowchart TB
 
 **Tarefas**
 
-- [ ] ⛔ **Fora do nosso escopo** — Não reservar 250px fixos quando o slot de anúncio não preenche
-- [ ] ⛔ **Fora do nosso escopo** — Subir a grade de jogos na ordem visual do celular (mexe na posição dos anúncios)
-- [ ] Colocar logo e navegação no cabeçalho fixo
-- [ ] ⛔ **Fora do nosso escopo** — Recolher os painéis de publicidade da sala de jogo quando não há criativo
-- [ ] ⛔ **Fora do nosso escopo** — Ajustar a largura da coluna para o criativo de 300px não transbordar
+- [x] Colocar a grade de jogos na coluna do meio no desktop, entre os Desafios e o Top 5
+- [ ] ⛔ **Fora do meu escopo** — Não reservar 250px fixos quando o slot de anúncio não preenche
+- [ ] ⛔ **Fora do meu escopo** — Subir a grade de jogos na ordem visual do celular (mexe na posição dos anúncios)
+- [x] Colocar logo e navegação no cabeçalho fixo
+- [ ] ⛔ **Fora do meu escopo** — Recolher os painéis de publicidade da sala de jogo quando não há criativo
+- [ ] ⛔ **Fora do meu escopo** — Ajustar a largura da coluna para o criativo de 300px não transbordar
 - [ ] Padronizar a proporção das capas para não cortar a arte
-- [ ] Ajustar itens por página ao número de colunas da grade
+- [x] Ajustar itens por página ao número de colunas da grade — 4 colunas × 3 linhas = 12
 - [ ] Transformar os filtros em faixa única com rolagem horizontal no celular
 - [ ] Indicar rolagem no card de desafios
 - [ ] Levar busca, filtro e página para a URL
-- [ ] ⛔ **Fora do nosso escopo** — Usar IDs de anúncio distintos por rota
+- [ ] ⛔ **Fora do meu escopo** — Usar IDs de anúncio distintos por rota
 
 ## Fase 5 — Higiene: SEO, acessibilidade e qualidade
 
@@ -572,9 +573,9 @@ flowchart TB
 
 **Tarefas — SEO**
 
-- [ ] Criar `robots.txt` e `sitemap.xml`
-- [ ] Adicionar tags `og:` e `twitter:` e `canonical`
-- [ ] Tornar o `<title>` dinâmico por rota
+- [x] Criar `robots.txt` e `sitemap.xml`
+- [x] Adicionar tags `og:` e `twitter:` e `canonical`
+- [x] Tornar o `<title>` dinâmico por rota
 
 **Tarefas — Acessibilidade**
 
@@ -583,7 +584,7 @@ flowchart TB
   <br>⚠️ Filtros (31px) e paginação (33px) ficaram como estão: passam o mínimo de
   24px do critério AA, e levá-los a 44px somaria ~52px acima da grade no celular,
   agravando justamente a rolagem que a Fase 4 quer reduzir.
-- [ ] Criar estados de foco visíveis e remover os `outline: none`
+- [x] Criar estados de foco visíveis e remover os `outline: none`
 - [ ] Corrigir o contraste dos cinzas `#666` e `#555`
 - [ ] Associar rótulo e `autoComplete` aos campos de formulário
 - [ ] Dar um `<h1>` à Home
@@ -592,7 +593,7 @@ flowchart TB
 
 - [ ] Zerar os 17 erros e 2 avisos do lint
 - [ ] Substituir os 24 `alert()` por feedback na interface
-- [ ] Definir a animação dos indicadores de carregamento
+- [x] Definir a animação dos indicadores de carregamento
 - [ ] Carregar a fonte Inter ou trocar a declaração
 - [ ] Remover componentes órfãos, CSS morto e `public/readme.html`
 - [ ] Corrigir o ícone que o `manifest.json` aponta
