@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { games } from '../constants/games';
 import { CATEGORIAS, normalizarConsole } from '../constants/consoles';
+import { paraComparar } from '../lib/texto';
 import AnuncioGPT from '../components/AnuncioGPT';
 
 const Home = () => {
@@ -160,11 +161,11 @@ const Home = () => {
 
   const categorias = CATEGORIAS;
 
-  const termoBusca = busca.toLowerCase();
+  const termoBusca = paraComparar(busca);
 
   const jogosFiltrados = jogos.filter((jogo) => {
-    const nomeJogo = jogo.nome || '';
-    const bateBusca = nomeJogo.toLowerCase().includes(termoBusca);
+    // Compara sem acento: "pokemon" precisa encontrar "Pokémon"
+    const bateBusca = paraComparar(jogo.nome).includes(termoBusca);
 
     let bateCategoria = true;
     if (filtroConsole === '❤️ Favoritos') {
@@ -178,9 +179,15 @@ const Home = () => {
   });
 
   const totalPaginas = Math.ceil(jogosFiltrados.length / jogosPorPagina);
+
+  // Desfavoritar o último item de uma página faz essa página deixar de existir.
+  // Limitar aqui, no render, evita a tela vazia sem resetar a navegação a cada
+  // coração clicado — que era o efeito colateral de observar `favoritos`.
+  const paginaValida = Math.min(paginaAtual, Math.max(1, totalPaginas));
+
   const jogosExibidos = jogosFiltrados.slice(
-    (paginaAtual - 1) * jogosPorPagina,
-    paginaAtual * jogosPorPagina
+    (paginaValida - 1) * jogosPorPagina,
+    paginaValida * jogosPorPagina
   );
 
   const mudarPagina = (pagina) => {
@@ -196,12 +203,12 @@ const Home = () => {
       for (let i = 1; i <= totalPaginas; i++) paginas.push(i);
     } else {
       paginas.push(1);
-      let inicio = Math.max(2, paginaAtual - 1);
-      let fim = Math.min(totalPaginas - 1, paginaAtual + 1);
+      let inicio = Math.max(2, paginaValida - 1);
+      let fim = Math.min(totalPaginas - 1, paginaValida + 1);
 
-      if (paginaAtual <= 3) {
+      if (paginaValida <= 3) {
         fim = Math.min(maxBotoes - 2, totalPaginas - 1);
-      } else if (paginaAtual >= totalPaginas - 2) {
+      } else if (paginaValida >= totalPaginas - 2) {
         inicio = Math.max(2, totalPaginas - (maxBotoes - 3));
       }
 
@@ -264,7 +271,11 @@ const Home = () => {
           flexWrap: isMobile ? 'wrap' : 'nowrap',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <Link to="/loja" className="botao-loja-topo">
+            Loja
+          </Link>
+        </div>
 
         <div
           style={{
@@ -803,15 +814,15 @@ const Home = () => {
             }}
           >
             <button
-              onClick={() => mudarPagina(paginaAtual - 1)}
-              disabled={paginaAtual === 1}
+              onClick={() => mudarPagina(paginaValida - 1)}
+              disabled={paginaValida === 1}
               style={{
-                background: paginaAtual === 1 ? '#1a1a1a' : '#242424',
-                color: paginaAtual === 1 ? '#444' : '#fff',
+                background: paginaValida === 1 ? '#1a1a1a' : '#242424',
+                color: paginaValida === 1 ? '#444' : '#fff',
                 border: '1px solid #333',
                 padding: '8px 12px',
                 borderRadius: '8px',
-                cursor: paginaAtual === 1 ? 'default' : 'pointer',
+                cursor: paginaValida === 1 ? 'default' : 'pointer',
                 fontWeight: 'bold',
                 fontSize: '0.85rem',
               }}
@@ -832,9 +843,9 @@ const Home = () => {
                   key={item}
                   onClick={() => mudarPagina(item)}
                   style={{
-                    background: paginaAtual === item ? '#fca311' : '#242424',
-                    color: paginaAtual === item ? '#1a1a2e' : '#aaa',
-                    border: paginaAtual === item ? 'none' : '1px solid #333',
+                    background: paginaValida === item ? '#fca311' : '#242424',
+                    color: paginaValida === item ? '#1a1a2e' : '#aaa',
+                    border: paginaValida === item ? 'none' : '1px solid #333',
                     padding: '8px 14px',
                     borderRadius: '8px',
                     cursor: 'pointer',
@@ -849,16 +860,16 @@ const Home = () => {
             )}
 
             <button
-              onClick={() => mudarPagina(paginaAtual + 1)}
-              disabled={paginaAtual === totalPaginas}
+              onClick={() => mudarPagina(paginaValida + 1)}
+              disabled={paginaValida === totalPaginas}
               style={{
                 background:
-                  paginaAtual === totalPaginas ? '#1a1a1a' : '#242424',
-                color: paginaAtual === totalPaginas ? '#444' : '#fff',
+                  paginaValida === totalPaginas ? '#1a1a1a' : '#242424',
+                color: paginaValida === totalPaginas ? '#444' : '#fff',
                 border: '1px solid #333',
                 padding: '8px 12px',
                 borderRadius: '8px',
-                cursor: paginaAtual === totalPaginas ? 'default' : 'pointer',
+                cursor: paginaValida === totalPaginas ? 'default' : 'pointer',
                 fontWeight: 'bold',
                 fontSize: '0.85rem',
               }}

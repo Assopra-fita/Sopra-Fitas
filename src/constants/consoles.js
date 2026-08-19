@@ -1,3 +1,5 @@
+import { semAcento } from '../lib/texto';
+
 // Categorias exibidas nos filtros da Home, na ordem em que aparecem.
 export const CATEGORIAS = [
   'Todos',
@@ -48,13 +50,7 @@ const SINONIMOS = {
 };
 
 // Deixa o valor comparável: sem acento, sem espaço sobrando, em maiúsculas.
-const achatar = (valor) =>
-  (valor || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim()
-    .replace(/\s+/g, ' ')
-    .toUpperCase();
+const achatar = (valor) => semAcento(valor).toUpperCase();
 
 // Devolve a categoria canônica do jogo. Valores desconhecidos voltam achatados
 // em vez de virarem null, para continuarem visíveis em "Todos".
