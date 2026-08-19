@@ -1,0 +1,357 @@
+/* Peças reutilizáveis da interface.
+   Convenção de nome: bloco, bloco__parte, bloco--variacao. O prefixo do bloco
+   é o que impede duas telas de colidirem usando o mesmo nome de classe. */
+
+/* ---------- Botão ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-sm);
+  min-height: var(--alvo-toque);
+  padding: 0 var(--esp-lg);
+  border: 1px solid transparent;
+  border-radius: var(--raio-m);
+  font: inherit;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.btn:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.btn--primaria {
+  background: var(--primaria);
+  color: var(--primaria-texto);
+}
+
+.btn--secundaria {
+  background: var(--superficie-alta);
+  color: var(--texto);
+  border-color: var(--borda-clara);
+}
+
+.btn--perigo {
+  background: var(--perigo);
+  color: var(--texto);
+  border-color: var(--perigo-borda);
+}
+
+.btn--fantasma {
+  background: transparent;
+  color: var(--primaria);
+  border-color: var(--primaria);
+}
+
+.btn--cheio {
+  width: 100%;
+}
+
+.btn--compacto {
+  min-height: 34px;
+  padding: 0 var(--esp-md);
+  font-size: 0.8rem;
+}
+
+/* ---------- Card ---------- */
+.card {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-lg);
+}
+
+.card--destaque {
+  background: var(--superficie-alta);
+}
+
+.card--centralizado {
+  text-align: center;
+}
+
+/* ---------- Campo de formulário ---------- */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-xs);
+  width: 100%;
+  text-align: left;
+}
+
+.campo__rotulo {
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.campo__entrada {
+  width: 100%;
+  min-height: var(--alvo-toque);
+  padding: 0 var(--esp-md);
+  background: var(--superficie-alta);
+  color: var(--texto);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-m);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.campo__entrada::placeholder {
+  color: var(--texto-fraco);
+}
+
+.campo__ajuda {
+  font-size: 0.75rem;
+  color: var(--texto-fraco);
+}
+
+.campo__erro {
+  font-size: 0.8rem;
+  color: var(--perigo-texto);
+}
+
+/* ---------- Link de voltar ---------- */
+.link-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  min-height: var(--alvo-toque);
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.link-voltar:hover {
+  color: var(--texto);
+}
+
+/* ---------- Casca de página ---------- */
+.casca {
+  min-height: 100vh;
+  background: var(--fundo-degrade);
+  color: var(--texto);
+  padding: 40px var(--esp-lg);
+}
+
+/* Cada tela tem a largura que o conteúdo dela pede: um formulário não quer
+   1200px, e uma tabela de jogadores com 5 colunas não cabe em 600px. */
+.casca__conteudo {
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-lg);
+}
+
+.casca__conteudo--estreito {
+  max-width: 600px;
+}
+
+.casca__conteudo--medio {
+  max-width: 800px;
+}
+
+.casca__conteudo--largo {
+  max-width: 1000px;
+}
+
+.casca__conteudo--total {
+  max-width: 1300px;
+}
+
+@media (max-width: 768px) {
+  .casca {
+    padding: var(--esp-lg) var(--esp-md);
+  }
+}
+
+/* ---------- Capa de jogo ---------- */
+.capa {
+  margin-bottom: var(--esp-sm);
+  border-radius: var(--raio-m);
+  overflow: hidden;
+  background: #000;
+}
+
+.capa__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- Cabeçalho de página ---------- */
+.cabecalho-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--esp-md);
+  flex-wrap: wrap;
+  padding-bottom: var(--esp-lg);
+  border-bottom: 1px solid var(--borda);
+}
+
+.cabecalho-pagina__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-md);
+  color: var(--primaria);
+  font-size: 1.8rem;
+}
+
+.cabecalho-pagina__subtitulo {
+  color: var(--texto-suave);
+  margin-top: var(--esp-xs);
+  font-size: 0.9rem;
+}
+
+/* ---------- Estados ---------- */
+.estado {
+  text-align: center;
+  padding: 50px var(--esp-lg);
+  color: var(--texto-suave);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-sm);
+}
+
+/* ---------- Tabela ---------- */
+.tabela-casca {
+  overflow-x: auto;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+
+.tabela th {
+  text-align: left;
+  padding: var(--esp-md);
+  background: var(--superficie-alta);
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--borda);
+  white-space: nowrap;
+}
+
+.tabela td {
+  padding: var(--esp-md);
+  border-bottom: 1px solid var(--borda);
+  vertical-align: middle;
+}
+
+.tabela tr:last-child td {
+  border-bottom: none;
+}
+
+/* ---------- Grade de cartões ---------- */
+.grade-cartoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--esp-lg);
+}
+
+/* ---------- Campo: variações que faltavam ---------- */
+.campo__entrada--area {
+  min-height: 90px;
+  padding: var(--esp-sm) var(--esp-md);
+  resize: vertical;
+  font-family: inherit;
+}
+
+.campo__entrada--compacto {
+  min-height: 34px;
+  padding: 0 var(--esp-sm);
+  font-size: 0.85rem;
+}
+
+/* ---------- Botão: variações que faltavam ---------- */
+.btn--sucesso {
+  background: #1c6440;
+  color: var(--texto);
+  border-color: #2a8455;
+}
+
+.btn--icone {
+  min-height: var(--alvo-toque);
+  min-width: var(--alvo-toque);
+  padding: 0;
+}
+
+/* Alturas da capa. Três tamanhos conhecidos: card do celular, card do desktop
+   e card de jogo relacionado. Ficam aqui e não como valor solto no JSX. */
+.capa--pequena {
+  height: 130px;
+}
+
+.capa--media {
+  height: 150px;
+}
+
+.capa--grande {
+  height: 160px;
+}
+
+/* ---------- Emulador ---------- */
+.emulador {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  background: #000;
+}
+
+.emulador__tela {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Aviso fixo no topo ---------- */
+.aviso-topo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--esp-sm);
+  padding: 8px;
+  background: #ffa600;
+  color: #1a1a2e;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* ---------- Tela de carregamento de rota ---------- */
+.carregando-rota {
+  min-height: 100vh;
+  background: var(--fundo);
+  color: var(--texto-suave);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

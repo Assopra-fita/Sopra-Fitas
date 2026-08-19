@@ -1,118 +1,52 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { User, LogOut, Coins } from 'lucide-react';
+import { User, LogOut, Coins, Trophy } from 'lucide-react';
+import { Botao } from '../ui';
 
-const CabecalhoHome = ({ session, pontos, nomeUsuario, aoSair, isMobile }) => (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        padding: isMobile ? '12px 16px' : '15px 30px',
-        background: 'rgba(18, 18, 18, 0.95)',
-        borderBottom: '1px solid #333',
-        zIndex: 100,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '10px',
-        flexWrap: isMobile ? 'wrap' : 'nowrap',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }} />
+const CabecalhoHome = ({ session, pontos, nomeUsuario, aoSair }) => (
+  <header className="topo">
+    {/* Este lado era uma div vazia de 0x0: a barra ficava com o botão de
+        entrar solto na ponta direita e nada do outro lado. */}
+    <nav className="topo__marca" aria-label="Navegação principal">
+      <Link to="/" className="topo__logo" aria-label="Sopra Fitas, ir para o início">
+        <img src="/logo.webp" alt="" width="700" height="374" />
+      </Link>
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          flexWrap: isMobile ? 'wrap' : 'nowrap',
-          justifyContent: isMobile ? 'center' : 'flex-end',
-          width: isMobile ? '100%' : 'auto',
-        }}
-      >
-        {session ? (
-          <>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: '#000',
-                padding: '6px 15px',
-                borderRadius: '20px',
-                border: '1px solid #fca311',
-              }}
-            >
-              <Coins size={16} color="#fca311" />
-              <span
-                style={{
-                  color: '#fca311',
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                }}
-              >
-                {pontos}
-              </span>
-            </div>
+      <Link to="/ranking" className="topo__link">
+        <Trophy size={16} aria-hidden="true" /> <span>Ranking</span>
+      </Link>
+    </nav>
 
-            <Link to="/perfil">
-              <button
-                style={{
-                  background: '#252525',
-                  color: '#fff',
-                  border: '1px solid #666',
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '0.85rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                <User size={16} /> {nomeUsuario || 'Meu Perfil'}
-              </button>
-            </Link>
+    <div className="topo__acoes">
+      {session ? (
+        <>
+          <p className="topo__moedas">
+            <Coins size={16} aria-hidden="true" />
+            <span>{pontos}</span>
+            <span className="visualmente-oculto">pontos</span>
+          </p>
 
-            <button
-              onClick={aoSair}
-              style={{
-                background: '#333',
-                color: '#ff4d4d',
-                border: '1px solid #444',
-                padding: '8px',
-                borderRadius: '50%',
-                cursor: 'pointer',
-              }}
-            >
-              <LogOut size={16} />
-            </button>
-          </>
-        ) : (
-          <Link to="/login">
-            <button
-              style={{
-                background: 'linear-gradient(45deg, #fca311, #ffc300)',
-                color: '#1a1a2e',
-                border: 'none',
-                padding: '10px 20px',
-                borderRadius: '20px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <User size={16} /> ENTRAR
-            </button>
-          </Link>
-        )}
-      </div>
+          <Botao variante="secundaria" compacto para="/perfil">
+            <User size={16} aria-hidden="true" />
+            {nomeUsuario || 'Meu perfil'}
+          </Botao>
+
+          <Botao
+            variante="secundaria"
+            compacto
+            onClick={aoSair}
+            aria-label="Sair da conta"
+          >
+            <LogOut size={16} aria-hidden="true" />
+          </Botao>
+        </>
+      ) : (
+        <Botao compacto para="/login">
+          <User size={16} aria-hidden="true" /> Entrar
+        </Botao>
+      )}
     </div>
+  </header>
 );
 
 export default CabecalhoHome;

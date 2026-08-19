@@ -140,67 +140,59 @@ const Home = () => {
 
 
 
+  // No desktop a grade fica na coluna do meio, entre os Desafios e o Top 5.
+  // São 4 colunas fixas para os 12 jogos da página fecharem 3 linhas cheias,
+  // sem sobrar órfãos na última. Em telas menores ela continua embaixo, para
+  // não deslocar os blocos de anúncio das laterais.
+  const gradeDeJogos = (
+    <>
+      <div className="home__grade">
+        {loadingGames ? (
+          <p className="estado-carregando">Carregando...</p>
+        ) : jogosExibidos.length > 0 ? (
+          jogosExibidos.map((jogo) => (
+            <CardDeJogo
+              key={jogo.id}
+              jogo={jogo}
+              favorito={favoritosSet.has(jogo.id)}
+              aoAlternarFavorito={toggleFavorito}
+              isMobile={isMobile}
+            />
+          ))
+        ) : (
+          <p className="estado-vazio">Nenhum jogo encontrado.</p>
+        )}
+      </div>
+
+      {!loadingGames && (
+        <Paginacao
+          paginaAtual={paginaValida}
+          totalPaginas={totalPaginas}
+          aoMudar={mudarPagina}
+          isMobile={isMobile}
+        />
+      )}
+    </>
+  );
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #121212, #1a1a2e)',
-        fontFamily: '"Inter", sans-serif',
-        color: 'white',
-        overflowX: 'hidden',
-      }}
-    >
+    <div className="home">
       <CabecalhoHome
         session={session}
         pontos={pontos}
         nomeUsuario={nomeUsuario}
         aoSair={handleLogout}
-        isMobile={isMobile}
       />
 
-      <div
-        style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          padding: isMobile ? '120px 14px 40px' : '100px 20px 40px',
-          width: '100%',
-          flex: 1,
-          boxSizing: 'border-box',
-        }}
-      >
-        <section
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isTablet
-              ? '1fr'
-              : '260px minmax(0, 1fr) 240px',
-            gap: '20px',
-            alignItems: 'start',
-            marginBottom: '40px',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-              order: isTablet ? 2 : 1,
-            }}
-          >
+      <main className="home__conteudo">
+        <section className="home__secao">
+          <div className="home__coluna home__coluna--esquerda">
             <AnuncioGPT adId="div-gpt-ad-1775680124469-0" />
 
             <CardDesafios missoes={missoes} carregando={loadingMissoes} />
           </div>
 
-          <div
-            style={{
-              textAlign: 'center',
-              order: 1,
-              minWidth: 0,
-            }}
-          >
+          <div className="home__coluna home__coluna--centro">
             <img
               src="/logo.webp"
               alt="Sopra Fitas"
@@ -208,153 +200,61 @@ const Home = () => {
               height="374"
               fetchPriority="high"
               decoding="async"
-              style={{
-                maxWidth: isMobile ? '220px' : '350px',
-                width: '100%',
-                height: 'auto',
-                marginBottom: '20px',
-              }}
+              className="home__logo"
             />
 
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                gap: '10px',
-                maxWidth: '600px',
-                margin: '0 auto 20px',
-                flexDirection: isMobile ? 'column' : 'row',
-              }}
-            >
-              <div style={{ position: 'relative', flex: 1 }}>
-                <Search
-                  color="#666"
-                  style={{ position: 'absolute', left: '15px', top: '12px' }}
-                />
+            <div className="home__busca">
+              <div className="home__busca-campo">
+                <Search className="home__busca-icone" aria-hidden="true" />
                 <input
                   type="text"
                   placeholder="Busque por jogo..."
                   value={busca}
                   onChange={(e) => mudarBusca(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 12px 12px 45px',
-                    borderRadius: '30px',
-                    border: '1px solid #333',
-                    background: '#1e1e1e',
-                    color: 'white',
-                    boxSizing: 'border-box',
-                  }}
+                  className="home__busca-entrada"
+                  aria-label="Buscar jogo pelo nome"
                 />
               </div>
 
               <button
                 onClick={jogarAleatorio}
                 aria-label="Jogar um jogo aleatório"
-                style={{
-                  background: 'linear-gradient(45deg, #ff00cc, #333399)',
-                  border: 'none',
-                  borderRadius: isMobile ? '14px' : '50%',
-                  width: isMobile ? '100%' : '50px',
-                  height: '50px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                className="home__sorteio"
               >
-                <Dices color="white" size={24} />
+                <Dices size={24} aria-hidden="true" />
               </button>
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                gap: '10px',
-                justifyContent: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
+            <div className="home__filtros">
               {categorias.map((cat) => (
                 <button
+                  type="button"
                   key={cat}
                   onClick={() => mudarFiltro(cat)}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '20px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: filtroConsole === cat ? '#fca311' : '#242424',
-                    color: filtroConsole === cat ? '#1a1a2e' : '#aaa',
-                    fontWeight: 'bold',
-                    fontSize: isMobile ? '0.8rem' : '0.9rem',
-                  }}
+                  className="home__filtro"
+                  aria-pressed={filtroConsole === cat}
                 >
                   {cat}
                 </button>
               ))}
             </div>
+
+            {!isTablet && (
+              <div className="home__grade-desktop">{gradeDeJogos}</div>
+            )}
           </div>
 
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-              order: isTablet ? 3 : 3,
-            }}
-          >
+          <div className="home__coluna home__coluna--direita">
             <AnuncioGPT adId="div-gpt-ad-1775680168607-0" />
 
             <CardTop5 ranking={ranking} carregando={loadingRanking} />
           </div>
         </section>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile
-              ? 'repeat(2, minmax(0, 1fr))'
-              : 'repeat(auto-fill, minmax(160px, 1fr))',
-            gap: isMobile ? '14px' : '20px',
-          }}
-        >
-          {loadingGames ? (
-            <span style={{ color: '#666' }}>Carregando...</span>
-          ) : jogosExibidos.length > 0 ? (
-            jogosExibidos.map((jogo) => (
-              <CardDeJogo
-                key={jogo.id}
-                jogo={jogo}
-                favorito={favoritosSet.has(jogo.id)}
-                aoAlternarFavorito={toggleFavorito}
-                isMobile={isMobile}
-              />
-            ))
-          ) : (
-            <span style={{ color: '#666' }}>Nenhum jogo encontrado.</span>
-          )}
-        </div>
+        {isTablet && gradeDeJogos}
+      </main>
 
-        {!loadingGames && (
-          <Paginacao
-            paginaAtual={paginaValida}
-            totalPaginas={totalPaginas}
-            aoMudar={mudarPagina}
-            isMobile={isMobile}
-          />
-        )}
-      </div>
-
-      <footer
-        style={{
-          textAlign: 'center',
-          padding: '20px',
-          borderTop: '1px solid #333',
-          color: '#666',
-          fontSize: isMobile ? '0.8rem' : '1rem',
-        }}
-      >
+      <footer className="home__rodape">
         <p>&copy; 2026 Winup Network - {jogos.length} jogos disponíveis.</p>
       </footer>
     </div>

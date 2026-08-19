@@ -82,17 +82,8 @@ const Emulator = ({ gameUrl, core, onPronto }) => {
   }, [gameUrl, core]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        background: '#000',
-      }}
-    >
-      <div id="game" style={{ width: '100%', height: '100%' }}></div>
+    <div ref={containerRef} className="emulador">
+      <div className="emulador__tela" id="game"></div>
     </div>
   );
 };

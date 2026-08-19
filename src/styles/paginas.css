@@ -1,0 +1,982 @@
+/* Estilos que pertencem a uma tela só. O prefixo indica de qual tela é, para
+   nomes iguais em telas diferentes nunca colidirem. */
+
+/* ---------- Perfil ---------- */
+.perfil__avatar {
+  width: 80px;
+  height: 80px;
+  background: var(--primaria);
+  color: var(--primaria-texto);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--esp-md);
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.perfil__nome {
+  font-size: 1.8rem;
+}
+
+.perfil__papel {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.perfil__numeros {
+  display: flex;
+  gap: var(--esp-md);
+  justify-content: center;
+  margin: var(--esp-xl) 0;
+}
+
+.perfil__numero {
+  background: var(--superficie-alta);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-md);
+  flex: 1;
+  color: var(--texto);
+  display: block;
+}
+
+.perfil__numero-valor {
+  font-size: 1.2rem;
+}
+
+.perfil__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+  margin-top: var(--esp-lg);
+}
+
+/* ---------- Estados compartilhados entre telas ---------- */
+.estado-carregando {
+  color: var(--texto-suave);
+  text-align: center;
+  padding: 50px var(--esp-lg);
+}
+
+.estado-vazio {
+  color: var(--texto-fraco);
+  text-align: center;
+  padding: 50px var(--esp-lg);
+}
+
+.estado-erro {
+  color: var(--perigo-texto);
+  text-align: center;
+  padding: 50px var(--esp-lg);
+}
+
+/* ---------- Página não encontrada ---------- */
+.nao-encontrada {
+  min-height: 100vh;
+  background: var(--fundo-degrade);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px var(--esp-lg);
+  gap: var(--esp-lg);
+}
+
+.nao-encontrada__titulo {
+  font-size: 2rem;
+}
+
+.nao-encontrada__texto {
+  color: var(--texto-suave);
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+/* ---------- Ranking ---------- */
+.ranking__cabecalho {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.ranking__titulo {
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 900;
+}
+
+.ranking__subtitulo {
+  color: var(--texto-suave);
+  margin-top: var(--esp-sm);
+}
+
+.ranking__trofeu {
+  margin-bottom: var(--esp-md);
+  filter: drop-shadow(0 0 15px rgba(252, 163, 17, 0.4));
+}
+
+.ranking__tabela {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  overflow: hidden;
+}
+
+/* Uma linha da tabela. As colunas encolhem no celular para o nome não espremer. */
+.ranking__linha {
+  display: grid;
+  grid-template-columns: 0.8fr 3fr 1fr;
+  align-items: center;
+  padding: var(--esp-lg) 25px;
+  border-bottom: 1px solid var(--borda);
+}
+
+.ranking__linha:last-child {
+  border-bottom: none;
+}
+
+.ranking__linha--cabecalho {
+  background: var(--superficie-alta);
+  font-weight: bold;
+  color: var(--texto-fraco);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding: 18px 25px;
+}
+
+.ranking__linha--lider {
+  background: linear-gradient(90deg, rgba(252, 163, 17, 0.08), transparent);
+}
+
+.ranking__posicao {
+  display: flex;
+  align-items: center;
+}
+
+.ranking__numero {
+  font-weight: bold;
+  color: var(--texto-fraco);
+  width: 24px;
+  text-align: center;
+}
+
+.ranking__jogador {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.ranking__jogador--lider {
+  color: var(--primaria);
+}
+
+.ranking__pontos {
+  text-align: right;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--primaria);
+}
+
+.ranking__coluna-direita {
+  text-align: right;
+}
+
+.ranking__unidade {
+  font-size: 0.7rem;
+  color: var(--texto-fraco);
+}
+
+@media (max-width: 600px) {
+  .ranking__linha,
+  .ranking__linha--cabecalho {
+    grid-template-columns: 0.6fr 2.4fr 1fr;
+    padding: var(--esp-md);
+  }
+
+  .ranking__titulo {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+  }
+}
+
+/* ---------- Login ---------- */
+.login {
+  min-height: 100vh;
+  background: var(--fundo-degrade);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--esp-lg);
+}
+
+.login__caixa {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-xl);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+}
+
+.login__voltar {
+  position: absolute;
+  top: var(--esp-md);
+  left: var(--esp-md);
+  color: var(--texto-suave);
+  display: inline-flex;
+  padding: var(--esp-sm);
+}
+
+.login__voltar:hover {
+  color: var(--texto);
+}
+
+.login__marca {
+  background: var(--primaria);
+  color: var(--primaria-texto);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--esp-sm) auto 0;
+}
+
+.login__titulo {
+  font-size: 1.5rem;
+}
+
+.login__chamada {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.login__instrucoes {
+  background: rgba(252, 163, 17, 0.1);
+  border: 1px solid var(--primaria);
+  border-radius: var(--raio-m);
+  padding: var(--esp-md);
+  text-align: left;
+}
+
+.login__instrucoes-titulo {
+  color: var(--primaria);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.login__instrucoes ul {
+  margin: 0;
+  padding-left: var(--esp-lg);
+  color: var(--texto-suave);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.login__aviso {
+  color: var(--texto);
+  margin-top: 4px;
+}
+
+.login__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+}
+
+.login__alternar {
+  border-top: 1px solid var(--borda);
+  padding-top: var(--esp-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-sm);
+  align-items: center;
+}
+
+.login__alternar p {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+/* ---------- Painel do GM ---------- */
+.painel__numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--esp-lg);
+}
+
+.painel__numero {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-xl);
+  text-align: center;
+}
+
+.painel__numero-valor {
+  font-size: 2.5rem;
+  color: var(--cor-destaque, var(--primaria));
+}
+
+.painel__numero-rotulo {
+  color: var(--texto-suave);
+}
+
+.painel__secao {
+  font-size: 1.1rem;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Cores de destaque do painel. Cada tela tem a sua, declarada aqui e não no
+   JSX: cor é decisão de design. O hover também é CSS puro — antes eram dois
+   handlers de JavaScript por cartão. */
+.painel__numero--acervo,
+.painel__atalho--upar {
+  --cor-destaque: #fca311;
+}
+
+.painel__numero--jogadores,
+.painel__atalho--ranking {
+  --cor-destaque: #00d4ff;
+}
+
+.painel__numero--missoes {
+  --cor-destaque: #ff8a8a;
+}
+
+.painel__atalho--acervo {
+  --cor-destaque: #3498db;
+}
+
+.painel__atalho--desafios {
+  --cor-destaque: #a855f7;
+}
+
+.painel__atalho--missoes {
+  --cor-destaque: #2ecc71;
+}
+
+.painel__atalho--usuarios {
+  --cor-destaque: #e879f9;
+}
+
+.painel__atalho {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-xl);
+  height: 100%;
+  display: block;
+  color: var(--texto);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.painel__atalho:hover {
+  border-color: var(--cor-destaque, var(--primaria));
+  transform: translateY(-4px);
+}
+
+.painel__atalho-icone {
+  color: var(--cor-destaque, var(--primaria));
+  margin-bottom: var(--esp-lg);
+}
+
+.painel__atalho-titulo {
+  font-size: 1.2rem;
+  margin-bottom: var(--esp-sm);
+}
+
+.painel__atalho-texto {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painel__atalho:hover {
+    transform: none;
+  }
+}
+
+/* ---------- Cards da barra lateral da Home ---------- */
+.lateral {
+  background: rgba(20, 20, 20, 0.92);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-md);
+  text-align: left;
+}
+
+.lateral--desafios {
+  border-color: #b77a09;
+}
+
+.lateral__titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid var(--borda);
+  padding-bottom: var(--esp-xs);
+  margin-bottom: var(--esp-sm);
+  color: var(--texto);
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.lateral__titulo-texto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lateral__ver-tudo {
+  font-size: 0.7rem;
+  color: var(--texto-suave);
+  font-weight: normal;
+}
+
+/* Rolagem própria: sem o teto, cada desafio novo alonga esta coluna e aumenta
+   o vão embaixo dos filtros, porque a grade só começa depois da coluna mais
+   alta da seção. */
+.lateral__lista {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.lateral__vazio {
+  color: var(--texto-fraco);
+  font-size: 0.8rem;
+}
+
+/* Um desafio */
+.desafio {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px;
+  border-radius: var(--raio-p);
+  margin-bottom: 8px;
+  border-left: 3px solid #b78009;
+}
+
+.desafio__titulo {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #c084fc;
+  margin-bottom: 2px;
+}
+
+.desafio__objetivo {
+  font-size: 0.72rem;
+  color: var(--texto-suave);
+  line-height: 1.3;
+}
+
+.desafio__recompensa {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  color: var(--primaria);
+  font-weight: bold;
+}
+
+/* Uma linha do TOP 5 */
+.top5__linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  padding: 6px 0;
+}
+
+.top5__jogador {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.top5__nome {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top5__pontos {
+  color: var(--primaria);
+  font-weight: bold;
+}
+
+.top5__posicao {
+  color: var(--texto-fraco);
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+/* ---------- Cabeçalho fixo da Home ---------- */
+.topo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--esp-sm);
+  padding: var(--esp-md) var(--esp-xl);
+  background: rgba(18, 18, 18, 0.95);
+  border-bottom: 1px solid var(--borda);
+}
+
+.topo__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-lg);
+  min-width: 0;
+}
+
+.topo__logo {
+  display: flex;
+  align-items: center;
+}
+
+.topo__logo img {
+  height: 40px;
+  width: auto;
+}
+
+.topo__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--alvo-toque);
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.topo__link:hover {
+  color: var(--texto);
+}
+
+.topo__acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+}
+
+.topo__moedas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #000;
+  padding: 6px var(--esp-md);
+  border-radius: var(--raio-pilula);
+  border: 1px solid var(--primaria);
+  color: var(--primaria);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .topo {
+    padding: var(--esp-sm) var(--esp-md);
+    gap: var(--esp-sm);
+  }
+
+  /* No celular a barra continua numa linha só: o texto do link some e fica o
+     ícone, para não empurrar o conteúdo para baixo com uma segunda linha. */
+  .topo__logo img {
+    height: 28px;
+  }
+
+  .topo__link span {
+    display: none;
+  }
+
+  .topo__acoes {
+    gap: 6px;
+  }
+}
+
+/* ---------- Card de jogo ---------- */
+.card-jogo {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: 12px;
+  text-align: center;
+  position: relative;
+  min-width: 0;
+}
+
+.card-jogo__favorito {
+  position: absolute;
+  top: var(--esp-sm);
+  right: var(--esp-sm);
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  /* 13px de recuo leva o alvo de toque a 44x44 */
+  padding: 13px;
+  line-height: 0;
+}
+
+.card-jogo__nome {
+  font-size: 0.85rem;
+  color: var(--texto);
+  margin-bottom: var(--esp-xs);
+  /* Duas linhas com reticências: cortar no overflow partia a letra ao meio */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.4em;
+  line-height: 1.2;
+}
+
+.card-jogo__console {
+  font-size: 0.7rem;
+  color: var(--texto-suave);
+  display: block;
+  margin-bottom: var(--esp-sm);
+}
+
+.card-jogo__acao {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .card-jogo {
+    padding: var(--esp-sm);
+  }
+
+  .card-jogo__nome {
+    font-size: 0.78rem;
+  }
+}
+
+/* ---------- Paginação ---------- */
+.paginacao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--esp-xl);
+  flex-wrap: wrap;
+}
+
+.paginacao__botao {
+  min-width: 38px;
+  min-height: 38px;
+  padding: 8px 14px;
+  background: #242424;
+  color: var(--texto-suave);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-m);
+  font: inherit;
+  font-weight: bold;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.paginacao__botao:hover:not(:disabled) {
+  border-color: var(--primaria);
+  color: var(--texto);
+}
+
+.paginacao__botao[aria-current='page'] {
+  background: var(--primaria);
+  color: var(--primaria-texto);
+  border-color: transparent;
+}
+
+.paginacao__botao:disabled {
+  color: #444;
+  background: #1a1a1a;
+  cursor: default;
+}
+
+.paginacao__reticencias {
+  color: var(--texto-fraco);
+  padding: 0 4px;
+}
+
+/* ---------- Home ---------- */
+.home {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--fundo-degrade);
+  overflow-x: hidden;
+}
+
+.home__conteudo {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+  /* O respiro do topo compensa o cabeçalho fixo */
+  padding: 100px var(--esp-lg) 40px;
+}
+
+/* Três colunas no desktop: desafios, jogos, ranking.
+   Abaixo de 1100px vira coluna única e a grade volta para baixo, para não
+   deslocar os blocos de anúncio das laterais. */
+.home__secao {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 240px;
+  gap: var(--esp-lg);
+  align-items: start;
+  margin-bottom: 40px;
+}
+
+.home__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-lg);
+}
+
+.home__coluna--esquerda {
+  order: 1;
+}
+
+.home__coluna--centro {
+  order: 1;
+  text-align: center;
+  min-width: 0;
+}
+
+.home__coluna--direita {
+  order: 3;
+}
+
+/* Acompanha a largura da busca, para os dois ficarem no mesmo eixo visual. */
+.home__logo {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  /* A coluna é flex, então text-align não centraliza um item que não estica */
+  margin-inline: auto;
+}
+
+/* O `width: 100%` é obrigatório aqui: num container flex, um item com margem
+   automática encolhe até o conteúdo em vez de esticar, e a busca saía com
+   353px no lugar dos 600px. */
+.home__busca {
+  display: flex;
+  justify-content: center;
+  gap: var(--esp-sm);
+  width: 100%;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+.home__busca-campo {
+  position: relative;
+  flex: 1;
+}
+
+.home__busca-icone {
+  position: absolute;
+  left: var(--esp-md);
+  top: 12px;
+  color: var(--texto-fraco);
+}
+
+.home__busca-entrada {
+  width: 100%;
+  min-height: var(--alvo-toque);
+  padding: 0 var(--esp-md) 0 45px;
+  border-radius: var(--raio-pilula);
+  border: 1px solid var(--borda);
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+}
+
+.home__busca-entrada::placeholder {
+  color: var(--texto-fraco);
+}
+
+.home__sorteio {
+  background: linear-gradient(45deg, #ff00cc, #333399);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--texto);
+  flex-shrink: 0;
+}
+
+.home__filtros {
+  display: flex;
+  gap: var(--esp-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.home__filtro {
+  padding: 8px 16px;
+  min-height: 34px;
+  border-radius: var(--raio-pilula);
+  border: none;
+  cursor: pointer;
+  background: #242424;
+  color: var(--texto-suave);
+  font: inherit;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.home__filtro:hover {
+  color: var(--texto);
+}
+
+.home__filtro[aria-pressed='true'] {
+  background: var(--primaria);
+  color: var(--primaria-texto);
+}
+
+.home__grade-desktop {
+  margin-top: var(--esp-xl);
+}
+
+/* A grade se adapta sozinha: cabem quantas colunas couberem, com no mínimo
+   150px cada. Antes eram contagens fixas — 2 no celular e 4 no desktop — e o
+   mesmo card ia de 159px a 363px conforme a largura da tela. */
+.home__grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+/* Acima de 1100px a seção vira três colunas e a grade fica no meio. Ali a
+   contagem fixa vale a pena: os 12 jogos da página fecham 3 linhas cheias,
+   sem órfãos na última. */
+@media (min-width: 1101px) {
+  .home__grade-desktop .home__grade {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.home__rodape {
+  text-align: center;
+  padding: var(--esp-lg);
+  border-top: 1px solid var(--borda);
+  color: var(--texto-fraco);
+}
+
+/* Tablet: coluna única, grade em largura livre */
+@media (max-width: 1100px) {
+  .home__secao {
+    grid-template-columns: 1fr;
+  }
+
+  .home__coluna--esquerda {
+    order: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .home__conteudo {
+    padding: 120px 14px 40px;
+  }
+
+  /* No celular a logo do cabeçalho já identifica o site: repetir a grande aqui
+     empurraria os jogos mais 200px para baixo sem informar nada de novo. */
+  .home__logo {
+    display: none;
+  }
+
+  .home__busca {
+    flex-direction: column;
+  }
+
+  .home__sorteio {
+    width: 100%;
+    border-radius: 14px;
+  }
+
+  .home__filtro {
+    font-size: 0.8rem;
+  }
+
+  .home__rodape {
+    font-size: 0.8rem;
+  }
+}
+
+/* ---------- Telas de admin: layout de duas colunas ---------- */
+.admin__duas-colunas {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--esp-xl);
+  align-items: start;
+}
+
+.admin__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+}
+
+.admin__subtitulo {
+  color: var(--texto-suave);
+  font-size: 1rem;
+  margin-bottom: var(--esp-sm);
+}
+
+/* Uma linha de lista dentro de card de admin */
+.admin__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--esp-sm);
+  padding: var(--esp-md);
+  background: var(--superficie-alta);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-m);
+  margin-bottom: 12px;
+}
+
+.admin__item-titulo {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--texto);
+}
+
+.admin__item-detalhe {
+  font-size: 0.75rem;
+  color: var(--primaria);
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .admin__duas-colunas {
+    grid-template-columns: 1fr;
+  }
+}

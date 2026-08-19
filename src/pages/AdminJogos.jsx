@@ -287,7 +287,6 @@ const inputStyle = {
   border: '1px solid #333',
   background: '#252525',
   color: 'white',
-  outline: 'none',
 };
 
 const uploadBoxStyle = {

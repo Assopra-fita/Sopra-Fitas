@@ -1,0 +1,62 @@
+/* Valores nomeados por PAPEL, não por aparência.
+   Antes eram 379 cores escritas à mão pelo JSX, com 54 valores distintos e
+   sete tons diferentes cumprindo o mesmo papel de "superfície escura".
+   Mudar a identidade visual do site agora se faz aqui, num lugar só. */
+:root {
+  /* Fundos */
+  --fundo: #121212;
+  --fundo-degrade: linear-gradient(to bottom, #121212, #1a1a2e);
+  --superficie: #1e1e1e;
+  --superficie-alta: #252525;
+  --superficie-card: #242038;
+
+  /* Traços */
+  --borda: #333;
+  --borda-clara: #444;
+
+  /* Texto */
+  --texto: #fff;
+  --texto-suave: #aaa;
+  /* #666 e #555 reprovavam em contraste sobre o fundo escuro (2,24:1 e
+     2,67:1). Este tom passa o mínimo de 4,5:1 do critério AA. */
+  --texto-fraco: #9a9a9a;
+
+  /* Ação principal. Conviviam #fca311 e #fbbf24 no mesmo papel;
+     ficou o primeiro, que era o mais usado. */
+  --primaria: #fca311;
+  --primaria-escura: #e08f08;
+  --primaria-texto: #1a1a2e;
+
+  /* Semânticas */
+  --perigo: #7f1d1d;
+  --perigo-borda: #991b1b;
+  --perigo-texto: #ff9d9d;
+  --sucesso-texto: #9de8b6;
+  --sucesso-fundo: #16301f;
+  --erro-fundo: #3a1c1e;
+
+  /* Formas */
+  --raio-p: 6px;
+  --raio-m: 8px;
+  --raio-g: 12px;
+  --raio-pilula: 999px;
+
+  /* Espaçamento */
+  --esp-xs: 5px;
+  --esp-sm: 10px;
+  --esp-md: 15px;
+  --esp-lg: 20px;
+  --esp-xl: 30px;
+
+  /* Alvo de toque confortável para o polegar */
+  --alvo-toque: 44px;
+}
+
+/* Foco visível em tudo que recebe teclado. O projeto tinha ZERO regra de
+   foco e oito campos com outline removido — quem navega por teclado ficava
+   sem saber onde estava. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--primaria);
+  outline-offset: 2px;
+  border-radius: var(--raio-p);
+}

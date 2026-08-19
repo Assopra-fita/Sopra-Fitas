@@ -222,7 +222,6 @@ const AdminMissoes = () => {
                     border: '1px solid #444',
                     padding: '8px',
                     borderRadius: '6px',
-                    outline: 'none',
                   }}
                 />
                 <span style={{ color: '#aaa', fontSize: '0.9rem' }}>

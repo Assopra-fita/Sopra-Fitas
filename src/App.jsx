@@ -17,17 +17,7 @@ const AdminUsuarios = lazy(() => import('./pages/AdminUsuarios'));
 const AdminDesafios = lazy(() => import('./pages/AdminDesafios'));
 
 const Carregando = () => (
-  <div
-    style={{
-      minHeight: '100vh',
-      background: '#121212',
-      color: '#666',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontFamily: '"Inter", sans-serif',
-    }}
-  >
+  <div className="carregando-rota">
     Carregando painel...
   </div>
 );

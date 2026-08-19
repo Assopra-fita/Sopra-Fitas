@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import AnuncioGPT from '../components/AnuncioGPT';
 import { gamesDb } from '../constants/games';
+import CapaDeJogo from '../components/ui/CapaDeJogo';
 import { gravarEstado, lerEstado } from '../lib/estadoDeJogo';
 
 // Lê as dimensões atuais da janela para decidir o layout.
@@ -577,20 +578,20 @@ const GameRoom = () => {
                           transition: '0.3s',
                         }}
                       >
-                        <img
+                        <CapaDeJogo
                           src={jogo.capa_url}
                           alt={jogo.nome}
-                          style={{
-                            width: '100%',
-                            borderRadius: '5px',
-                            marginBottom: '10px',
-                          }}
+                          tamanho="media"
                         />
                         <span
                           style={{
                             fontSize: '0.8rem',
                             fontWeight: 'bold',
                             display: 'block',
+                            // Duas linhas de altura fixa: sem isto, um nome
+                            // comprido deixa o card mais alto que o vizinho
+                            minHeight: '2.4em',
+                            lineHeight: '1.2',
                           }}
                         >
                           {jogo.nome}

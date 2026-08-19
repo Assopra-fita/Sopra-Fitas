@@ -215,7 +215,6 @@ const inputPontosStyle = {
   borderRadius: '6px',
   color: 'white',
   padding: '5px 8px',
-  outline: 'none',
 };
 const btnSaveStyle = {
   background: '#00ff8822',
