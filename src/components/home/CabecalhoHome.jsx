@@ -26,9 +26,16 @@ const CabecalhoHome = ({ session, pontos, nomeUsuario, aoSair }) => (
             <span className="visualmente-oculto">pontos</span>
           </p>
 
-          <Botao variante="secundaria" compacto para="/perfil">
+          <Botao
+            variante="secundaria"
+            compacto
+            para="/perfil"
+            className="topo__perfil"
+          >
             <User size={16} aria-hidden="true" />
-            {nomeUsuario || 'Meu perfil'}
+            <span className="topo__apelido">
+              {nomeUsuario || 'Meu perfil'}
+            </span>
           </Botao>
 
           <Botao

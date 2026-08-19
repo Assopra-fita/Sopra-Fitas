@@ -529,12 +529,15 @@
   font-weight: bold;
 }
 
-/* ---------- Cabeçalho fixo da Home ---------- */
+/* ---------- Cabeçalho fixo da Home ----------
+   `sticky` e não `fixed`: assim o cabeçalho ocupa o próprio espaço no fluxo e
+   o conteúdo não precisa reservar um respiro do tamanho dele. Com `fixed`, a
+   altura do cabeçalho varia — 65px no celular, 75px acima disso, 78px quando o
+   jogador logado tem nickname longo — contra um respiro escrito à mão, e a
+   conta só fechava por sorte: com nickname longo a folga caía para 7px. */
 .topo {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: 100;
   display: flex;
   justify-content: space-between;
@@ -580,6 +583,20 @@
   display: flex;
   align-items: center;
   gap: var(--esp-sm);
+  /* Sem isto o lado das ações não encolhe, e um apelido longo empurrava o
+     cabeçalho para fora da janela — 203px de excesso medidos em 320px, que o
+     overflow-x escondia em vez de resolver. */
+  min-width: 0;
+}
+
+.topo__perfil {
+  min-width: 0;
+}
+
+.topo__apelido {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .topo__moedas {
@@ -613,6 +630,12 @@
 
   .topo__acoes {
     gap: 6px;
+  }
+
+  /* No celular o apelido cede espaço primeiro: o ícone e o botão de sair
+     precisam continuar alcançáveis. */
+  .topo__apelido {
+    max-width: 8ch;
   }
 }
 
@@ -722,12 +745,15 @@
 }
 
 /* ---------- Home ---------- */
+/* Sem `overflow-x: hidden` aqui, e é de propósito: qualquer ancestral com
+   overflow diferente de `visible` desliga o `position: sticky` do cabeçalho.
+   Ele também escondia transbordo horizontal em vez de deixar aparecer, o que
+   transforma um defeito de layout em algo que ninguém vê e ninguém conserta. */
 .home {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background: var(--fundo-degrade);
-  overflow-x: hidden;
 }
 
 .home__conteudo {
@@ -735,8 +761,7 @@
   margin: 0 auto;
   width: 100%;
   flex: 1;
-  /* O respiro do topo compensa o cabeçalho fixo */
-  padding: 100px var(--esp-lg) 40px;
+  padding: var(--esp-xl) var(--esp-lg) 40px;
 }
 
 /* Três colunas no desktop: desafios, jogos, ranking.
@@ -953,7 +978,7 @@
 
 @media (max-width: 768px) {
   .home__conteudo {
-    padding: 120px 14px 40px;
+    padding: var(--esp-lg) 14px 40px;
   }
 
   /* Capa mais baixa no celular, onde o card é estreito. Era uma prop calculada
