@@ -42,6 +42,7 @@ const GameRoom = () => {
   const [session, setSession] = useState(null);
 
   const [jogoAtual, setJogoAtual] = useState(null);
+  const [erroJogo, setErroJogo] = useState(null);
   const [outrosJogos, setOutrosJogos] = useState([]);
 
   // A instância real do emulador, entregue pelo componente Emulator quando o
@@ -192,6 +193,10 @@ const GameRoom = () => {
   };
 
   useEffect(() => {
+    // Sem isto, o erro (ou o jogo anterior) sobrevive à navegação entre jogos
+    setJogoAtual(null);
+    setErroJogo(null);
+
     const fetchCurrentGame = async () => {
       const currentGameDb = gamesDb[gameId];
 
@@ -206,8 +211,9 @@ const GameRoom = () => {
         .eq('id', gameId)
         .single();
 
-      if (currentGameError) {
-        alert('Houve um erro ao obter a ROM');
+      if (currentGameError || !currentGame) {
+        console.error('Erro ao obter o jogo:', currentGameError);
+        setErroJogo('Não encontramos esse jogo no acervo.');
         return;
       }
 
@@ -506,7 +512,14 @@ const GameRoom = () => {
                         e nos envie!
                       </p>
                       <button
-                        onClick={() => setModalAberto(true)}
+                        onClick={() =>
+                          session
+                            ? setModalAberto(true)
+                            : mostrarAviso(
+                                'Entre na sua conta para enviar o print',
+                                true
+                              )
+                        }
                         style={{
                           width: '100%',
                           background: '#fbbf24',
@@ -588,6 +601,27 @@ const GameRoom = () => {
                 </div>
               </>
             )}
+          </div>
+        ) : erroJogo ? (
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <Gamepad size={40} style={{ color: '#ff9d9d', marginBottom: '10px' }} />
+            <p style={{ marginBottom: '20px' }}>{erroJogo}</p>
+            <Link
+              to="/"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: '#fbbf24',
+                color: '#000',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                fontWeight: 'bold',
+                textDecoration: 'none',
+              }}
+            >
+              <Home size={16} /> Voltar para os jogos
+            </Link>
           </div>
         ) : (
           <div style={{ textAlign: 'center', padding: '50px' }}>
