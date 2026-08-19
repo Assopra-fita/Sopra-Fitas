@@ -6,40 +6,48 @@ import { ArrowLeft, Trophy, Crown, Medal, Loader2 } from 'lucide-react';
 const Ranking = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    const checkUserRole = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (data?.role === 'admin') setIsAdmin(true);
+      }
+    };
+
+    const fetchRanking = async () => {
+      // Não pedir 'email': a coluna trafegava para o navegador de qualquer
+      // visitante e o ranking não precisa dela.
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, nome, pontos')
+        .order('pontos', { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.error('Erro ao buscar ranking:', error);
+        setErro(true);
+      } else {
+        setErro(false);
+        setUsuarios(data);
+      }
+
+      setLoading(false);
+    };
+
     checkUserRole();
     fetchRanking();
   }, []);
-
-  const checkUserRole = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
-      const { data } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (data?.role === 'admin') setIsAdmin(true);
-    }
-  };
-
-  const fetchRanking = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, nome, email, pontos')
-      .order('pontos', { ascending: false })
-      .limit(50);
-
-    if (error) console.error('Erro ao buscar ranking:', error);
-    else setUsuarios(data);
-
-    setLoading(false);
-  };
 
   const getIcone = (index) => {
     if (index === 0) return <Crown size={24} color="#fca311" fill="#fca311" />;
@@ -184,15 +192,6 @@ const Ranking = () => {
                   >
                     {user.nome || 'Player Sem Nome'}
                   </span>
-                  <span
-                    style={{
-                      fontSize: '0.75rem',
-                      color: '#555',
-                      fontFamily: 'monospace',
-                    }}
-                  >
-                    {user.email?.split('@')[0]}
-                  </span>
                 </div>
 
                 <div
@@ -210,7 +209,15 @@ const Ranking = () => {
             ))
           )}
 
-          {usuarios.length === 0 && !loading && (
+          {erro && !loading && (
+            <div
+              style={{ padding: '50px', textAlign: 'center', color: '#ff9d9d' }}
+            >
+              <p>Não foi possível carregar o ranking. Tente de novo daqui a pouco.</p>
+            </div>
+          )}
+
+          {!erro && usuarios.length === 0 && !loading && (
             <div
               style={{ padding: '50px', textAlign: 'center', color: '#666' }}
             >
