@@ -15,7 +15,7 @@ export const games = [
     console: 'MASTER SYSTEM',
     core: 'smsplus',
     rom_url: '/alexkidd.sms',
-    capa_url: '/alexkidd.jpg',
+    capa_url: '/alexkidd.webp',
   },
 
   // SNES
@@ -25,7 +25,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/aladdin.sfc',
-    capa_url: '/aladdin.jpg',
+    capa_url: '/aladdin.webp',
   },
   {
     id: 'snes-chrono-trigger',
@@ -33,7 +33,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/chrono-trigger.sfc',
-    capa_url: '/chrono-trigger.jpg',
+    capa_url: '/chrono-trigger.webp',
   },
   {
     id: 'snes-contra3',
@@ -41,7 +41,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/contra-3.sfc',
-    capa_url: '/contra-3.jpg',
+    capa_url: '/contra-3.webp',
   },
   {
     id: 'snes-dkc',
@@ -49,7 +49,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/dkc.sfc',
-    capa_url: '/dkc.png',
+    capa_url: '/dkc.webp',
   },
   {
     id: 'snes-fatal-fury2',
@@ -57,7 +57,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/fatal-fury-2.sfc',
-    capa_url: '/fatal-fury-2.jpg',
+    capa_url: '/fatal-fury-2.webp',
   },
   {
     id: 'snes-goof-troop',
@@ -65,7 +65,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/goof-troop.sfc',
-    capa_url: '/goof-troop.jpg',
+    capa_url: '/goof-troop.webp',
   },
   {
     id: 'snes-harvest-moon',
@@ -73,7 +73,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/harvest-moon.sfc',
-    capa_url: '/harvest-moon.jpg',
+    capa_url: '/harvest-moon.webp',
   },
   {
     id: 'snes-kirbys-avalanche',
@@ -81,7 +81,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/kirbys-avalanche.sfc',
-    capa_url: '/kirbys-avalanche.jpg',
+    capa_url: '/kirbys-avalanche.webp',
   },
   {
     id: 'snes-kirby-super-star',
@@ -89,7 +89,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/kirby-super-star.sfc',
-    capa_url: '/kirby-super-star.jpg',
+    capa_url: '/kirby-super-star.webp',
   },
   {
     id: 'snes-megaman-x',
@@ -97,7 +97,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/megaman-x.sfc',
-    capa_url: '/megaman-x.jpg',
+    capa_url: '/megaman-x.webp',
   },
   {
     id: 'snes-megaman-x2',
@@ -105,7 +105,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/megaman-x2.sfc',
-    capa_url: '/megaman-x2.jpg',
+    capa_url: '/megaman-x2.webp',
   },
   {
     id: 'snes-megaman-x3',
@@ -113,7 +113,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/megaman-x3.sfc',
-    capa_url: '/megaman-x3.jpg',
+    capa_url: '/megaman-x3.webp',
   },
   {
     id: 'snes-rrr',
@@ -121,7 +121,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/rrr.sfc',
-    capa_url: '/rrr.jpg',
+    capa_url: '/rrr.webp',
   },
   {
     id: 'snes-supermarioworld',
@@ -138,7 +138,7 @@ export const games = [
     console: 'SNES',
     core: 'snes9x',
     rom_url: '/topgear.smc',
-    capa_url: '/Capa_de_Top_Gear.jpg',
+    capa_url: '/Capa_de_Top_Gear.webp',
   },
 
   // NES
@@ -148,7 +148,7 @@ export const games = [
     console: 'NES',
     core: 'nestopia',
     rom_url: '/contra.nes',
-    capa_url: '/contra.jpg',
+    capa_url: '/contra.webp',
   },
   {
     id: 'nes-duck-hunt',
@@ -156,7 +156,7 @@ export const games = [
     console: 'NES',
     core: 'nestopia',
     rom_url: '/duck-hunt.nes',
-    capa_url: '/duck-hunt.jpg',
+    capa_url: '/duck-hunt.webp',
   },
 
   // GBA
@@ -166,7 +166,7 @@ export const games = [
     console: 'GBA',
     core: 'mgba',
     rom_url: '/LegendOfZeldaTheMinishCap.gba',
-    capa_url: '/zelda.jpg',
+    capa_url: '/zelda.webp',
   },
   {
     id: 'gba-pokemon-fire-red',
@@ -174,7 +174,7 @@ export const games = [
     console: 'GBA',
     core: 'mgba',
     rom_url: '/pokemon-fire-red.gba',
-    capa_url: '/pokemon-fire-red.jpg',
+    capa_url: '/pokemon-fire-red.webp',
   },
 
   // GAME BOY
@@ -184,7 +184,7 @@ export const games = [
     console: 'GAME BOY',
     core: 'gambatte',
     rom_url: '/PokémonSilver.gbc',
-    capa_url: '/pokemon-silver.jpg',
+    capa_url: '/pokemon-silver.webp',
   },
 
   // N64
@@ -194,7 +194,7 @@ export const games = [
     console: 'NINTENDO 64',
     core: 'mupen64plus_next',
     rom_url: '/mario64.z64',
-    capa_url: '/Super_Mario_64.jpg',
+    capa_url: '/Super_Mario_64.webp',
   },
 
   // ATARI
@@ -204,7 +204,7 @@ export const games = [
     console: 'ATARI',
     core: 'stella2014',
     rom_url: '/asteroids.a26',
-    capa_url: '/asteroids.jpg',
+    capa_url: '/asteroids.webp',
   },
 ];
 
@@ -228,7 +228,7 @@ export const gamesDb = {
     nome: 'Alex Kidd in Miracle World',
     ano: '1986',
     fabricante: 'SEGA',
-    capa_url: '/alexkidd.jpg',
+    capa_url: '/alexkidd.webp',
     descricao: 'O maior clássico do Master System! Use o Jokenpô para vencer!',
   },
 
@@ -240,7 +240,7 @@ export const gamesDb = {
     nome: "Disney's Aladdin",
     ano: '1993',
     fabricante: 'Capcom',
-    capa_url: '/aladdin.jpg',
+    capa_url: '/aladdin.webp',
     descricao: 'A versão clássica da Capcom baseada no filme da Disney.',
   },
   'snes-chrono-trigger': {
@@ -250,7 +250,7 @@ export const gamesDb = {
     nome: 'Chrono Trigger',
     ano: '1995',
     fabricante: 'Square',
-    capa_url: '/chrono-trigger.jpg',
+    capa_url: '/chrono-trigger.webp',
     descricao: 'Uma das maiores aventuras RPG de todos os tempos!',
   },
   'snes-contra3': {
@@ -260,7 +260,7 @@ export const gamesDb = {
     nome: 'Contra III: The Alien Wars',
     ano: '1992',
     fabricante: 'Konami',
-    capa_url: '/contra-3.jpg',
+    capa_url: '/contra-3.webp',
     descricao: 'A maior aventura dos Contra Brothers no futuro!',
   },
   'snes-dkc': {
@@ -270,7 +270,7 @@ export const gamesDb = {
     nome: 'Donkey Kong Country',
     ano: '1994',
     fabricante: 'Rare/Nintendo',
-    capa_url: '/dkc.png',
+    capa_url: '/dkc.webp',
     descricao: 'Donkey e Diddy em uma aventura revolucionária em 3D!',
   },
   'snes-fatal-fury2': {
@@ -280,7 +280,7 @@ export const gamesDb = {
     nome: 'Fatal Fury 2',
     ano: '1992',
     fabricante: 'SNK',
-    capa_url: '/fatal-fury-2.jpg',
+    capa_url: '/fatal-fury-2.webp',
     descricao: 'Terry Bogard e cia no torneio do Rei das Trevas!',
   },
   'snes-goof-troop': {
@@ -290,7 +290,7 @@ export const gamesDb = {
     nome: 'Goof Troop',
     ano: '1993',
     fabricante: 'Capcom/Disney',
-    capa_url: '/goof-troop.jpg',
+    capa_url: '/goof-troop.webp',
     descricao: 'Max e PJ salvam o Prefeito X com truques malucos!',
   },
   'snes-harvest-moon': {
@@ -300,7 +300,7 @@ export const gamesDb = {
     nome: 'Harvest Moon',
     ano: '1996',
     fabricante: 'Natsume',
-    capa_url: '/harvest-moon.jpg',
+    capa_url: '/harvest-moon.webp',
     descricao: 'Reconstrua a fazenda e encontre o amor verdadeiro!',
   },
   'snes-kirbys-avalanche': {
@@ -310,7 +310,7 @@ export const gamesDb = {
     nome: "Kirby's Avalanche",
     ano: '1995',
     fabricante: 'HAL',
-    capa_url: '/kirbys-avalanche.jpg',
+    capa_url: '/kirbys-avalanche.webp',
     descricao: 'Kirby no puzzle game estilo Puyo Puyo!',
   },
   'snes-kirby-super-star': {
@@ -320,7 +320,7 @@ export const gamesDb = {
     nome: 'Kirby Super Star',
     ano: '1996',
     fabricante: 'HAL/Nintendo',
-    capa_url: '/kirby-super-star.jpg',
+    capa_url: '/kirby-super-star.webp',
     descricao: 'Múltiplas aventuras do Kirby rosa e faminto!',
   },
   'snes-megaman-x': {
@@ -330,7 +330,7 @@ export const gamesDb = {
     nome: 'Mega Man X',
     ano: '1993',
     fabricante: 'Capcom',
-    capa_url: '/megaman-x.jpg',
+    capa_url: '/megaman-x.webp',
     descricao: 'O futuro dos Mavericks começa aqui com X!',
   },
   'snes-megaman-x2': {
@@ -340,7 +340,7 @@ export const gamesDb = {
     nome: 'Mega Man X2',
     ano: '1994',
     fabricante: 'Capcom',
-    capa_url: '/megaman-x2.jpg',
+    capa_url: '/megaman-x2.webp',
     descricao: 'Wire Sponge, Wheel Gator e mais 6 Mavericks!',
   },
   'snes-megaman-x3': {
@@ -350,7 +350,7 @@ export const gamesDb = {
     nome: 'Mega Man X3',
     ano: '1995',
     fabricante: 'Capcom',
-    capa_url: '/megaman-x3.jpg',
+    capa_url: '/megaman-x3.webp',
     descricao: 'O último grande X do SNES com escolhas morais!',
   },
   'snes-rrr': {
@@ -360,7 +360,7 @@ export const gamesDb = {
     nome: "Rock n' Roll Racing",
     ano: '1993',
     fabricante: 'Blizzard',
-    capa_url: '/rrr.jpg',
+    capa_url: '/rrr.webp',
     descricao: 'Acelere ao som de rock em corridas intergalácticas!',
   },
   'snes-supermarioworld': {
@@ -381,7 +381,7 @@ export const gamesDb = {
     nome: 'Top Gear',
     ano: '1992',
     fabricante: 'Kemco/Gremlin',
-    capa_url: '/Capa_de_Top_Gear.jpg',
+    capa_url: '/Capa_de_Top_Gear.webp',
     descricao: 'O jogo de corrida mais amado do Brasil!',
   },
 
@@ -393,7 +393,7 @@ export const gamesDb = {
     nome: 'Contra',
     ano: '1987',
     fabricante: 'Konami',
-    capa_url: '/contra.jpg',
+    capa_url: '/contra.webp',
     descricao: 'Bill Rizer e Lance Bean contra os aliens!',
   },
   'nes-duck-hunt': {
@@ -403,7 +403,7 @@ export const gamesDb = {
     nome: 'Duck Hunt',
     ano: '1984',
     fabricante: 'Nintendo',
-    capa_url: '/duck-hunt.jpg',
+    capa_url: '/duck-hunt.webp',
     descricao: 'O cão zoeiro e sua Zapper na caça aos patos!',
   },
 
@@ -415,7 +415,7 @@ export const gamesDb = {
     nome: 'The Legend of Zelda: The Minish Cap',
     ano: '2004',
     fabricante: 'Capcom/Nintendo',
-    capa_url: '/zelda.jpg',
+    capa_url: '/zelda.webp',
     descricao: 'Link encolhe com Ezlo para salvar Hyrule!',
   },
   'gba-pokemon-fire-red': {
@@ -425,7 +425,7 @@ export const gamesDb = {
     nome: 'Pokémon Fire Red',
     ano: '2004',
     fabricante: 'Game Freak',
-    capa_url: '/pokemon-fire-red.jpg',
+    capa_url: '/pokemon-fire-red.webp',
     descricao: 'Kanto em 3D com Pokémon até a Geração III!',
   },
 
@@ -437,7 +437,7 @@ export const gamesDb = {
     nome: 'Pokémon Silver',
     ano: '1999',
     fabricante: 'Game Freak',
-    capa_url: '/pokemon-silver.jpg',
+    capa_url: '/pokemon-silver.webp',
     descricao: 'Gold e Silver na região de Johto e Kanto!',
   },
 
@@ -449,7 +449,7 @@ export const gamesDb = {
     nome: 'Super Mario 64',
     ano: '1996',
     fabricante: 'Nintendo',
-    capa_url: '/Super_Mario_64.jpg',
+    capa_url: '/Super_Mario_64.webp',
     descricao: 'A revolução 3D que mudou os games para sempre!',
   },
 
@@ -461,7 +461,7 @@ export const gamesDb = {
     nome: 'Asteroids',
     ano: '1979',
     fabricante: 'Atari',
-    capa_url: '/asteroids.jpg',
+    capa_url: '/asteroids.webp',
     descricao: 'O clássico arcade que definiu os shoot em up!',
   },
 };

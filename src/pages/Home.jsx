@@ -504,11 +504,16 @@ const Home = () => {
             }}
           >
             <img
-              src="/logo.jpg"
-              alt="Logo"
+              src="/logo.webp"
+              alt="Sopra Fitas"
+              width="700"
+              height="374"
+              fetchPriority="high"
+              decoding="async"
               style={{
                 maxWidth: isMobile ? '220px' : '350px',
                 width: '100%',
+                height: 'auto',
                 marginBottom: '20px',
               }}
             />
@@ -743,6 +748,10 @@ const Home = () => {
                   <img
                     src={jogo.capa_url}
                     alt={jogo.nome}
+                    loading="lazy"
+                    decoding="async"
+                    width="200"
+                    height={isMobile ? 130 : 160}
                     style={{
                       width: '100%',
                       height: '100%',
