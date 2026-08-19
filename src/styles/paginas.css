@@ -980,3 +980,179 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Gestão de jogadores ---------- */
+.usuarios__nome {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.usuarios__email {
+  font-size: 0.75rem;
+  color: var(--texto-fraco);
+}
+
+.usuarios__pontos {
+  color: var(--primaria);
+  font-weight: bold;
+}
+
+.usuarios__editar {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+}
+
+/* Um campo de pontos não precisa da largura da coluna, mas também não pode
+   encolher a ponto de esconder o número. */
+.usuarios__campo-pontos {
+  width: 90px;
+}
+
+.usuarios__papel {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--raio-pilula);
+  font-size: 0.75rem;
+  background: var(--superficie-alta);
+  color: var(--texto-suave);
+}
+
+.usuarios__papel--admin {
+  background: var(--superficie-alta);
+  color: var(--primaria);
+}
+
+/* ---------- Validação de missões ---------- */
+.missao__topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Sem o wrap, a pílula com o nome do jogo empurrava o cartão 62px para
+     fora da janela em telas de 320px. */
+  flex-wrap: wrap;
+  gap: var(--esp-sm);
+  margin-bottom: var(--esp-md);
+}
+
+.missao__jogador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  /* min-width deixa a caixa encolher; overflow-wrap dá ao texto onde quebrar.
+     Sem os dois, um apelido longo sem espaço empurra o cartão para fora da
+     janela — medido em 61px de excesso numa tela de 320px. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.missao__jogador svg {
+  flex-shrink: 0;
+}
+
+.missao__jogo {
+  padding: var(--esp-xs) 12px;
+  border: 1px solid var(--borda-clara);
+  border-radius: var(--raio-pilula);
+  background: var(--superficie-alta);
+  color: var(--primaria);
+  font-size: 0.85rem;
+  /* Nome de jogo é texto de terceiro: pode vir longo e sem espaço */
+  overflow-wrap: anywhere;
+}
+
+.missao__print {
+  overflow: hidden;
+  border: 2px solid var(--borda);
+  border-radius: var(--raio-m);
+  margin-bottom: var(--esp-lg);
+}
+
+.missao__print img {
+  width: 100%;
+  display: block;
+}
+
+.missao__recompensa {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--esp-md);
+  flex-wrap: wrap;
+  padding: var(--esp-md);
+  border-radius: var(--raio-m);
+  background: var(--fundo);
+  margin-bottom: var(--esp-lg);
+}
+
+.missao__campo {
+  width: 160px;
+}
+
+.missao__acoes {
+  display: grid;
+  gap: var(--esp-md);
+}
+
+/* Lado a lado só quando os dois rótulos cabem numa linha cada */
+@media (min-width: 480px) {
+  .missao__acoes {
+    grid-template-columns: 1fr 1.5fr;
+  }
+}
+
+/* ---------- Cadastro de jogo ---------- */
+.jogos__aviso {
+  margin-top: var(--esp-lg);
+  padding: var(--esp-sm) var(--esp-md);
+  border-radius: var(--raio-m);
+  text-align: center;
+  background: var(--sucesso-fundo);
+  color: var(--sucesso-texto);
+}
+
+.jogos__aviso--erro {
+  background: var(--erro-fundo);
+  color: var(--perigo-texto);
+}
+
+/* ---------- Gerenciar acervo ---------- */
+.acervo__capa {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: var(--raio-p);
+  background: #000;
+  display: block;
+}
+
+.acervo__id {
+  font-size: 0.8rem;
+  color: var(--texto-fraco);
+}
+
+.acervo__acoes {
+  display: flex;
+  gap: 8px;
+}
+
+/* Sete colunas somam 825px de largura mínima: no celular só a capa cabia, e
+   era preciso arrastar 587px para descobrir de que jogo era a linha. Ano,
+   fabricante e identificador não são o que se procura numa tela pequena. */
+@media (max-width: 767px) {
+  .acervo__secundaria {
+    display: none;
+  }
+
+  /* Com quatro colunas o piso de 560px do componente sobra, e era ele que
+     mantinha o nome do jogo fora da tela mesmo depois de esconder as colunas
+     secundárias. */
+  .acervo .tabela {
+    min-width: 0;
+  }
+
+  .acervo .tabela th,
+  .acervo .tabela td {
+    padding: var(--esp-sm);
+  }
+}

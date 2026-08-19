@@ -286,6 +286,14 @@
   font-size: 0.85rem;
 }
 
+/* O seletor de arquivo nativo tem largura intrínseca de cerca de 278px e não
+   encolhe sozinho: era ele que empurrava 45px para fora da janela numa tela de
+   320px, atravessando também a borda da própria caixa. */
+.campo__entrada[type='file'] {
+  min-width: 0;
+  padding: var(--esp-sm) var(--esp-md);
+}
+
 /* ---------- Botão: variações que faltavam ---------- */
 .btn--sucesso {
   background: #1c6440;
