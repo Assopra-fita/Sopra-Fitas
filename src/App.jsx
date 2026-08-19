@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Perfil from './pages/Perfil';
 import Ranking from './pages/Ranking';
 import NaoEncontrada from './pages/NaoEncontrada';
+import RotaAdmin from './components/RotaAdmin';
 
 // A área do GM é carregada sob demanda: só um punhado de pessoas a usa, e sem
 // isso ela viajava no mesmo arquivo que todo visitante anônimo baixa.
@@ -39,28 +40,67 @@ function App() {
 
           {/* ==============================
               ROTAS EXCLUSIVAS DO ADMIN (GM)
+
+              Todas passam pela mesma guarda. Antes, seis das sete abriam para
+              qualquer visitante sem verificação nenhuma.
+
+              A guarda esconde a tela, não protege o dado: quem garante isso
+              são as policies de RLS no Supabase.
              ============================== */}
 
-          {/* Painel Central do Administrador */}
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-
-          {/* Lançar Desafios Globais (Novas missões do topo) */}
-          <Route path="/admin-desafios" element={<AdminDesafios />} />
-
-          {/* Validação de Missões (Prints enviados pelos players) */}
-          <Route path="/admin-missoes" element={<AdminMissoes />} />
-
-          {/* Painel para Upar novos Jogos */}
-          <Route path="/painel-admin-jogos" element={<AdminJogos />} />
-
-          {/* Listar, Editar e Deletar Jogos Existentes */}
           <Route
-            path="/admin-gerenciar-jogos"
-            element={<AdminGerenciarJogos />}
+            path="/admin-dashboard"
+            element={
+              <RotaAdmin>
+                <AdminDashboard />
+              </RotaAdmin>
+            }
           />
 
-          {/* Controle de Usuários */}
-          <Route path="/admin-usuarios" element={<AdminUsuarios />} />
+          <Route
+            path="/admin-desafios"
+            element={
+              <RotaAdmin>
+                <AdminDesafios />
+              </RotaAdmin>
+            }
+          />
+
+          <Route
+            path="/admin-missoes"
+            element={
+              <RotaAdmin>
+                <AdminMissoes />
+              </RotaAdmin>
+            }
+          />
+
+          <Route
+            path="/painel-admin-jogos"
+            element={
+              <RotaAdmin>
+                <AdminJogos />
+              </RotaAdmin>
+            }
+          />
+
+          <Route
+            path="/admin-gerenciar-jogos"
+            element={
+              <RotaAdmin>
+                <AdminGerenciarJogos />
+              </RotaAdmin>
+            }
+          />
+
+          <Route
+            path="/admin-usuarios"
+            element={
+              <RotaAdmin>
+                <AdminUsuarios />
+              </RotaAdmin>
+            }
+          />
 
           {/* Qualquer endereço fora da lista acima. Sem isto, URL errada
               renderizava uma página completamente em branco. */}
