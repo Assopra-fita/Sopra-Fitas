@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Área administrativa não deve ser indexada
+Disallow: /admin-dashboard
+Disallow: /admin-desafios
+Disallow: /admin-missoes
+Disallow: /admin-usuarios
+Disallow: /admin-gerenciar-jogos
+Disallow: /painel-admin-jogos
+
+Sitemap: https://assoprafitas.com/sitemap.xml
