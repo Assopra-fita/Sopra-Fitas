@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-29 de 93 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+37 de 93 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
 | **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
 | **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
-| **3** | Limpeza estrutural | Média | `█░░░░░░░░░` | 2/23 |
+| **3** | Limpeza estrutural | Média | `███░░░░░░░` | 8/23 |
 | **4** | Layout e navegação | Média | `░░░░░░░░░░` | 0/11 |
-| **5** | SEO, acessibilidade e qualidade | Baixa | `░░░░░░░░░░` | 0/18 |
-| | **Total** | | `███░░░░░░░` | **29/93** |
+| **5** | SEO, acessibilidade e qualidade | Baixa | `█░░░░░░░░░` | 2/18 |
+| | **Total** | | `████░░░░░░` | **37/93** |
 
 ---
 
@@ -369,10 +369,10 @@ Isso muda a conversa. O código não está "todo ruim": ele tem dois componentes
 
 **Tarefas**
 
-- [ ] Extrair hooks da Home: sessão, catálogo, favoritos e paginação
-- [ ] Extrair os componentes de apresentação da Home
+- [x] Extrair hooks da Home: sessão, catálogo, favoritos e paginação
+- [x] Extrair os componentes de apresentação da Home
 - [ ] Extrair hooks e componentes da sala de jogo
-- [ ] Tirar `gerarNumerosPagina` do componente como função pura
+- [x] Tirar `gerarNumerosPagina` do componente como função pura
 
 ### 3.2 — Duplicação: 23% do projeto, 48% das telas de admin
 
@@ -493,14 +493,14 @@ A conferência derrubou a retórica de três itens, e isso importa mais do que p
 **Tarefas**
 
 - [x] Içar `busca.toLowerCase()` para fora do predicado do filtro
-- [ ] Deduplicar por `id` a união dos catálogos
+- [x] Deduplicar por `id` a união dos catálogos
 - [ ] Corrigir o sorteio de relacionados: copiar antes e usar Fisher-Yates
 - [ ] Paralelizar as três consultas do painel administrativo
 - [ ] Paralelizar os uploads de capa e ROM, depois de validar o id
-- [ ] Guardar o booleano de breakpoint em vez da largura em pixels
+- [x] Guardar o booleano de breakpoint em vez da largura em pixels
 - [ ] Trocar `key={idx}` por chave natural nas duas listas que reordenam
 - [ ] Adicionar guarda de nulo no filtro do admin
-- [ ] Enxugar as colunas do `select` da Home
+- [x] Enxugar as colunas do `select` da Home
 
 ### 3.7 — Alvo estrutural
 
@@ -526,6 +526,9 @@ flowchart TB
 
 ## Fase 4 — Layout e navegação
 
+> ⛔ Tudo que envolve **posição, tamanho ou comportamento de anúncio** está marcado como
+> fora do nosso escopo: é decisão de quem cuida da monetização, não da equipe de código.
+
 | Item | Medição | Correção |
 | --- | --- | --- |
 | Vãos mortos de anúncio | primeiro jogo a **1.750px** do topo no mobile; ~1.650px também em 768, 844 e 1024px | não reservar 250px fixos quando o slot não preenche |
@@ -543,17 +546,17 @@ flowchart TB
 
 **Tarefas**
 
-- [ ] Não reservar 250px fixos quando o slot de anúncio não preenche
-- [ ] Subir a grade de jogos na ordem visual do celular
+- [ ] ⛔ **Fora do nosso escopo** — Não reservar 250px fixos quando o slot de anúncio não preenche
+- [ ] ⛔ **Fora do nosso escopo** — Subir a grade de jogos na ordem visual do celular (mexe na posição dos anúncios)
 - [ ] Colocar logo e navegação no cabeçalho fixo
-- [ ] Recolher os painéis de publicidade da sala de jogo quando não há criativo
-- [ ] Ajustar a largura da coluna para o criativo de 300px não transbordar
+- [ ] ⛔ **Fora do nosso escopo** — Recolher os painéis de publicidade da sala de jogo quando não há criativo
+- [ ] ⛔ **Fora do nosso escopo** — Ajustar a largura da coluna para o criativo de 300px não transbordar
 - [ ] Padronizar a proporção das capas para não cortar a arte
 - [ ] Ajustar itens por página ao número de colunas da grade
 - [ ] Transformar os filtros em faixa única com rolagem horizontal no celular
 - [ ] Indicar rolagem no card de desafios
 - [ ] Levar busca, filtro e página para a URL
-- [ ] Usar IDs de anúncio distintos por rota
+- [ ] ⛔ **Fora do nosso escopo** — Usar IDs de anúncio distintos por rota
 
 ## Fase 5 — Higiene: SEO, acessibilidade e qualidade
 
@@ -575,8 +578,11 @@ flowchart TB
 
 **Tarefas — Acessibilidade**
 
-- [ ] Dar nome acessível aos 13 botões só de ícone
-- [ ] Levar os alvos de toque a 44px
+- [x] Dar nome acessível aos 13 botões só de ícone
+- [x] Levar os alvos de toque a 44px — corações e botões JOGAR
+  <br>⚠️ Filtros (31px) e paginação (33px) ficaram como estão: passam o mínimo de
+  24px do critério AA, e levá-los a 44px somaria ~52px acima da grade no celular,
+  agravando justamente a rolagem que a Fase 4 quer reduzir.
 - [ ] Criar estados de foco visíveis e remover os `outline: none`
 - [ ] Corrigir o contraste dos cinzas `#666` e `#555`
 - [ ] Associar rótulo e `autoComplete` aos campos de formulário
