@@ -36,13 +36,13 @@ const Emulator = ({ gameUrl, core }) => {
     window.EJS_player = '#game';
     window.EJS_core = core;
     window.EJS_gameUrl = gameUrl;
-    window.EJS_pathtodata = 'https://cdn.jsdelivr.net/gh/ethanaobrien/emulatorjs@main/data/';
+    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/4.2.3/data/';
     window.EJS_startOnLoaded = true;
     window.EJS_DEBUG_XX = false; // Desativado para evitar logs desnecessários
 
     // --- 3. INJEÇÃO DO SCRIPT ---
     const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/gh/ethanaobrien/emulatorjs@main/data/loader.js';
+    script.src = 'https://cdn.emulatorjs.org/4.2.3/data/loader.js';
     script.id = 'emulator-script';
     script.async = true;
 
