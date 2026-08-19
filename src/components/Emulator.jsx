@@ -1,28 +1,46 @@
 import React, { useEffect, useRef } from 'react';
 
-const Emulator = ({ gameUrl, core }) => {
+// Versão fixa do EmulatorJS. Apontar para uma branch faz um commit de terceiro
+// quebrar todos os jogos sem aviso.
+const CDN = 'https://cdn.emulatorjs.org/4.2.3/data/';
+
+// O EmulatorJS é configurado por variáveis globais e cria a instância real em
+// window.EJS_emulator. Atenção: window.EJS_player é só o SELETOR CSS de onde
+// montar — chamar métodos nele não funciona, é uma string.
+const Emulator = ({ gameUrl, core, onPronto }) => {
   const containerRef = useRef(null);
 
+  // Guardado em ref para o efeito abaixo não remontar o emulador toda vez que
+  // o pai recriar a função.
+  const prontoRef = useRef(onPronto);
   useEffect(() => {
-    // --- 1. LIMPEZA PREVENTIVA (Antes de carregar um novo jogo) ---
-    const limparTudo = () => {
-      // Se o player já existe, tenta parar o áudio e os processos
-      if (window.EJS_player) {
-        if (typeof window.EJS_player.stop === 'function') window.EJS_player.stop();
-        if (typeof window.EJS_player.destroy === 'function') window.EJS_player.destroy();
+    prontoRef.current = onPronto;
+  });
+
+  useEffect(() => {
+    // --- 1. ENCERRA O JOGO ANTERIOR ---
+    const encerrar = () => {
+      const emulador = window.EJS_emulator;
+      if (emulador) {
+        try {
+          // Encerramento oficial: grava a memória de bateria, para o loop e
+          // desmonta o sistema de arquivos. É o mesmo que o EmulatorJS dispara
+          // no beforeunload — era só por isso que recarregar a página calava
+          // o áudio.
+          emulador.callEvent('exit');
+        } catch (e) {
+          console.warn('Falha ao encerrar o emulador:', e);
+        }
       }
 
-      // Remove o script antigo se ele existir
-      const existingScript = document.getElementById('emulator-script');
-      if (existingScript) existingScript.remove();
+      const scriptAntigo = document.getElementById('emulator-script');
+      if (scriptAntigo) scriptAntigo.remove();
 
-      // Limpa o conteúdo de dentro da div do jogo para não sobrar lixo visual ou áudio
-      const gameDiv = document.getElementById('game');
-      if (gameDiv) {
-        gameDiv.innerHTML = '';
-      }
+      const divJogo = document.getElementById('game');
+      if (divJogo) divJogo.innerHTML = '';
 
-      // Reseta as variáveis globais que o EmulatorJS usa
+      delete window.EJS_emulator;
+      delete window.EJS_ready;
       delete window.EJS_player;
       delete window.EJS_core;
       delete window.EJS_gameUrl;
@@ -30,27 +48,36 @@ const Emulator = ({ gameUrl, core }) => {
       delete window.EJS_startOnLoaded;
     };
 
-    limparTudo();
+    encerrar();
 
     // --- 2. CONFIGURAÇÕES GLOBAIS ---
     window.EJS_player = '#game';
     window.EJS_core = core;
     window.EJS_gameUrl = gameUrl;
-    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/4.2.3/data/';
+    window.EJS_pathtodata = CDN;
     window.EJS_startOnLoaded = true;
-    window.EJS_DEBUG_XX = false; // Desativado para evitar logs desnecessários
+    window.EJS_DEBUG_XX = false;
+
+    // O loader registra este callback como o evento "ready" e é por ele que
+    // conseguimos a instância para os botões de salvar, carregar e reiniciar.
+    window.EJS_ready = () => {
+      if (typeof prontoRef.current === 'function') {
+        prontoRef.current(window.EJS_emulator);
+      }
+    };
 
     // --- 3. INJEÇÃO DO SCRIPT ---
     const script = document.createElement('script');
-    script.src = 'https://cdn.emulatorjs.org/4.2.3/data/loader.js';
+    script.src = `${CDN}loader.js`;
     script.id = 'emulator-script';
     script.async = true;
 
     document.body.appendChild(script);
 
-    // --- 4. CLEANUP (Quando o componente morre ou muda de jogo) ---
+    // --- 4. LIMPEZA (troca de jogo ou saída da tela) ---
     return () => {
-      limparTudo();
+      if (typeof prontoRef.current === 'function') prontoRef.current(null);
+      encerrar();
     };
   }, [gameUrl, core]);
 
@@ -62,7 +89,7 @@ const Emulator = ({ gameUrl, core }) => {
         height: '100%',
         display: 'flex',
         justifyContent: 'center',
-        background: '#000', // Garante que o fundo fique preto enquanto carrega
+        background: '#000',
       }}
     >
       <div id="game" style={{ width: '100%', height: '100%' }}></div>

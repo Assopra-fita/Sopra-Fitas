@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Emulator from '../components/Emulator';
 import { supabase } from '../supabaseClient';
@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import AnuncioGPT from '../components/AnuncioGPT';
 import { gamesDb } from '../constants/games';
+import { gravarEstado, lerEstado } from '../lib/estadoDeJogo';
 
 // Lê as dimensões atuais da janela para decidir o layout.
 // Precisa olhar a ALTURA também: celular deitado tem largura de desktop (740-930px)
@@ -43,28 +44,18 @@ const GameRoom = () => {
   const [jogoAtual, setJogoAtual] = useState(null);
   const [outrosJogos, setOutrosJogos] = useState([]);
 
-  // --- FUNÇÃO PARA MATAR O JOGO COMPLETAMENTE ---
-  const finalizarEmulador = () => {
-    if (window.EJS_player) {
-      try {
-        // Tenta parar o jogo e o áudio oficialmente
-        if (typeof window.EJS_player.stop === 'function')
-          window.EJS_player.stop();
-        if (typeof window.EJS_player.destroy === 'function')
-          window.EJS_player.destroy();
+  // A instância real do emulador, entregue pelo componente Emulator quando o
+  // EmulatorJS termina de carregar. Antes daqui os botões chamavam métodos em
+  // window.EJS_player, que é só uma string com o seletor CSS — nunca funcionaram.
+  const emuladorRef = useRef(null);
 
-        // Limpa as variáveis globais para evitar conflitos no próximo jogo
-        window.EJS_player = null;
-        window.EJS_core = null;
-        window.EJS_gameUrl = null;
+  const [aviso, setAviso] = useState(null);
+  const avisoTimerRef = useRef(null);
 
-        // Remove o elemento do DOM para garantir que o áudio pare
-        const emuElement = document.getElementById('game');
-        if (emuElement) emuElement.innerHTML = '';
-      } catch (e) {
-        console.warn('Erro ao finalizar emulador:', e);
-      }
-    }
+  const mostrarAviso = (texto, erro = false) => {
+    clearTimeout(avisoTimerRef.current);
+    setAviso({ texto, erro });
+    avisoTimerRef.current = setTimeout(() => setAviso(null), 2800);
   };
 
   useEffect(() => {
@@ -77,30 +68,51 @@ const GameRoom = () => {
       .getSession()
       .then(({ data: { session } }) => setSession(session));
 
-    // Cleanup ao desmontar o componente
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('orientationchange', handleResize);
-      finalizarEmulador();
+      clearTimeout(avisoTimerRef.current);
     };
   }, [gameId]);
 
-  const salvarJogo = () => {
-    if (window.EJS_player) window.EJS_player.saveState();
+  const salvarJogo = async () => {
+    const gerenciador = emuladorRef.current?.gameManager;
+    if (!gerenciador) return mostrarAviso('O jogo ainda está carregando', true);
+
+    try {
+      await gravarEstado(gameId, gerenciador.getState());
+      mostrarAviso('Progresso salvo neste aparelho');
+    } catch (e) {
+      console.error('Falha ao salvar o estado:', e);
+      mostrarAviso('Não foi possível salvar', true);
+    }
   };
-  const carregarJogo = () => {
-    if (window.EJS_player) window.EJS_player.loadState();
+
+  const carregarJogo = async () => {
+    const gerenciador = emuladorRef.current?.gameManager;
+    if (!gerenciador) return mostrarAviso('O jogo ainda está carregando', true);
+
+    try {
+      const estado = await lerEstado(gameId);
+      if (!estado) return mostrarAviso('Nenhum progresso salvo aqui', true);
+
+      gerenciador.loadState(estado);
+      mostrarAviso('Progresso carregado');
+    } catch (e) {
+      console.error('Falha ao carregar o estado:', e);
+      mostrarAviso('Não foi possível carregar', true);
+    }
   };
+
   const reiniciarJogo = () => {
-    if (window.EJS_player) window.EJS_player.restart();
+    const gerenciador = emuladorRef.current?.gameManager;
+    if (!gerenciador) return mostrarAviso('O jogo ainda está carregando', true);
+
+    gerenciador.restart();
+    mostrarAviso('Jogo reiniciado');
   };
 
   const telaCheia = () => {
-    if (window.EJS_player) {
-      try {
-        window.EJS_player.maximize();
-      } catch (e) {}
-    }
     const elem = document.getElementById('tela-do-jogo');
     if (elem) {
       const pedido =
@@ -113,11 +125,10 @@ const GameRoom = () => {
     }
   };
 
-  // --- ALTERAÇÃO AQUI: FORÇA O RECARREGAMENTO PARA MATAR O SOM ---
-  const sairDoJogo = () => {
-    finalizarEmulador();
-    window.location.href = '/'; // Isso garante que o AudioContext do navegador seja resetado
-  };
+  // O emulador é encerrado no cleanup do componente Emulator, então dá para sair
+  // pela navegação normal. Antes era preciso recarregar a página inteira porque
+  // o áudio continuava tocando.
+  const sairDoJogo = () => navigate('/');
 
   // No modo jogo os controles ficam compactos para sobrar altura ao emulador
   const estiloBotao = (extra) => ({
@@ -317,7 +328,13 @@ const GameRoom = () => {
                     }),
               }}
             >
-              <Emulator gameUrl={jogoAtual.rom_url} core={jogoAtual.core} />
+              <Emulator
+                gameUrl={jogoAtual.rom_url}
+                core={jogoAtual.core}
+                onPronto={(emulador) => {
+                  emuladorRef.current = emulador;
+                }}
+              />
             </div>
 
             <div
@@ -380,6 +397,25 @@ const GameRoom = () => {
                 <Maximize size={tamanhoIcone} /> Tela Cheia
               </button>
             </div>
+
+            {aviso && (
+              <div
+                role="status"
+                style={{
+                  width: '100%',
+                  textAlign: 'center',
+                  fontSize: '0.8rem',
+                  fontWeight: 'bold',
+                  padding: '6px 10px',
+                  color: aviso.erro ? '#ff9d9d' : '#9de8b6',
+                  background: aviso.erro ? '#3a1c1e' : '#16301f',
+                  borderBottom: `1px solid ${aviso.erro ? '#7f1d1d' : '#1c6440'}`,
+                  ...(isGameFocus ? { flexShrink: 0 } : { marginTop: '-20px', marginBottom: '20px' }),
+                }}
+              >
+                {aviso.texto}
+              </div>
+            )}
 
             {!isGameFocus && (
               <>
