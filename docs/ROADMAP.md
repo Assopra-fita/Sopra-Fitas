@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-48 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+52 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
 | **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
 | **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
-| **3** | Limpeza estrutural | Média | `█████░░░░░` | 11/23 |
+| **3** | Limpeza estrutural | Média | `██████░░░░` | 13/23 |
 | **4** | Layout e navegação | Média | `███░░░░░░░` | 3/12 |
-| **5** | SEO, acessibilidade e qualidade | Baixa | `████░░░░░░` | 7/18 |
-| | **Total** | | `█████░░░░░` | **48/94** |
+| **5** | SEO, acessibilidade e qualidade | Baixa | `█████░░░░░` | 9/18 |
+| | **Total** | | `██████░░░░` | **52/94** |
 
 ---
 
@@ -401,7 +401,10 @@ E **379 cores hexadecimais escritas à mão**, 54 valores distintos. O [`index.c
 
 - [x] Criar `components/ui` com Botão, Card, Input, Layout e link de voltar
 - [ ] Criar tokens de cor e substituir as 379 cores escritas à mão
-- [ ] Migrar as telas para os componentes compartilhados
+- [x] Migrar as telas para os componentes compartilhados
+  <br>11 das 12 telas usam `components/ui`. A Home é a exceção de propósito:
+  busca, filtros e paginação dela são peças próprias, já extraídas para
+  `components/home`.
 
 ### 3.3 — A duplicação já custa dinheiro, medido
 
@@ -458,8 +461,11 @@ Toda a responsividade do produto é ternário JavaScript dentro de objeto de est
 
 **Tarefas**
 
-- [ ] Unificar a detecção de breakpoint entre Home e sala de jogo
+- [x] Unificar a detecção de breakpoint entre Home e sala de jogo
 - [ ] Migrar a responsividade de JavaScript para CSS
+  <br>A sala de jogo já é só media query. Falta a Home, onde `isTablet`
+  decide em que posição do DOM a grade é montada — isso é ordem de
+  elementos, e sai com `order` no CSS.
 
 ### 3.6 — Estruturas de dados e complexidade algorítmica
 
@@ -585,8 +591,8 @@ flowchart TB
   24px do critério AA, e levá-los a 44px somaria ~52px acima da grade no celular,
   agravando justamente a rolagem que a Fase 4 quer reduzir.
 - [x] Criar estados de foco visíveis e remover os `outline: none`
-- [ ] Corrigir o contraste dos cinzas `#666` e `#555`
-- [ ] Associar rótulo e `autoComplete` aos campos de formulário
+- [x] Corrigir o contraste dos cinzas `#666` e `#555`
+- [x] Associar rótulo e `autoComplete` aos campos de formulário
 - [ ] Dar um `<h1>` à Home
 
 **Tarefas — Qualidade**
