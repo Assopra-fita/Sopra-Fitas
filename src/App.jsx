@@ -14,7 +14,8 @@ import AdminJogos from './pages/AdminJogos'; // Tela de ADICIONAR
 import AdminGerenciarJogos from './pages/AdminGerenciarJogos'; // Tela de EDITAR/LISTAR
 import AdminUsuarios from './pages/AdminUsuarios';
 import AdminDesafios from './pages/AdminDesafios';
-import AdminLoja from './pages/AdminLoja'; 
+import AdminLoja from './pages/AdminLoja';
+import NaoEncontrada from './pages/NaoEncontrada';
 
 function App() {
   return (
@@ -55,6 +56,10 @@ function App() {
 
         {/* Gerenciar Itens da Loja */}
         <Route path="/admin-loja" element={<AdminLoja />} />
+
+        {/* Qualquer endereço fora da lista acima. Sem isto, URL errada
+            renderizava uma página completamente em branco. */}
+        <Route path="*" element={<NaoEncontrada />} />
       </Routes>
     </Router>
   );
