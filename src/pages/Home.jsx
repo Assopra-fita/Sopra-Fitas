@@ -32,7 +32,9 @@ const Home = () => {
 
   const navigate = useNavigate();
 
-  const { isMobile, isTablet } = useBreakpoint();
+  // isMobile continua vindo do JavaScript porque decide CONTEÚDO, não
+  // aparência: quantos números a paginação mostra. O resto do layout é CSS.
+  const { isMobile } = useBreakpoint();
   const { favoritos, alternar: toggleFavorito } = useFavoritos();
   const { session, pontos, nome: nomeUsuario, sair } = useSessao();
   const { jogos, carregando: loadingGames } = useCatalogo();
@@ -159,7 +161,6 @@ const Home = () => {
               jogo={jogo}
               favorito={favoritosSet.has(jogo.id)}
               aoAlternarFavorito={toggleFavorito}
-              isMobile={isMobile}
             />
           ))
         ) : (
@@ -242,9 +243,6 @@ const Home = () => {
               ))}
             </div>
 
-            {!isTablet && (
-              <div className="home__grade-desktop">{gradeDeJogos}</div>
-            )}
           </div>
 
           <div className="home__coluna home__coluna--direita">
@@ -252,9 +250,13 @@ const Home = () => {
 
             <CardTop5 ranking={ranking} carregando={loadingRanking} />
           </div>
-        </section>
 
-        {isTablet && gradeDeJogos}
+          {/* Renderizada uma vez só. Onde ela aparece é decisão de layout e
+              está no CSS: sob a coluna do meio no desktop, por último em
+              coluna única. Antes eram duas árvores e um ternário de
+              JavaScript escolhendo qual montar. */}
+          <div className="home__grade-area">{gradeDeJogos}</div>
+        </section>
       </main>
 
       <footer className="home__rodape">

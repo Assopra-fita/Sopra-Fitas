@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { Botao, CapaDeJogo } from '../ui';
 
-const CardDeJogo = ({ jogo, favorito, aoAlternarFavorito, isMobile }) => (
+const CardDeJogo = ({ jogo, favorito, aoAlternarFavorito }) => (
   <article className="card-jogo">
     <button
       type="button"
@@ -23,11 +23,7 @@ const CardDeJogo = ({ jogo, favorito, aoAlternarFavorito, isMobile }) => (
       />
     </button>
 
-    <CapaDeJogo
-      src={jogo.capa_url}
-      alt={jogo.nome}
-      tamanho={isMobile ? 'pequena' : 'grande'}
-    />
+    <CapaDeJogo src={jogo.capa_url} alt={jogo.nome} tamanho="grande" />
 
     <h3 className="card-jogo__nome">{jogo.nome}</h3>
     <span className="card-jogo__console">{jogo.console}</span>

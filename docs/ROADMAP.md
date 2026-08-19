@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-53 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+54 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
 | **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
 | **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
-| **3** | Limpeza estrutural | Média | `██████░░░░` | 14/23 |
+| **3** | Limpeza estrutural | Média | `███████░░░` | 15/23 |
 | **4** | Layout e navegação | Média | `███░░░░░░░` | 3/12 |
 | **5** | SEO, acessibilidade e qualidade | Baixa | `█████░░░░░` | 9/18 |
-| | **Total** | | `██████░░░░` | **53/94** |
+| | **Total** | | `██████░░░░` | **54/94** |
 
 ---
 
@@ -464,10 +464,10 @@ Toda a responsividade do produto é ternário JavaScript dentro de objeto de est
 **Tarefas**
 
 - [x] Unificar a detecção de breakpoint entre Home e sala de jogo
-- [ ] Migrar a responsividade de JavaScript para CSS
-  <br>A sala de jogo já é só media query. Falta a Home, onde `isTablet`
-  decide em que posição do DOM a grade é montada — isso é ordem de
-  elementos, e sai com `order` no CSS.
+- [x] Migrar a responsividade de JavaScript para CSS
+  <br>Sobrou um uso de breakpoint em JavaScript, e de propósito: quantos números
+  a paginação mostra, 5 no celular e 7 no desktop. Isso é conteúdo, não
+  aparência — a lista de botões muda, não o estilo deles.
 
 ### 3.6 — Estruturas de dados e complexidade algorítmica
 

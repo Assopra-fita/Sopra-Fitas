@@ -745,7 +745,8 @@
 .home__secao {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr) 240px;
-  gap: var(--esp-lg);
+  column-gap: var(--esp-lg);
+  row-gap: var(--esp-xl);
   align-items: start;
   margin-bottom: 40px;
 }
@@ -756,18 +757,30 @@
   gap: var(--esp-lg);
 }
 
+/* No desktop as laterais ocupam as duas linhas e a grade entra sob a coluna
+   do meio. Antes essa posição era escolhida em JavaScript, montando uma de
+   duas árvores conforme a largura da janela. */
 .home__coluna--esquerda {
-  order: 1;
+  grid-column: 1;
+  grid-row: 1 / span 2;
 }
 
 .home__coluna--centro {
-  order: 1;
+  grid-column: 2;
+  grid-row: 1;
   text-align: center;
   min-width: 0;
 }
 
 .home__coluna--direita {
-  order: 3;
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+
+.home__grade-area {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
 }
 
 /* Acompanha a largura da busca, para os dois ficarem no mesmo eixo visual. */
@@ -861,10 +874,6 @@
   color: var(--primaria-texto);
 }
 
-.home__grade-desktop {
-  margin-top: var(--esp-xl);
-}
-
 /* A grade se adapta sozinha: cabem quantas colunas couberem, com no mínimo
    150px cada. Antes eram contagens fixas — 2 no celular e 4 no desktop — e o
    mesmo card ia de 159px a 363px conforme a largura da tela. */
@@ -874,11 +883,31 @@
   gap: 16px;
 }
 
-/* Acima de 1100px a seção vira três colunas e a grade fica no meio. Ali a
-   contagem fixa vale a pena: os 12 jogos da página fecham 3 linhas cheias,
-   sem órfãos na última. */
-@media (min-width: 1101px) {
-  .home__grade-desktop .home__grade {
+/* Abaixo de 344px a largura útil não chega aos 316px que o auto-fill exige
+   para abrir a segunda coluna, e a grade caía para uma coluna só, com card de
+   300px e a página em 12 linhas. Duas colunas de 141px cabem. */
+@media (max-width: 343px) {
+  .home__grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+/* Entre 854 e 1019px o auto-fill resolve para 5 colunas, e 5 não divide os 12
+   jogos da página: a última linha ficava com 2 cards. Quatro divide. */
+@media (min-width: 854px) and (max-width: 1019px) {
+  .home__grade {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Quatro colunas fixas só quando cabem: os 12 jogos da página fecham 3 linhas
+   cheias, sem órfão na última. O piso é 1188px, porque abaixo disso a coluna
+   do meio não tem os 608px que quatro cards de 140px exigem — em 1101px a
+   conta dava cards de 118px, contra 163px em 1100px. Entre 1101 e 1187 a
+   grade se vira sozinha e faz 3 colunas de 163px. */
+@media (min-width: 1188px) {
+  .home__grade-area .home__grade {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
@@ -890,20 +919,47 @@
   color: var(--texto-fraco);
 }
 
-/* Tablet: coluna única, grade em largura livre */
+/* Coluna única. A ordem visual é a mesma de antes — meio, desafios, top 5 e a
+   grade por último — porque subir a grade mexeria na posição dos anúncios. */
 @media (max-width: 1100px) {
   .home__secao {
     grid-template-columns: 1fr;
   }
 
+  .home__coluna--esquerda,
+  .home__coluna--centro,
+  .home__coluna--direita,
+  .home__grade-area {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .home__coluna--centro {
+    order: 1;
+  }
+
   .home__coluna--esquerda {
     order: 2;
+  }
+
+  .home__coluna--direita {
+    order: 3;
+  }
+
+  .home__grade-area {
+    order: 4;
   }
 }
 
 @media (max-width: 768px) {
   .home__conteudo {
     padding: 120px 14px 40px;
+  }
+
+  /* Capa mais baixa no celular, onde o card é estreito. Era uma prop calculada
+     em JavaScript e passada por dois componentes. */
+  .card-jogo .capa {
+    height: 130px;
   }
 
   /* No celular a logo do cabeçalho já identifica o site: repetir a grande aqui
