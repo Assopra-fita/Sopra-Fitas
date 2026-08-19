@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-21 de 92 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+29 de 93 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
 | **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
 | **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
-| **2** | Peso e velocidade | Alta | `░░░░░░░░░░` | 0/9 |
+| **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
 | **3** | Limpeza estrutural | Média | `█░░░░░░░░░` | 2/23 |
 | **4** | Layout e navegação | Média | `░░░░░░░░░░` | 0/11 |
 | **5** | SEO, acessibilidade e qualidade | Baixa | `░░░░░░░░░░` | 0/18 |
-| | **Total** | | `██░░░░░░░░` | **21/92** |
+| | **Total** | | `███░░░░░░░` | **29/93** |
 
 ---
 
@@ -269,13 +269,26 @@ Correção: apontar para o CDN oficial com versão fixada — `https://cdn.emula
 | Adicionar `loading="lazy"` e `decoding="async"` | 8 dos 12 cards da página 1 ficam abaixo da dobra no mobile |
 | Dar `height`/`aspect-ratio` ao logo | elimina o salto de layout na entrada |
 
-**Efeito combinado: 2,25 MiB → 0,66 MiB, ou 47 s → 14 s em 3G lenta.** Sem tocar em lógica.
+**Correção da estimativa.** Este número supunha reprocessar todas as capas, mas a medição mostrou que **as capas da primeira página vêm do Supabase Storage**, não de `public/` — só os logos e as 22 capas do catálogo estático estão ao nosso alcance pelo código.
+
+Medido antes e depois, no viewport de celular:
+
+| | Antes | Depois |
+| --- | ---: | ---: |
+| Capas (Supabase) | 1.696 KB | **828 KB** |
+| Imagens locais | 249 KB | **66 KB** |
+| Anúncios e pixel | 786 KB | 785 KB |
+| Outros | 53 KB | 53 KB |
+| **Total sem o app** | **2.784 KB** | **1.732 KB** *(−38%)* |
+
+Metade do ganho nas capas veio do carregamento tardio, que funciona independente de onde a imagem esteja hospedada. Reprocessar as capas do Supabase levaria os 828 KB para perto de 150 KB, e continua valendo — mas depende de acesso ao painel.
 
 **Tarefas**
 
-- [ ] Converter as 60 capas para WebP 400×320
-- [ ] Adicionar `loading="lazy"` e `decoding="async"` nos cards
-- [ ] Dar dimensão fixa ao logo da Home
+- [x] Converter para WebP as 22 capas locais do catálogo estático
+- [ ] Converter as capas hospedadas no Supabase Storage — **depende de acesso**
+- [x] Adicionar `loading="lazy"` e `decoding="async"` nos cards
+- [x] Dar dimensão fixa ao logo da Home
 
 ### 2.2 — Cache: hoje não existe
 
@@ -292,8 +305,8 @@ Correção: adicionar um bloco `headers` no [`vercel.json`](../vercel.json) com 
 
 **Tarefas**
 
-- [ ] Adicionar bloco `headers` no `vercel.json` com cache imutável para `/assets/*`
-- [ ] Definir cache semanal para capas e ROMs
+- [x] Adicionar bloco `headers` no `vercel.json` com cache imutável para `/assets/*`
+- [x] Definir cache semanal para capas e ROMs
 
 ### 2.3 — 199 MiB de duplicata pura no repositório
 
@@ -311,7 +324,7 @@ Isso não afeta a navegação — o navegador nunca baixa as duplicatas. Afeta *
 
 **Tarefas**
 
-- [ ] Remover `public/roms/` e `public/capas/`
+- [x] Remover `public/roms/` e `public/capas/`
 - [ ] Decidir o destino das ROMs e capas órfãs
 
 ### 2.4 — Bundle e divisão de código
@@ -332,8 +345,8 @@ O ganho aqui é menor do que parece à primeira vista (ver [Avaliado e descartad
 
 **Tarefas**
 
-- [ ] Separar react, router e supabase em chunks próprios
-- [ ] Envolver as rotas admin em `React.lazy`
+- [x] Separar react, router e supabase em chunks próprios
+- [x] Envolver as rotas admin em `React.lazy`
 
 ## Fase 3 — Limpeza estrutural do código
 
