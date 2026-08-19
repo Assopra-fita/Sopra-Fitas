@@ -217,7 +217,7 @@ export const games = [
     nome: 'Super Mario 64',
     console: 'NINTENDO 64',
     core: 'mupen64plus_next',
-    rom_url: '/Super_Mario_64.z64',
+    rom_url: '/mario64.z64',
     capa_url: '/Super_Mario_64.jpg',
   },
 
@@ -226,7 +226,7 @@ export const games = [
     id: 'atari-asteroids',
     nome: 'Asteroids',
     console: 'ATARI',
-    core: 'stella',
+    core: 'stella2014',
     rom_url: '/asteroids.a26',
     capa_url: '/asteroids.jpg',
   },
@@ -496,7 +496,7 @@ export const gamesDb = {
   // N64
   'n64-super-mario-64': {
     id: 'n64-super-mario-64',
-    rom_url: '/Super_Mario_64.z64',
+    rom_url: '/mario64.z64',
     core: 'mupen64plus_next',
     nome: 'Super Mario 64',
     ano: '1996',
@@ -509,7 +509,7 @@ export const gamesDb = {
   'atari-asteroids': {
     id: 'atari-asteroids',
     rom_url: '/asteroids.a26',
-    core: 'stella',
+    core: 'stella2014',
     nome: 'Asteroids',
     ano: '1979',
     fabricante: 'Atari',
