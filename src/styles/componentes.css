@@ -307,6 +307,17 @@
   padding: 0;
 }
 
+/* As variações compactas existem para densidade em tabela e em barra de
+   ações, o que faz sentido no mouse. No dedo, 34px é alvo pequeno demais:
+   quem aponta com o dedo recebe os 44px de volta, sem perder a densidade de
+   quem usa mouse. */
+@media (pointer: coarse) {
+  .btn--compacto,
+  .campo__entrada--compacto {
+    min-height: var(--alvo-toque);
+  }
+}
+
 /* Alturas da capa. Três tamanhos conhecidos: card do celular, card do desktop
    e card de jogo relacionado. Ficam aqui e não como valor solto no JSX. */
 .capa--pequena {
