@@ -6,6 +6,7 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 **Números levantados:** 93 constatações verificadas, 78 confirmadas, 11 derrubadas na conferência, 4 dependentes de checagem externa, mais 35 achados novos que a varredura inicial não tinha pego.
 
+- [Progresso](#progresso)
 - [Sumário executivo](#sumário-executivo)
 - [Ordem de execução](#ordem-de-execução)
 - [Fase 0 — Urgente: dado pessoal exposto](#fase-0--urgente-dado-pessoal-exposto)
@@ -16,6 +17,22 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 - [Fase 5 — Higiene: SEO, acessibilidade e qualidade](#fase-5--higiene-seo-acessibilidade-e-qualidade)
 - [Avaliado e descartado](#avaliado-e-descartado)
 - [Depende de checagem fora do repositório](#depende-de-checagem-fora-do-repositório)
+
+---
+
+## Progresso
+
+9 de 93 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+
+| Fase | Frente | Prioridade | Progresso | Feitas |
+| :---: | --- | --- | --- | :---: |
+| **0** | Dado pessoal exposto | Urgente | `░░░░░░░░░░` | 0/6 |
+| **1** | Quebrado para o usuário | Alta | `███░░░░░░░` | 8/26 |
+| **2** | Peso e velocidade | Alta | `░░░░░░░░░░` | 0/9 |
+| **3** | Limpeza estrutural | Média | `░░░░░░░░░░` | 1/23 |
+| **4** | Layout e navegação | Média | `░░░░░░░░░░` | 0/11 |
+| **5** | SEO, acessibilidade e qualidade | Baixa | `░░░░░░░░░░` | 0/18 |
+| | **Total** | | `█░░░░░░░░░` | **9/93** |
 
 ---
 
@@ -90,6 +107,12 @@ Risco de LGPD e lista pronta para phishing.
 
 A correção tem **duas camadas, ambas necessárias**: remover `email` do `select` resolve a tela, mas não fecha o buraco — a chave anônima permite consultar a coluna diretamente. É preciso também restringir o `SELECT` em `profiles` por RLS e expor o ranking por uma *view* pública com apenas `id`, `nome` e `pontos`.
 
+**Tarefas**
+
+- [ ] Remover `email` do `select` em [`Ranking.jsx:34`](../src/pages/Ranking.jsx#L34)
+- [ ] Restringir o `SELECT` em `profiles` por RLS ao próprio usuário
+- [ ] Criar view pública de ranking expondo só `id`, `nome` e `pontos`
+
 ### 0.2 — Prints dos jogadores listáveis, com o autor identificável
 
 O bucket `prints` responde a listagem com a chave anônima. Como o arquivo é nomeado `{user_id}_{timestamp}` ([`GameRoom.jsx:152`](../src/pages/GameRoom.jsx#L152)), cada print fica amarrado ao `profiles.id` do autor — e `profiles` devolve nome e e-mail. Na verificação, **todos os prints existentes foram associados a contas reais**.
@@ -99,6 +122,12 @@ Print de tela costuma capturar notificação de celular, nick e conversa.
 Correção: tirar a permissão de listagem do papel anônimo, tornar o bucket privado servindo ao GM por URL assinada, e parar de usar o `user.id` como nome de arquivo — usar um identificador aleatório e guardar a associação só na tabela `missoes`.
 
 ---
+
+**Tarefas**
+
+- [ ] Remover a permissão de listagem anônima do bucket `prints`
+- [ ] Tornar o bucket privado e servir ao GM por URL assinada
+- [ ] Trocar o nome do arquivo de print por identificador aleatório
 
 ## Fase 1 — O que está quebrado para o usuário
 
@@ -113,6 +142,13 @@ O jogador clica em Salvar, não recebe retorno nenhum, volta depois e perdeu tud
 O mesmo defeito explica outro sintoma: em `finalizarEmulador` os guards `typeof … === 'function'` são sempre falsos, então `stop()` e `destroy()` nunca executam. O emulador nunca é encerrado — sair pelo botão "voltar" do navegador ou clicar num jogo relacionado deixa a música tocando por baixo do site. É por isso que o botão Sair precisa recarregar a página inteira: o reload virou o único jeito de matar o áudio.
 
 > Corrigir isto destrava trocar `window.location.href` por navegação SPA, que hoje refaz todo o download de anúncios e do catálogo a cada saída de jogo.
+
+**Tarefas**
+
+- [x] Guardar a instância real do emulador (`window.EJS_emulator`) numa ref
+- [x] Fazer Salvar, Carregar e Reiniciar chamarem a instância, com retorno visual
+- [x] Encerrar o emulador de verdade no cleanup do componente
+- [x] Trocar `window.location.href` por `navigate('/')` no botão Sair
 
 ### 1.2 — 54 dos 160 jogos não iniciam
 
@@ -132,6 +168,15 @@ Correções, em ordem de custo:
 - **Os 49 do banco:** um `UPDATE` corrigindo `rom_url` e `core`, mais validação no formulário. O `core` deveria ser **derivado da extensão**, não escolhido à mão.
 - **Os 3 da SEGA:** ver 1.3, não é só renomear.
 
+**Tarefas**
+
+- [x] Asteroids: core `stella` → `stella2014`
+- [x] Super Mario 64: `rom_url` → `/mario64.z64`
+- [ ] Corrigir os 29 jogos com `rom_url` apontando para PNG
+- [ ] Corrigir os 20 jogos com `core` incompatível com a extensão
+- [ ] Validar tipo e extensão do arquivo no formulário de cadastro
+- [ ] Derivar o `core` da extensão em vez de deixá-lo livre
+
 ### 1.3 — As 22 ROMs de Mega Drive em `public/` estão corrompidas
 
 Batman Forever, Battletoads e Battletoads & Double Dragon estão cadastrados como SNES, mas os arquivos no disco são de Mega Drive — o cabeçalho traz `SEGA GENESIS` no offset `0x100`. Só que **renomear não resolve**: todos os 22 arquivos `.md` da raiz de `public/` foram re-encodados como texto UTF-8 em algum ponto do histórico, e todo byte `>= 0x80` virou a sequência `EF BF BD`.
@@ -144,6 +189,11 @@ Batman Forever, Battletoads e Battletoads & Double Dragon estão cadastrados com
 | Controle: ROMs SEGA em `.smd` e `.bin` | **zero** ocorrências, tamanho correto |
 
 A corrupção atingiu especificamente a extensão `.md`. **Os binários precisam ser substituídos por cópias íntegras.** Enquanto não houver, o certo é tirar os três cards do ar em vez de deixá-los quebrados.
+
+**Tarefas**
+
+- [ ] Substituir as 22 ROMs `.md` por cópias íntegras
+- [ ] Enquanto não houver ROM válida, remover do catálogo os 3 cards da SEGA
 
 ### 1.4 — 67 dos 160 jogos não aparecem em nenhum filtro
 
@@ -161,6 +211,13 @@ Game Boy 8 · Nintendo 1 · Super Nitendo 1 · Game boy 1 · game Boy 1  ← inv
 
 Correção em duas frentes: normalizar a coluna com um `UPDATE`, e trocar o campo de texto livre do formulário por um `<select>` fechado — senão o problema volta a cada cadastro.
 
+**Tarefas**
+
+- [x] Normalizar o valor de console na comparação do filtro
+- [ ] `UPDATE` normalizando a coluna `console` na tabela `jogos`
+- [ ] Trocar o campo de texto livre por `<select>` fechado no cadastro
+- [ ] Definir a que console pertence o registro gravado como `Nintendo`
+
 ### 1.5 — Falhas que deixam o usuário preso
 
 | Problema | Onde | Efeito |
@@ -175,6 +232,18 @@ Correção em duas frentes: normalizar a coluna com um `UPDATE`, e trocar o camp
 | `/loja` sem nenhum link no site | `App.jsx:32` | a loja de afiliados é inalcançável navegando |
 | Jogador nunca sabe o que houve com a missão | `GameRoom.jsx` / `AdminMissoes.jsx` | não existe tela de status |
 
+**Tarefas**
+
+- [ ] Adicionar rota de 404
+- [ ] Dar estado de erro à sala de jogo, com link de saída
+- [ ] Exigir login antes de abrir o modal de envio de print
+- [ ] Resetar a paginação ao desfavoritar
+- [ ] Fazer a busca ignorar acentos
+- [ ] Distinguir erro de estado vazio no Ranking
+- [ ] Implementar recuperação de senha
+- [ ] Criar ponto de entrada para `/loja`
+- [ ] Criar tela de acompanhamento das missões enviadas
+
 ### 1.6 — O CDN do emulador já está quebrado
 
 [`Emulator.jsx:39`](../src/components/Emulator.jsx#L39) aponta para o branch `@main` de um repositório de terceiros, num caminho que **não contém os arquivos do emulador**. O `emulator.min.js` responde 404 e o loader cai num fallback que o próprio EmulatorJS registra no console como *"THIS METHOD IS A FAILSAFE, AND NOT OFFICIALLY SUPPORTED"*.
@@ -184,6 +253,10 @@ Resultado por jogo aberto: **16 idas ao CDN em vez de 1**, incluindo um 404 puro
 Correção: apontar para o CDN oficial com versão fixada — `https://cdn.emulatorjs.org/4.2.3/data/`, onde o build minificado existe. Resolve os 404, reduz o peso e congela a versão, eliminando o risco de um commit de terceiro derrubar todos os jogos sem aviso.
 
 ---
+
+**Tarefas**
+
+- [x] Apontar o EmulatorJS para o CDN oficial em versão fixa
 
 ## Fase 2 — Peso e velocidade
 
@@ -199,6 +272,12 @@ Correção: apontar para o CDN oficial com versão fixada — `https://cdn.emula
 
 **Efeito combinado: 2,25 MiB → 0,66 MiB, ou 47 s → 14 s em 3G lenta.** Sem tocar em lógica.
 
+**Tarefas**
+
+- [ ] Converter as 60 capas para WebP 400×320
+- [ ] Adicionar `loading="lazy"` e `decoding="async"` nos cards
+- [ ] Dar dimensão fixa ao logo da Home
+
 ### 2.2 — Cache: hoje não existe
 
 Medido em produção, não suposto:
@@ -211,6 +290,11 @@ cache-control: public, max-age=0, must-revalidate
 **Todo arquivo do site** é servido com `max-age=0` — inclusive os assets que já têm hash de conteúdo no nome e nunca mudam. Um visitante recorrente paga cerca de **55 idas ao servidor** só para revalidar coisas que já tem em cache.
 
 Correção: adicionar um bloco `headers` no [`vercel.json`](../vercel.json) com `max-age=31536000, immutable` para `/assets/*` (é seguro, os nomes têm hash), cache semanal para capas e ROMs, e manter `max-age=0` apenas para o `index.html`.
+
+**Tarefas**
+
+- [ ] Adicionar bloco `headers` no `vercel.json` com cache imutável para `/assets/*`
+- [ ] Definir cache semanal para capas e ROMs
 
 ### 2.3 — 199 MiB de duplicata pura no repositório
 
@@ -225,6 +309,11 @@ Correção: adicionar um bloco `headers` no [`vercel.json`](../vercel.json) com 
 Além disso, 83% de `public/` (332 MB) são ROMs e capas órfãs, incluindo jogos inteiros que nunca aparecem no site.
 
 Isso não afeta a navegação — o navegador nunca baixa as duplicatas. Afeta **build, deploy e clone**: hoje o repositório é inviável de clonar em rede fraca.
+
+**Tarefas**
+
+- [ ] Remover `public/roms/` e `public/capas/`
+- [ ] Decidir o destino das ROMs e capas órfãs
 
 ### 2.4 — Bundle e divisão de código
 
@@ -241,6 +330,11 @@ O bundle é um chunk único de 486 KB (136 KB gzip). Composição medida:
 O ganho aqui é menor do que parece à primeira vista (ver [Avaliado e descartado](#avaliado-e-descartado)), mas vale por **higiene de cache**: separar React, Router e Supabase em chunks próprios faz o código da aplicação — que muda toda semana — parar de invalidar os 62 KB do React a cada deploy.
 
 ---
+
+**Tarefas**
+
+- [ ] Separar react, router e supabase em chunks próprios
+- [ ] Envolver as rotas admin em `React.lazy`
 
 ## Fase 3 — Limpeza estrutural do código
 
@@ -260,6 +354,13 @@ Distribuição das 190 funções do projeto: **96,8% têm complexidade ≤ 9**. 
 Isso muda a conversa. O código não está "todo ruim": ele tem dois componentes-deus e um monte de folha simples. `Home` sozinho acumula sessão, perfil, ranking, missões, catálogo, favoritos, busca, filtro, paginação, responsividade, sorteio e toda a renderização — numa única função de 874 linhas.
 
 **Alvo:** extrair hooks (`useSessao`, `useCatalogo`, `useFavoritos`, `usePaginacao`) e componentes de apresentação, deixando `Home` e `GameRoom` como orquestradores de ~120 linhas.
+
+**Tarefas**
+
+- [ ] Extrair hooks da Home: sessão, catálogo, favoritos e paginação
+- [ ] Extrair os componentes de apresentação da Home
+- [ ] Extrair hooks e componentes da sala de jogo
+- [ ] Tirar `gerarNumerosPagina` do componente como função pura
 
 ### 3.2 — Duplicação: 23% do projeto, 48% das telas de admin
 
@@ -284,6 +385,12 @@ O que mais chama atenção é a **ausência total de reuso** — não é código
 
 E **379 cores hexadecimais escritas à mão**, 54 valores distintos. O [`index.css`](../src/index.css) já declara variáveis CSS — e o uso de `var(--…)` nos arquivos `.jsx` é **zero**.
 
+**Tarefas**
+
+- [ ] Criar `components/ui` com Botão, Card, Input, Layout e link de voltar
+- [ ] Criar tokens de cor e substituir as 379 cores escritas à mão
+- [ ] Migrar as telas para os componentes compartilhados
+
 ### 3.3 — A duplicação já custa dinheiro, medido
 
 Dois números que provam a consequência prática em vez de apontar o cheiro:
@@ -301,6 +408,11 @@ Dois números que provam a consequência prática em vez de apontar o cheiro:
 
 Como a Home lê uma estrutura e a sala de jogo lê a outra, **a capa e o nome mudam entre a listagem e a tela do jogo, hoje, no ar**. 137 das 234 linhas do `games[]` (58,5%) são pura repetição.
 
+**Tarefas**
+
+- [ ] Unificar `games[]` e `gamesDb{}` numa fonte única
+- [ ] Corrigir as 4 divergências que já existem entre as duas
+
 ### 3.4 — Nenhuma camada entre a tela e o banco
 
 | Medida | Valor |
@@ -314,6 +426,12 @@ Operadores de query encadeados dentro do JSX: 19 `.select(`, 16 `.eq(`, 9 `.orde
 
 Consequência direta: os três blocos de upload (`AdminJogos`, `AdminLoja`, `GameRoom`) repetem a mesma sequência — `split('.').pop()` → montar caminho → `upload(..., {upsert:true})` → `getPublicUrl` → gravar na tabela — e **os três têm zero validação de tipo ou tamanho de arquivo**. Foi assim que 29 capas PNG entraram no campo da ROM.
 
+**Tarefas**
+
+- [ ] Criar `services/` como único lugar que monta consulta
+- [ ] Unificar os 3 blocos de upload, com validação de tipo e tamanho
+- [ ] Criar um guard de rota único para as telas administrativas
+
 ### 3.5 — Responsividade: duas implementações que discordam
 
 | Medida | Valor |
@@ -325,6 +443,11 @@ Consequência direta: os três blocos de upload (`AdminJogos`, `AdminLoja`, `Gam
 `GameRoom` usa `innerWidth < 768 || innerHeight < 600`; `Home` usa `screenWidth <= 768`. **Numa janela de exatamente 768px, a Home considera mobile e a GameRoom considera desktop.** As sete telas de admin não tratam responsividade nenhuma e usam padding fixo de 40px.
 
 Toda a responsividade do produto é ternário JavaScript dentro de objeto de estilo inline, reavaliado a cada evento de resize.
+
+**Tarefas**
+
+- [ ] Unificar a detecção de breakpoint entre Home e sala de jogo
+- [ ] Migrar a responsividade de JavaScript para CSS
 
 ### 3.6 — Estruturas de dados e complexidade algorítmica
 
@@ -354,6 +477,18 @@ A conferência derrubou a retórica de três itens, e isso importa mais do que p
 **Item derrubado na conferência:** trocar o *refetch* da tabela após uma edição por atualização otimista. O veredito foi que hoje isso seria **trocar correção por microtimização** — quatro caminhos de escrita não reportam erro e os `update` não usam `.select()`, então a tela mostraria uma alteração que pode não ter acontecido no banco. Só faz sentido depois que o tratamento de erro existir.
 
 > Resumo para a reunião: **o site não está lento por causa de algoritmo.** Está lento por causa das imagens da Fase 2. O que a Fase 3 entrega é código que escala e que para de produzir bug — três dos itens acima já causam defeito visível hoje.
+
+**Tarefas**
+
+- [x] Içar `busca.toLowerCase()` para fora do predicado do filtro
+- [ ] Deduplicar por `id` a união dos catálogos
+- [ ] Corrigir o sorteio de relacionados: copiar antes e usar Fisher-Yates
+- [ ] Paralelizar as três consultas do painel administrativo
+- [ ] Paralelizar os uploads de capa e ROM, depois de validar o id
+- [ ] Guardar o booleano de breakpoint em vez da largura em pixels
+- [ ] Trocar `key={idx}` por chave natural nas duas listas que reordenam
+- [ ] Adicionar guarda de nulo no filtro do admin
+- [ ] Enxugar as colunas do `select` da Home
 
 ### 3.7 — Alvo estrutural
 
@@ -394,6 +529,20 @@ flowchart TB
 | Estado da vitrine não vai para a URL | voltar de um jogo devolve para a página 1 | busca, filtro e página na *query string* |
 | IDs de anúncio repetidos entre rotas | mesmos IDs na Home e na GameRoom; após navegação SPA o slot não reexibe | IDs distintos por rota |
 
+**Tarefas**
+
+- [ ] Não reservar 250px fixos quando o slot de anúncio não preenche
+- [ ] Subir a grade de jogos na ordem visual do celular
+- [ ] Colocar logo e navegação no cabeçalho fixo
+- [ ] Recolher os painéis de publicidade da sala de jogo quando não há criativo
+- [ ] Ajustar a largura da coluna para o criativo de 300px não transbordar
+- [ ] Padronizar a proporção das capas para não cortar a arte
+- [ ] Ajustar itens por página ao número de colunas da grade
+- [ ] Transformar os filtros em faixa única com rolagem horizontal no celular
+- [ ] Indicar rolagem no card de desafios
+- [ ] Levar busca, filtro e página para a URL
+- [ ] Usar IDs de anúncio distintos por rota
+
 ## Fase 5 — Higiene: SEO, acessibilidade e qualidade
 
 **SEO** — não existem `robots.txt` nem `sitemap.xml`; o `index.html` não tem nenhuma tag `og:`, `twitter:` ou `canonical`; e o `<title>` é fixo em todas as rotas. Colar o link no WhatsApp não gera prévia nenhuma.
@@ -405,6 +554,36 @@ flowchart TB
 **Dados** — 120 dos 184 perfis estão com `nome` NULL, porque o cadastro nunca grava um nome; o pódio da Home já mostra `---`. O Meta Pixel dispara `CompleteRegistration` em **todo carregamento de página**, não no cadastro, o que contamina a métrica de conversão. Apagar um jogo deixa a ROM e a capa no Storage — já há 10 ROMs (14,8 MiB) e 11 capas órfãs acumuladas.
 
 ---
+
+**Tarefas — SEO**
+
+- [ ] Criar `robots.txt` e `sitemap.xml`
+- [ ] Adicionar tags `og:` e `twitter:` e `canonical`
+- [ ] Tornar o `<title>` dinâmico por rota
+
+**Tarefas — Acessibilidade**
+
+- [ ] Dar nome acessível aos 13 botões só de ícone
+- [ ] Levar os alvos de toque a 44px
+- [ ] Criar estados de foco visíveis e remover os `outline: none`
+- [ ] Corrigir o contraste dos cinzas `#666` e `#555`
+- [ ] Associar rótulo e `autoComplete` aos campos de formulário
+- [ ] Dar um `<h1>` à Home
+
+**Tarefas — Qualidade**
+
+- [ ] Zerar os 17 erros e 2 avisos do lint
+- [ ] Substituir os 24 `alert()` por feedback na interface
+- [ ] Definir a animação dos indicadores de carregamento
+- [ ] Carregar a fonte Inter ou trocar a declaração
+- [ ] Remover componentes órfãos, CSS morto e `public/readme.html`
+- [ ] Corrigir o ícone que o `manifest.json` aponta
+
+**Tarefas — Dados**
+
+- [ ] Passar a gravar o nome no cadastro e corrigir os 120 perfis sem nome
+- [ ] Disparar o evento de cadastro do pixel só no cadastro
+- [ ] Apagar os arquivos do Storage junto com o registro
 
 ## Avaliado e descartado
 
