@@ -22,17 +22,17 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-69 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+71 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
 | **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
 | **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
-| **3** | Limpeza estrutural | Média | `█████████░` | 22/23 |
+| **3** | Limpeza estrutural | Média | `██████████` | 23/23 |
 | **4** | Layout e navegação | Média | `██████░░░░` | 7/12 |
-| **5** | SEO, acessibilidade e qualidade | Baixa | `███████░░░` | 13/18 |
-| | **Total** | | `███████░░░` | **69/94** |
+| **5** | SEO, acessibilidade e qualidade | Baixa | `████████░░` | 14/18 |
+| | **Total** | | `████████░░` | **71/94** |
 
 ---
 
@@ -371,7 +371,14 @@ Isso muda a conversa. O código não está "todo ruim": ele tem dois componentes
 
 - [x] Extrair hooks da Home: sessão, catálogo, favoritos e paginação
 - [x] Extrair os componentes de apresentação da Home
-- [ ] Extrair hooks e componentes da sala de jogo
+- [x] Extrair hooks e componentes da sala de jogo
+  <br>De 772 linhas no começo para 160. Saíram três hooks — `useJogo`,
+  `useRelacionados` e `useEmulador` — e quatro componentes em
+  `components/jogo/`. A extração revelou dois defeitos que estavam
+  escondidos: o sorteio rodava dentro de um `useMemo`, ou seja durante o
+  render, onde o React não garante quantas vezes executa; e o jogo do
+  acervo do código era gravado com `setState` num efeito, custando um
+  render a mais para um dado que já estava em memória.
 - [x] Tirar `gerarNumerosPagina` do componente como função pura
 
 ### 3.2 — Duplicação: 23% do projeto, 48% das telas de admin
@@ -621,7 +628,12 @@ flowchart TB
   resultado de uma fonte inexistente: ela nunca foi carregada, porque não há
   `@font-face` nem link de fonte no projeto. Quem tinha Inter instalada via
   uma tipografia diferente do resto do público.
-- [ ] Remover componentes órfãos, CSS morto e `public/readme.html`
+- [x] Remover componentes órfãos, CSS morto e `public/readme.html`
+  <br>O `readme.html` era um arquivo do CoolROM servido no domínio, com
+  redirecionamento automático para um site de ROMs. Saíram também o
+  `AvisoPrint`, que ninguém importava, e as classes que sobraram dele.
+  O `AnuncioLateral` continua no repositório, órfão, porque os arquivos
+  de anúncio estão congelados por decisão de quem cuida da monetização.
 - [x] Corrigir o ícone que o `manifest.json` aponta
   <br>Foi além do ícone: o manifest inteiro estava inservível e o site nunca
   foi instalável, porque faltava o service worker que o Chrome exige.

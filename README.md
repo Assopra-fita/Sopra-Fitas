@@ -86,45 +86,60 @@ O `git clone` baixa cerca de **93 MB** de histórico e o diretório de trabalho 
 Sopra-Fitas/
 ├── index.html              # shell da SPA + tags de anúncio e Meta Pixel
 ├── vite.config.js          # config do build (mínima: só o plugin do React)
-├── vercel.json             # rewrite catch-all para a SPA
-├── eslint.config.js
+├── vercel.json             # rewrite catch-all da SPA + cabeçalhos de cache
+├── eslint.config.js        # proíbe estilo no JSX, entre outras regras
 ├── .prettierrc
 │
-├── src/                    # TODO o código-fonte — 24 arquivos, ~5.000 linhas
-│   ├── main.jsx            # bootstrap (6 linhas)
-│   ├── App.jsx             # as 13 rotas do produto (62 linhas)
-│   ├── supabaseClient.js   # cliente Supabase singleton (9 linhas)
-│   ├── index.css           # único CSS importado (91 linhas)
-│   ├── App.css             # ÓRFÃO: nenhum arquivo importa
-│   ├── constants/
-│   │   └── games.js        # catálogo estático (518 linhas)
-│   ├── pages/              # 13 arquivos, uma página por rota
-│   ├── components/         # 4 arquivos, só 2 em uso
-│   └── assets/             # órfão do template Vite
+├── src/                    # todo o código-fonte — 67 arquivos, ~6.800 linhas
+│   ├── main.jsx            # bootstrap
+│   ├── App.jsx             # as rotas do produto
+│   ├── supabaseClient.js   # cliente Supabase singleton
+│   ├── registrarPWA.js     # registra o service worker, só em produção
+│   ├── constants/          # acervo estático e a lista de consoles suportados
+│   ├── services/           # ÚNICO lugar que fala com o Supabase — 7 arquivos
+│   ├── hooks/              # sessão, catálogo, favoritos, avisos, emulador…
+│   ├── lib/                # funções puras: texto, paginação, estado de jogo
+│   ├── pages/              # uma página por rota — 12 arquivos
+│   ├── components/
+│   │   ├── ui/             # peças compartilhadas: Botao, Card, Campo, Tabela…
+│   │   ├── home/           # cabeçalho, cards e paginação da vitrine
+│   │   └── jogo/           # barra de controles, ficha, relacionados, modal
+│   └── styles/             # todo o CSS — 6 arquivos, um ponto de entrada
 │
-├── public/                 # ~400 MB de binários, copiados verbatim para o dist
+├── public/                 # ~196 MB de binários, copiados verbatim para o dist
 │   ├── *.sfc *.md *.nes …  # ROMs
-│   ├── *.jpg *.png         # capas
-│   ├── roms/               # NÃO REFERENCIADA por nenhuma linha de código
-│   ├── capas/              # NÃO REFERENCIADA por nenhuma linha de código
-│   ├── ads.txt
-│   └── manifest.json
+│   ├── *.webp *.png        # capas
+│   ├── sw.js               # service worker
+│   ├── manifest.json       # nome, ícone e cores do app instalado
+│   ├── icone-*.png         # ícones do PWA
+│   ├── robots.txt · sitemap.xml
+│   └── ads.txt
 │
 └── dist/                   # gerado pelo build, não versionado
 ```
 
-O que **não existe** e vale saber de antemão: nenhum `Context`/`Provider`, nenhum hook customizado, nenhum componente de layout ou header compartilhado, nenhum teste, nenhum TypeScript, nenhuma pasta de migrations do banco.
+O que **não existe** e vale saber de antemão: nenhum `Context`/`Provider`,
+nenhum teste automatizado no repositório, nenhum TypeScript, nenhuma pasta de
+migrations do banco.
+
+Três regras estruturais que o código segue hoje, e que valem para quem for
+mexer:
+
+| Regra | Onde vive | Como é garantida |
+| --- | --- | --- |
+| Nenhum estilo no JSX | `src/styles/` | regra de lint que falha o build da revisão |
+| Nenhuma tela monta consulta | `src/services/` | só `services/consulta.js` importa o cliente do Supabase |
+| Layout é CSS, não JavaScript | media queries | sobrou um uso de breakpoint em JS, que decide conteúdo e não aparência |
 
 ### Ordem sugerida de leitura
 
-Não há um "core": há três arquivos que concentram quase tudo e o resto são folhas.
-
-1. [`src/main.jsx`](src/main.jsx) → [`src/App.jsx`](src/App.jsx) → [`src/supabaseClient.js`](src/supabaseClient.js) — o esqueleto, 77 linhas somadas
-2. [`src/constants/games.js`](src/constants/games.js) — dados puros, entenda o formato antes do resto
-3. [`src/pages/Home.jsx`](src/pages/Home.jsx) — 894 linhas, o maior arquivo; concentra sessão, catálogo, busca, favoritos, ranking e anúncios
-4. [`src/pages/GameRoom.jsx`](src/pages/GameRoom.jsx) — 688 linhas; emulador, controles e envio de missão
-5. [`src/components/Emulator.jsx`](src/components/Emulator.jsx) — a ponte com o EmulatorJS
-6. As sete telas de admin — todas são variações do mesmo padrão: um `useEffect` de busca, um handler de escrita, estilos inline
+1. [`src/main.jsx`](src/main.jsx) → [`src/App.jsx`](src/App.jsx) — o esqueleto e as rotas
+2. [`src/constants/games.js`](src/constants/games.js) — o acervo do código, fonte única; entenda o formato antes do resto
+3. [`src/services/`](src/services/) — o que o site lê e escreve, por domínio
+4. [`src/pages/Home.jsx`](src/pages/Home.jsx) — a vitrine: busca, filtro e paginação, com o estado na URL
+5. [`src/pages/GameRoom.jsx`](src/pages/GameRoom.jsx) — a sala de jogo, que orquestra os hooks de `src/hooks/use{Jogo,Relacionados,Emulador}.js`
+6. [`src/components/Emulator.jsx`](src/components/Emulator.jsx) — a ponte com o EmulatorJS, e o lugar mais frágil do projeto
+7. As seis telas de admin — todas seguem o mesmo desenho: um hook de consulta, `services/` para escrever, `components/ui` para desenhar
 
 ## Build e deploy
 
