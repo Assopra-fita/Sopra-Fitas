@@ -687,6 +687,10 @@
   border: none;
   border-radius: 50%;
   cursor: pointer;
+  /* `button` não herda `color`: o navegador aplica `buttontext`, que é preto.
+     Sem esta linha o coração vazio ficava preto sobre o círculo preto do
+     próprio botão, com contraste de 1,00:1 — ou seja, invisível. */
+  color: var(--texto);
   /* 13px de recuo leva o alvo de toque a 44x44 */
   padding: 13px;
   line-height: 0;
