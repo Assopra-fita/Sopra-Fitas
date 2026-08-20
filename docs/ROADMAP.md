@@ -22,7 +22,7 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-62 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+65 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
@@ -31,8 +31,8 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
 | **3** | Limpeza estrutural | Média | `█████████░` | 22/23 |
 | **4** | Layout e navegação | Média | `███░░░░░░░` | 3/12 |
-| **5** | SEO, acessibilidade e qualidade | Baixa | `██████░░░░` | 10/18 |
-| | **Total** | | `███████░░░` | **62/94** |
+| **5** | SEO, acessibilidade e qualidade | Baixa | `███████░░░` | 13/18 |
+| | **Total** | | `███████░░░` | **65/94** |
 
 ---
 
@@ -595,14 +595,21 @@ flowchart TB
 - [x] Criar estados de foco visíveis e remover os `outline: none`
 - [x] Corrigir o contraste dos cinzas `#666` e `#555`
 - [x] Associar rótulo e `autoComplete` aos campos de formulário
-- [ ] Dar um `<h1>` à Home
+- [x] Dar um `<h1>` à Home
 
 **Tarefas — Qualidade**
 
 - [ ] Zerar os 17 erros e 2 avisos do lint
-- [ ] Substituir os 24 `alert()` por feedback na interface
+- [x] Substituir os 24 `alert()` por feedback na interface
+  <br>Eram 19 no código quando chegou a vez deles. Sobraram os 4 `window.confirm`,
+  de propósito: são confirmações de ação destrutiva, e trocá-las por caixa
+  própria exige armadilha de foco para não piorar o teclado.
 - [x] Definir a animação dos indicadores de carregamento
-- [ ] Carregar a fonte Inter ou trocar a declaração
+- [x] Carregar a fonte Inter ou trocar a declaração
+  <br>Trocada a declaração. Medindo a largura do texto, `"Inter"` dava o mesmo
+  resultado de uma fonte inexistente: ela nunca foi carregada, porque não há
+  `@font-face` nem link de fonte no projeto. Quem tinha Inter instalada via
+  uma tipografia diferente do resto do público.
 - [ ] Remover componentes órfãos, CSS morto e `public/readme.html`
 - [x] Corrigir o ícone que o `manifest.json` aponta
   <br>Foi além do ícone: o manifest inteiro estava inservível e o site nunca
