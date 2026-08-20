@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { listarRanking } from '../services/perfis';
 import { listarDesafios } from '../services/desafios';
 import {
@@ -30,6 +30,9 @@ import Paginacao from '../components/home/Paginacao';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { useAviso } from '../hooks/useAviso';
 
+// Quanto o campo espera parar de digitar antes de escrever na URL.
+const ATRASO_DA_BUSCA = 250;
+
 const Home = () => {
   useTituloDaPagina();
 
@@ -48,9 +51,30 @@ const Home = () => {
   const [missoes, setMissoes] = useState([]);
   const [loadingRanking, setLoadingRanking] = useState(true);
   const [loadingMissoes, setLoadingMissoes] = useState(true);
-  const [busca, setBusca] = useState('');
-  const [filtroConsole, setFiltroConsole] = useState('Todos');
-  const [paginaAtual, setPaginaAtual] = useState(1);
+  // Busca, filtro e página vivem na URL, não em estado local. Sem isso, voltar
+  // de um jogo devolvia o jogador para a página 1 sem filtro, e não havia como
+  // mandar para alguém o link de uma busca.
+  //
+  // O padrão de cada um fica FORA da URL, para o endereço da Home continuar
+  // sendo apenas "/".
+  const [parametros, setParametros] = useSearchParams();
+  const busca = parametros.get('busca') ?? '';
+  const filtroConsole = parametros.get('console') ?? 'Todos';
+  const paginaAtual = Number(parametros.get('pagina')) || 1;
+
+  const atualizarParametros = (mudancas, { substituir = false } = {}) => {
+    setParametros(
+      (atuais) => {
+        const novos = new URLSearchParams(atuais);
+        for (const [chave, valor] of Object.entries(mudancas)) {
+          if (valor === null) novos.delete(chave);
+          else novos.set(chave, valor);
+        }
+        return novos;
+      },
+      { replace: substituir }
+    );
+  };
 
   useEffect(() => {
     let ativo = true;
@@ -90,14 +114,48 @@ const Home = () => {
   // Mudar busca ou categoria volta para a primeira página. Feito aqui, junto da
   // ação, em vez de num efeito que reage à mudança — o efeito causava um render
   // extra em cascata.
+  //
+  // O campo tem estado próprio e a URL recebe o valor com atraso.
+  //
+  // Sem isso o campo perde letra: ele é controlado pela URL, a atualização da
+  // URL não é síncrona com a digitação, e um render com o valor anterior
+  // reescreve o que já estava no campo. Digitando "mario" depressa, o que
+  // chegava era "mo" — medido.
+  //
+  // O atraso também evita encher o histórico: digitar substitui a entrada em
+  // vez de empilhar uma por tecla.
+  const [buscaDigitada, setBuscaDigitada] = useState(busca);
+  const buscaEnviadaRef = useRef(busca);
+  const timerBuscaRef = useRef(null);
+
   const mudarBusca = (valor) => {
-    setBusca(valor);
-    setPaginaAtual(1);
+    setBuscaDigitada(valor);
+    clearTimeout(timerBuscaRef.current);
+
+    timerBuscaRef.current = setTimeout(() => {
+      buscaEnviadaRef.current = valor;
+      atualizarParametros(
+        { busca: valor || null, pagina: null },
+        { substituir: true }
+      );
+    }, ATRASO_DA_BUSCA);
   };
 
+  // Voltar e avançar mudam a URL por fora do campo; aí o campo acompanha.
+  useEffect(() => {
+    if (busca !== buscaEnviadaRef.current) {
+      buscaEnviadaRef.current = busca;
+      setBuscaDigitada(busca);
+    }
+  }, [busca]);
+
+  useEffect(() => () => clearTimeout(timerBuscaRef.current), []);
+
   const mudarFiltro = (categoria) => {
-    setFiltroConsole(categoria);
-    setPaginaAtual(1);
+    atualizarParametros({
+      console: categoria === 'Todos' ? null : categoria,
+      pagina: null,
+    });
   };
 
   const sairDaConta = async () => {
@@ -152,11 +210,9 @@ const Home = () => {
   );
 
   const mudarPagina = (pagina) => {
-    setPaginaAtual(pagina);
+    atualizarParametros({ pagina: pagina === 1 ? null : String(pagina) });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-
 
 
   // No desktop a grade fica na coluna do meio, entre os Desafios e o Top 5.
@@ -234,7 +290,7 @@ const Home = () => {
                 <input
                   type="text"
                   placeholder="Busque por jogo..."
-                  value={busca}
+                  value={buscaDigitada}
                   onChange={(e) => mudarBusca(e.target.value)}
                   className="home__busca-entrada"
                   aria-label="Buscar jogo pelo nome"
