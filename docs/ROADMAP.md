@@ -22,7 +22,7 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-61 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+62 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
@@ -31,8 +31,8 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
 | **3** | Limpeza estrutural | Média | `█████████░` | 22/23 |
 | **4** | Layout e navegação | Média | `███░░░░░░░` | 3/12 |
-| **5** | SEO, acessibilidade e qualidade | Baixa | `█████░░░░░` | 9/18 |
-| | **Total** | | `██████░░░░` | **61/94** |
+| **5** | SEO, acessibilidade e qualidade | Baixa | `██████░░░░` | 10/18 |
+| | **Total** | | `███████░░░` | **62/94** |
 
 ---
 
@@ -604,7 +604,10 @@ flowchart TB
 - [x] Definir a animação dos indicadores de carregamento
 - [ ] Carregar a fonte Inter ou trocar a declaração
 - [ ] Remover componentes órfãos, CSS morto e `public/readme.html`
-- [ ] Corrigir o ícone que o `manifest.json` aponta
+- [x] Corrigir o ícone que o `manifest.json` aponta
+  <br>Foi além do ícone: o manifest inteiro estava inservível e o site nunca
+  foi instalável, porque faltava o service worker que o Chrome exige.
+  Ver a seção do PWA no README.
 
 **Tarefas — Dados**
 
