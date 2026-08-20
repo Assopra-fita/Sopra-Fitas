@@ -351,25 +351,6 @@
   height: 100%;
 }
 
-/* ---------- Aviso fixo no topo ---------- */
-.aviso-topo {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--esp-sm);
-  padding: 8px;
-  background: #ffa600;
-  color: #1a1a2e;
-  font-size: 0.85rem;
-  font-weight: bold;
-  text-align: center;
-}
-
 /* ---------- Tela de carregamento de rota ---------- */
 .carregando-rota {
   min-height: 100vh;

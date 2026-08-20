@@ -712,10 +712,6 @@
   margin-bottom: var(--esp-sm);
 }
 
-.card-jogo__acao {
-  display: block;
-}
-
 @media (max-width: 768px) {
   .card-jogo {
     padding: var(--esp-sm);
