@@ -7,6 +7,19 @@ const CardDesafios = ({ missoes, carregando }) => (
       <span className="lateral__titulo-texto">
         <Target size={18} aria-hidden="true" /> Desafios do mês
       </span>
+
+      {/* O total no cabeçalho é o que avisa que a lista continua além do que
+          cabe na caixa. Tentei antes uma sombra de rolagem em CSS e medi que
+          ela não produzia diferença visível: os desafios têm fundo próprio e
+          a lista rola com barra sobreposta, que some quando parada. */}
+      {!carregando && missoes.length > 0 && (
+        <span className="lateral__contagem">
+          {missoes.length}
+          <span className="visualmente-oculto">
+            {missoes.length === 1 ? ' desafio' : ' desafios'}
+          </span>
+        </span>
+      )}
     </h2>
 
     <div className="lateral__lista">
