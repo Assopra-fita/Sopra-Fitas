@@ -22,7 +22,7 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-65 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+69 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
@@ -30,9 +30,9 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 | **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
 | **3** | Limpeza estrutural | Média | `█████████░` | 22/23 |
-| **4** | Layout e navegação | Média | `███░░░░░░░` | 3/12 |
+| **4** | Layout e navegação | Média | `██████░░░░` | 7/12 |
 | **5** | SEO, acessibilidade e qualidade | Baixa | `███████░░░` | 13/18 |
-| | **Total** | | `███████░░░` | **65/94** |
+| | **Total** | | `███████░░░` | **69/94** |
 
 ---
 
@@ -560,11 +560,22 @@ flowchart TB
 - [x] Colocar logo e navegação no cabeçalho fixo
 - [ ] ⛔ **Fora do meu escopo** — Recolher os painéis de publicidade da sala de jogo quando não há criativo
 - [ ] ⛔ **Fora do meu escopo** — Ajustar a largura da coluna para o criativo de 300px não transbordar
-- [ ] Padronizar a proporção das capas para não cortar a arte
+- [x] Padronizar a proporção das capas para não cortar a arte
+  <br>Resolvido com `object-fit: contain` em vez de padronizar os arquivos: as
+  22 capas locais têm 14 proporções diferentes, de 0,71 a 2,00, e recortar
+  comia 27% da arte em média e 48% no pior caso.
 - [x] Ajustar itens por página ao número de colunas da grade — 4 colunas × 3 linhas = 12
-- [ ] Transformar os filtros em faixa única com rolagem horizontal no celular
-- [ ] Indicar rolagem no card de desafios
-- [ ] Levar busca, filtro e página para a URL
+- [x] Transformar os filtros em faixa única com rolagem horizontal no celular
+  <br>De 4 linhas e 170,8px para 1 linha e 43px. O primeiro jogo subiu 128px.
+- [x] Indicar rolagem no card de desafios
+  <br>Feito com a contagem no cabeçalho, não com sombra de rolagem: medi o
+  brilho da borda da lista e a sombra em CSS não produzia diferença
+  perceptível, porque cada desafio tem fundo próprio e a barra é sobreposta.
+  O teto da lista também deixou de ser 260px fixos.
+- [x] Levar busca, filtro e página para a URL
+  <br>O campo de busca precisou de estado próprio e escrita atrasada na URL:
+  controlado direto pela URL ele perdia letra, e digitar "mario" depressa
+  gravava "mo".
 - [ ] ⛔ **Fora do meu escopo** — Usar IDs de anúncio distintos por rota
 
 ## Fase 5 — Higiene: SEO, acessibilidade e qualidade
