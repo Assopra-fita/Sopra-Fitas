@@ -186,10 +186,15 @@
   background: #000;
 }
 
+/* `contain` e não `cover`: as capas do acervo têm 14 proporções diferentes,
+   de 0,71 a 2,00, e recortar para caber numa caixa quadrada comia 27% da arte
+   em média e 48% no pior caso — Mega Man X perdia metade do desenho.
+   A caixa continua de altura fixa para os cards da mesma linha ficarem
+   alinhados; o que sobra é fundo, não corte. */
 .capa__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
