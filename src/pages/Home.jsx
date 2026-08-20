@@ -213,15 +213,20 @@ const Home = () => {
           </div>
 
           <div className="home__coluna home__coluna--centro">
-            <img
-              src="/logo.webp"
-              alt="Sopra Fitas"
-              width="700"
-              height="374"
-              fetchPriority="high"
-              decoding="async"
-              className="home__logo"
-            />
+            {/* A Home não tinha nenhum <h1>. Envolver a logo resolve sem
+                mudar nada na tela: o texto alternativo da imagem vira o
+                título de primeiro nível da página. */}
+            <h1 className="home__titulo">
+              <img
+                src="/logo.webp"
+                alt="Sopra Fitas"
+                width="700"
+                height="374"
+                fetchPriority="high"
+                decoding="async"
+                className="home__logo"
+              />
+            </h1>
 
             <div className="home__busca">
               <div className="home__busca-campo">

@@ -813,6 +813,12 @@
   min-width: 0;
 }
 
+/* O h1 existe pela semântica e não deve introduzir espaçamento próprio. */
+.home__titulo {
+  margin: 0;
+  line-height: 0;
+}
+
 /* Acompanha a largura da busca, para os dois ficarem no mesmo eixo visual. */
 .home__logo {
   width: 100%;

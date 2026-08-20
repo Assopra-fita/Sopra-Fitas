@@ -232,6 +232,9 @@ const GameRoom = () => {
         {erroJogo ? (
           <div className="sala__falha">
             <Gamepad size={40} aria-hidden="true" />
+            {/* Um endereço é uma rota, e uma rota precisa de título de
+                primeiro nível — inclusive quando o que ela mostra é um erro. */}
+            <h1 className="sala__falha-titulo">Jogo não encontrado</h1>
             <EstadoErro>{erroJogo}</EstadoErro>
             <Botao para="/">
               <Home size={16} aria-hidden="true" /> Voltar para os jogos

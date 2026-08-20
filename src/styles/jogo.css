@@ -80,6 +80,12 @@
   gap: var(--esp-md);
   padding: 50px var(--esp-lg);
   color: var(--perigo-texto);
+  text-align: center;
+}
+
+.sala__falha-titulo {
+  color: var(--texto);
+  font-size: 1.4rem;
 }
 
 /* ---------- Tela do emulador ---------- */

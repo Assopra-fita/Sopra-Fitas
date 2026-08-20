@@ -10,7 +10,13 @@ body {
   min-height: 100vh;
   background-color: var(--fundo);
   color: var(--texto);
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* Sem Inter. Ela era a primeira da lista e nunca foi carregada: não há
+     @font-face nem link para fonte no projeto, e medindo a largura do texto
+     com "Inter" o resultado é idêntico ao de uma fonte inexistente. O site
+     sempre renderizou com a fonte do sistema — a declaração só escondia isso,
+     e dava tipografia diferente para quem tivesse Inter instalada. */
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
   line-height: 1.5;
 }
 
