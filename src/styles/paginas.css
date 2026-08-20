@@ -444,6 +444,17 @@
   gap: 8px;
 }
 
+.lateral__contagem {
+  flex-shrink: 0;
+  min-width: 22px;
+  padding: 2px 7px;
+  border-radius: var(--raio-pilula);
+  background: var(--superficie-alta);
+  color: var(--texto-suave);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
 .lateral__ver-tudo {
   font-size: 0.7rem;
   color: var(--texto-suave);
@@ -452,10 +463,22 @@
 
 /* Rolagem própria: sem o teto, cada desafio novo alonga esta coluna e aumenta
    o vão embaixo dos filtros, porque a grade só começa depois da coluna mais
-   alta da seção. */
+   alta da seção.
+   
+   O teto vale só no layout de três colunas. Em coluna única a lista pode
+   crescer no fluxo da página: rolagem dentro de rolagem não ajuda ninguém, e
+   ali não há coluna vizinha para desalinhar. */
 .lateral__lista {
-  max-height: 260px;
   overflow-y: auto;
+}
+
+@media (min-width: 1101px) {
+  .lateral__lista {
+    /* Proporcional à janela, não 260px fixos: em 1440px de altura a lista
+       parava em 260px com 368px de conteúdo, escondendo 108px com espaço
+       de sobra na tela. */
+    max-height: min(420px, calc(100vh - 260px));
+  }
 }
 
 .lateral__vazio {
@@ -1013,7 +1036,28 @@
     border-radius: 14px;
   }
 
+  /* Os 10 filtros quebravam em 4 linhas e 170,8px de altura numa tela de
+     320px, tudo isso acima do primeiro jogo. Em faixa rolável ficam numa
+     linha só. O recuo lateral negativo faz a faixa sangrar até a borda da
+     tela, para ficar claro que ela continua além do que se vê. */
+  .home__filtros {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    margin-inline: -14px;
+    padding-inline: 14px;
+    padding-block: 4px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .home__filtros::-webkit-scrollbar {
+    display: none;
+  }
+
   .home__filtro {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
     font-size: 0.8rem;
   }
 
