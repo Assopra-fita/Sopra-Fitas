@@ -374,3 +374,48 @@
   align-items: center;
   justify-content: center;
 }
+
+/* ---------- Aviso de ação ----------
+   Substitui o alert() do navegador, que travava a página até alguém clicar em
+   OK e, no celular, aparecia como caixa do sistema com o endereço do site. */
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  padding: var(--esp-sm) var(--esp-md);
+  border-radius: var(--raio-m);
+  background: var(--sucesso-fundo);
+  color: var(--sucesso-texto);
+  border: 1px solid #1c6440;
+  font-size: 0.9rem;
+}
+
+.aviso--erro {
+  background: var(--erro-fundo);
+  color: var(--perigo-texto);
+  border-color: var(--perigo);
+}
+
+.aviso svg {
+  flex-shrink: 0;
+}
+
+/* Mensagem de erro do banco pode vir longa e sem espaço */
+.aviso__texto {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.aviso__fechar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: var(--alvo-toque);
+  height: var(--alvo-toque);
+  margin: calc(var(--esp-sm) * -1) calc(var(--esp-sm) * -1) calc(var(--esp-sm) * -1) 0;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}

@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { listarAcervo, atualizarJogo, removerJogo } from '../services/jogos';
 import { Edit, Trash2, X, Check, Library } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useAviso } from '../hooks/useAviso';
 import { paraComparar } from '../lib/texto';
 import {
+  Aviso,
   Botao,
   CabecalhoPagina,
   Campo,
@@ -16,6 +18,8 @@ import {
 
 const AdminGerenciarJogos = () => {
   useTituloDaPagina('Gerenciar acervo');
+
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
 
   const [jogos, setJogos] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -64,8 +68,9 @@ const AdminGerenciarJogos = () => {
       await atualizarJogo(id, dadosEditados);
       setEditandoId(null);
       recarregar();
+      mostrarAviso(`"${dadosEditados.nome}" foi atualizado.`);
     } catch (e) {
-      alert('Erro ao atualizar: ' + e.message);
+      mostrarAviso('Erro ao atualizar: ' + e.message, { erro: true });
     }
   };
 
@@ -76,8 +81,11 @@ const AdminGerenciarJogos = () => {
     try {
       await removerJogo(id);
       recarregar();
+      // A ROM e a capa continuam no Storage: quem apaga a linha não apaga os
+      // arquivos, e quem for limpar precisa saber que eles ficaram lá.
+      mostrarAviso(`"${nome}" saiu do acervo. Os arquivos continuam no Storage.`);
     } catch (e) {
-      alert('Erro ao deletar: ' + e.message);
+      mostrarAviso('Erro ao deletar: ' + e.message, { erro: true });
     }
   };
 
@@ -196,6 +204,8 @@ const AdminGerenciarJogos = () => {
         subtitulo={`${jogos.length} jogos cadastrados pelo painel`}
         acao={<Botao para="/painel-admin-jogos">Adicionar novo</Botao>}
       />
+
+      <Aviso aviso={aviso} aoFechar={limparAviso} />
 
       <Campo
         tipo="search"

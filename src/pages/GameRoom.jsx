@@ -20,8 +20,9 @@ import {
 import AnuncioGPT from '../components/AnuncioGPT';
 import { acharJogo, outrosJogos as outrosDoAcervo } from '../constants/games';
 import CapaDeJogo from '../components/ui/CapaDeJogo';
-import { Botao, Campo, Carregando, EstadoErro } from '../components/ui';
+import { Aviso, Botao, Campo, Carregando, EstadoErro } from '../components/ui';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useAviso } from '../hooks/useAviso';
 import { gravarEstado, lerEstado } from '../lib/estadoDeJogo';
 
 const GameRoom = () => {
@@ -44,14 +45,7 @@ const GameRoom = () => {
   // window.EJS_player, que é só uma string com o seletor CSS — nunca funcionaram.
   const emuladorRef = useRef(null);
 
-  const [aviso, setAviso] = useState(null);
-  const avisoTimerRef = useRef(null);
-
-  const mostrarAviso = (texto, erro = false) => {
-    clearTimeout(avisoTimerRef.current);
-    setAviso({ texto, erro });
-    avisoTimerRef.current = setTimeout(() => setAviso(null), 2800);
-  };
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -65,42 +59,41 @@ const GameRoom = () => {
 
     return () => {
       ativo = false;
-      clearTimeout(avisoTimerRef.current);
     };
   }, [gameId]);
 
   const salvarJogo = async () => {
     const gerenciador = emuladorRef.current?.gameManager;
-    if (!gerenciador) return mostrarAviso('O jogo ainda está carregando', true);
+    if (!gerenciador) return mostrarAviso('O jogo ainda está carregando', { erro: true });
 
     try {
       await gravarEstado(gameId, gerenciador.getState());
       mostrarAviso('Progresso salvo neste aparelho');
     } catch (e) {
       console.error('Falha ao salvar o estado:', e);
-      mostrarAviso('Não foi possível salvar', true);
+      mostrarAviso('Não foi possível salvar', { erro: true });
     }
   };
 
   const carregarJogo = async () => {
     const gerenciador = emuladorRef.current?.gameManager;
-    if (!gerenciador) return mostrarAviso('O jogo ainda está carregando', true);
+    if (!gerenciador) return mostrarAviso('O jogo ainda está carregando', { erro: true });
 
     try {
       const estado = await lerEstado(gameId);
-      if (!estado) return mostrarAviso('Nenhum progresso salvo aqui', true);
+      if (!estado) return mostrarAviso('Nenhum progresso salvo aqui', { erro: true });
 
       gerenciador.loadState(estado);
       mostrarAviso('Progresso carregado');
     } catch (e) {
       console.error('Falha ao carregar o estado:', e);
-      mostrarAviso('Não foi possível carregar', true);
+      mostrarAviso('Não foi possível carregar', { erro: true });
     }
   };
 
   const reiniciarJogo = () => {
     const gerenciador = emuladorRef.current?.gameManager;
-    if (!gerenciador) return mostrarAviso('O jogo ainda está carregando', true);
+    if (!gerenciador) return mostrarAviso('O jogo ainda está carregando', { erro: true });
 
     gerenciador.restart();
     mostrarAviso('Jogo reiniciado');
@@ -145,7 +138,7 @@ const GameRoom = () => {
 
   const enviarPrint = async (e) => {
     e.preventDefault();
-    if (!sessao) return mostrarAviso('Você precisa estar logado', true);
+    if (!sessao) return mostrarAviso('Você precisa estar logado', { erro: true });
 
     setEnviando(true);
     try {
@@ -299,14 +292,7 @@ const GameRoom = () => {
               </button>
             </div>
 
-            {aviso && (
-              <p
-                className={`sala__aviso${aviso.erro ? ' sala__aviso--erro' : ''}`}
-                role={aviso.erro ? 'alert' : 'status'}
-              >
-                {aviso.texto}
-              </p>
-            )}
+            <Aviso aviso={aviso} aoFechar={limparAviso} className="sala__aviso" />
 
             {/* Escondido por CSS no celular deitado, onde a tela inteira é do
                 jogo. Antes era desmontado por um ternário de JavaScript. */}

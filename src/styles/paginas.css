@@ -639,6 +639,11 @@
   }
 }
 
+/* O aviso da Home fica na largura do conteúdo, acima das três colunas. */
+.home__aviso {
+  margin-bottom: var(--esp-lg);
+}
+
 /* ---------- Card de jogo ---------- */
 .card-jogo {
   background: var(--superficie);

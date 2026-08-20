@@ -6,7 +6,9 @@ import {
 } from '../services/perfis';
 import { Users, Shield, ShieldOff, Save } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useAviso } from '../hooks/useAviso';
 import {
+  Aviso,
   Botao,
   CabecalhoPagina,
   Campo,
@@ -18,6 +20,8 @@ import {
 
 const AdminUsuarios = () => {
   useTituloDaPagina('Gestão de jogadores');
+
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
 
   const [usuarios, setUsuarios] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -63,16 +67,20 @@ const AdminUsuarios = () => {
     if (lista) aplicarUsuarios(lista);
   };
 
+  const nomeDe = (id) =>
+    usuarios.find((u) => u.id === id)?.nome || 'jogador sem nome';
+
   const salvarPontos = async (id) => {
     const novosPontos = parseInt(editandoPontos[id], 10);
-    if (Number.isNaN(novosPontos)) return alert('Informe um número de pontos.');
+    if (Number.isNaN(novosPontos))
+      return mostrarAviso('Informe um número de pontos.', { erro: true });
 
     try {
       await atualizarPontos(id, novosPontos);
-      alert('Pontuação atualizada!');
+      mostrarAviso(`Pontuação de ${nomeDe(id)} atualizada.`);
       recarregar();
     } catch (e) {
-      alert('Erro ao salvar os pontos: ' + e.message);
+      mostrarAviso('Erro ao salvar os pontos: ' + e.message, { erro: true });
     }
   };
 
@@ -81,7 +89,7 @@ const AdminUsuarios = () => {
       await definirPapel(id, papelAtual === 'admin' ? 'user' : 'admin');
       recarregar();
     } catch (e) {
-      alert('Erro ao mudar o cargo: ' + e.message);
+      mostrarAviso('Erro ao mudar o cargo: ' + e.message, { erro: true });
     }
   };
 
@@ -169,6 +177,8 @@ const AdminUsuarios = () => {
         titulo="Gestão de jogadores e pontos"
         subtitulo={`${usuarios.length} jogadores cadastrados`}
       />
+
+      <Aviso aviso={aviso} aoFechar={limparAviso} />
 
       {carregando ? (
         <Carregando>Carregando jogadores...</Carregando>

@@ -25,11 +25,15 @@ import CabecalhoHome from '../components/home/CabecalhoHome';
 import CardDesafios from '../components/home/CardDesafios';
 import CardTop5 from '../components/home/CardTop5';
 import CardDeJogo from '../components/home/CardDeJogo';
+import { Aviso } from '../components/ui';
 import Paginacao from '../components/home/Paginacao';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useAviso } from '../hooks/useAviso';
 
 const Home = () => {
   useTituloDaPagina();
+
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
 
   const navigate = useNavigate();
 
@@ -96,9 +100,13 @@ const Home = () => {
     setPaginaAtual(1);
   };
 
-  const handleLogout = async () => {
-    await sair();
-    alert('Você saiu da conta! Até mais 👋');
+  const sairDaConta = async () => {
+    try {
+      await sair();
+      mostrarAviso('Você saiu da conta. Até mais!');
+    } catch (e) {
+      mostrarAviso('Não foi possível sair: ' + e.message, { erro: true });
+    }
   };
 
   const jogarAleatorio = () => {
@@ -191,10 +199,12 @@ const Home = () => {
         session={session}
         pontos={pontos}
         nomeUsuario={nomeUsuario}
-        aoSair={handleLogout}
+        aoSair={sairDaConta}
       />
 
       <main className="home__conteudo">
+        <Aviso aviso={aviso} aoFechar={limparAviso} className="home__aviso" />
+
         <section className="home__secao">
           <div className="home__coluna home__coluna--esquerda">
             <AnuncioGPT adId="div-gpt-ad-1775680124469-0" />

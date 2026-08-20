@@ -3,10 +3,13 @@ import { entrar, cadastrar } from '../services/sessao';
 import { useNavigate, Link } from 'react-router-dom';
 import { Gamepad2, ArrowLeft, Info, Loader2, CheckCircle2 } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
-import { Botao, Campo } from '../components/ui';
+import { useAviso } from '../hooks/useAviso';
+import { Aviso, Botao, Campo } from '../components/ui';
 
 const Login = () => {
   useTituloDaPagina('Entrar');
+
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
 
   const navigate = useNavigate();
   const [enviando, setEnviando] = useState(false);
@@ -24,8 +27,11 @@ const Login = () => {
       if (criandoConta) {
         await cadastrar(email, senha);
 
-        alert(
-          'Conta criada! O link de confirmação foi enviado para o seu e-mail — confira também a caixa de spam.'
+        // Fixo: quem acabou de se cadastrar precisa ler isto inteiro, e some
+        // antes de terminar se durar três segundos.
+        mostrarAviso(
+          'Conta criada! O link de confirmação foi enviado para o seu e-mail — confira também a caixa de spam.',
+          { fixo: true }
         );
         setCriandoConta(false);
       } else {
@@ -33,13 +39,14 @@ const Login = () => {
         navigate('/');
       }
     } catch (erro) {
-      alert(erro.message);
+      mostrarAviso(erro.message, { erro: true });
     } finally {
       setEnviando(false);
     }
   };
 
   const alternarModo = () => {
+    limparAviso();
     setCriandoConta((atual) => !atual);
     setEmail('');
     setSenha('');
@@ -101,6 +108,8 @@ const Login = () => {
             )}
           </ul>
         </section>
+
+        <Aviso aviso={aviso} aoFechar={limparAviso} />
 
         <form onSubmit={enviar} className="login__formulario">
           <Campo

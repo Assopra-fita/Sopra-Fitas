@@ -4,10 +4,20 @@ import { obterPerfil, atualizarNome } from '../services/perfis';
 import { Link, useNavigate } from 'react-router-dom';
 import { Coins, Trophy, Shield } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
-import { Botao, Campo, Card, CascaDePagina, LinkVoltar } from '../components/ui';
+import { useAviso } from '../hooks/useAviso';
+import {
+  Aviso,
+  Botao,
+  Campo,
+  Card,
+  CascaDePagina,
+  LinkVoltar,
+} from '../components/ui';
 
 const Perfil = () => {
   useTituloDaPagina('Meu perfil');
+
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
 
   const navigate = useNavigate();
   const [carregando, setCarregando] = useState(true);
@@ -59,10 +69,13 @@ const Perfil = () => {
     setSalvando(true);
     try {
       await atualizarNome(usuarioId, nome);
-      alert('Nickname atualizado com sucesso!');
+      mostrarAviso('Nickname atualizado.');
     } catch (e) {
       console.error('Erro ao atualizar:', e);
-      alert('Erro ao atualizar o nome. Verifique se o banco permite a alteração.');
+      mostrarAviso(
+        'Não foi possível atualizar o nome. Confira se o banco permite a alteração.',
+        { erro: true }
+      );
     } finally {
       setSalvando(false);
     }
@@ -73,6 +86,8 @@ const Perfil = () => {
   return (
     <CascaDePagina largura="estreito">
       <LinkVoltar para="/">Voltar para a Home</LinkVoltar>
+
+      <Aviso aviso={aviso} aoFechar={limparAviso} />
 
       <Card centralizado>
         <div className="perfil__avatar" aria-hidden="true">

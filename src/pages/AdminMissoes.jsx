@@ -6,7 +6,9 @@ import {
 } from '../services/missoes';
 import { CheckCircle, User, Shield, Coins } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useAviso } from '../hooks/useAviso';
 import {
+  Aviso,
   Botao,
   CabecalhoPagina,
   Campo,
@@ -22,6 +24,8 @@ const RECOMPENSA_PADRAO = 500;
 
 const AdminMissoes = () => {
   useTituloDaPagina('Validar missões');
+
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
 
   const [missoes, setMissoes] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -68,7 +72,7 @@ const AdminMissoes = () => {
   const aprovar = async (missao) => {
     const valor = parseInt(pontos[missao.id], 10);
     if (!Number.isFinite(valor) || valor <= 0)
-      return alert('Informe um valor de pontos maior que zero.');
+      return mostrarAviso('Informe um valor de pontos maior que zero.', { erro: true });
 
     const jogador = missao.profiles?.nome || 'este jogador';
     if (!window.confirm(`Confirmar depósito de ${valor} pontos para ${jogador}?`))
@@ -81,10 +85,10 @@ const AdminMissoes = () => {
         pontos: valor,
       });
     } catch (e) {
-      return alert('Erro no banco: ' + e.message);
+      return mostrarAviso('Erro no banco: ' + e.message, { erro: true });
     }
 
-    alert('Pontos depositados.');
+    mostrarAviso(`${valor} pontos depositados para ${jogador}.`);
     recarregar();
   };
 
@@ -95,7 +99,7 @@ const AdminMissoes = () => {
       await rejeitarMissao(id);
       recarregar();
     } catch (e) {
-      alert('Erro ao rejeitar: ' + e.message);
+      mostrarAviso('Erro ao rejeitar: ' + e.message, { erro: true });
     }
   };
 
@@ -108,6 +112,8 @@ const AdminMissoes = () => {
         titulo="Validação de missões"
         subtitulo="Prints enviados pelos jogadores, à espera de conferência"
       />
+
+      <Aviso aviso={aviso} aoFechar={limparAviso} />
 
       {carregando ? (
         <Carregando>Buscando prints pendentes...</Carregando>

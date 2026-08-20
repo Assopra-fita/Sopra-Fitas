@@ -161,24 +161,13 @@
   background: var(--borda-clara);
 }
 
-/* ---------- Aviso de salvar/carregar ---------- */
+/* ---------- Aviso de salvar/carregar ----------
+   A aparência vem do bloco `.aviso`, compartilhado com o resto do site; aqui
+   só o encaixe: ele sobe para colar na barra de controles. */
 .sala__aviso {
   width: 100%;
-  margin-top: -20px;
+  margin-top: calc(var(--esp-lg) * -1);
   margin-bottom: var(--esp-lg);
-  padding: 6px var(--esp-sm);
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: var(--sucesso-texto);
-  background: var(--sucesso-fundo);
-  border-bottom: 1px solid #1c6440;
-}
-
-.sala__aviso--erro {
-  color: var(--perigo-texto);
-  background: var(--erro-fundo);
-  border-bottom-color: var(--perigo);
 }
 
 /* ---------- Ficha do jogo ---------- */

@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { listarDesafios, criarDesafio, removerDesafio } from '../services/desafios';
 import { Target, PlusCircle, Trash2 } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useAviso } from '../hooks/useAviso';
 import {
+  Aviso,
   Botao,
   CabecalhoPagina,
   Campo,
@@ -13,6 +15,8 @@ import {
 
 const AdminDesafios = () => {
   useTituloDaPagina('Lançar desafios');
+
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
 
   const [titulo, setTitulo] = useState('');
   const [objetivo, setObjetivo] = useState('');
@@ -51,20 +55,22 @@ const AdminDesafios = () => {
 
   const lancar = async (e) => {
     e.preventDefault();
-    if (!titulo || !objetivo || !recompensa)
-      return alert('Preencha todos os campos.');
+    // `trim`: um campo com só espaços passa no `required` do navegador e
+    // gravaria um desafio de título em branco no topo da Home.
+    if (!titulo.trim() || !objetivo.trim() || !recompensa)
+      return mostrarAviso('Preencha todos os campos.', { erro: true });
 
     try {
       await criarDesafio({
-        titulo,
-        objetivo,
+        titulo: titulo.trim(),
+        objetivo: objetivo.trim(),
         recompensa: parseInt(recompensa, 10),
       });
     } catch (e) {
-      return alert('Erro ao lançar: ' + e.message);
+      return mostrarAviso('Erro ao lançar: ' + e.message, { erro: true });
     }
 
-    alert('Desafio publicado no topo da Home.');
+    mostrarAviso('Desafio publicado no topo da Home.');
     setTitulo('');
     setObjetivo('');
     setRecompensa('');
@@ -78,7 +84,7 @@ const AdminDesafios = () => {
       await removerDesafio(id);
       buscarDesafios();
     } catch (e) {
-      alert('Erro ao remover: ' + e.message);
+      mostrarAviso('Erro ao remover: ' + e.message, { erro: true });
     }
   };
 
@@ -91,6 +97,8 @@ const AdminDesafios = () => {
         titulo="Lançar desafios do mês"
         subtitulo="Aparecem no topo da Home para todos os jogadores"
       />
+
+      <Aviso aviso={aviso} aoFechar={limparAviso} />
 
       <div className="admin__duas-colunas">
         <Card>
