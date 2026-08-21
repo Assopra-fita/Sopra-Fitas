@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Coins, Trophy, Shield } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { useAviso } from '../hooks/useAviso';
+import { MARCA } from '../lib/seo';
 import {
   Aviso,
   Botao,
@@ -96,7 +97,7 @@ const Perfil = () => {
 
         <h1 className="perfil__nome">{nome || 'Player'}</h1>
         <p className="perfil__papel">
-          {papel === 'admin' ? '👑 Administrador' : '🎮 Jogador do Sopra Fitas'}
+          {papel === 'admin' ? '👑 Administrador' : `🎮 Jogador do ${MARCA}`}
         </p>
 
         <div className="perfil__numeros">

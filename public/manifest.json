@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Sopra Fitas — Jogos clássicos no navegador",
-  "short_name": "Sopra Fitas",
+  "name": "Assopra Fita — Jogos clássicos no navegador",
+  "short_name": "Assopra Fita",
   "description": "Jogue os clássicos de Super Nintendo, Mega Drive, Game Boy e mais direto no navegador, sem instalar nada.",
   "lang": "pt-BR",
   "dir": "ltr",
@@ -11,7 +11,10 @@
   "orientation": "any",
   "theme_color": "#121212",
   "background_color": "#121212",
-  "categories": ["games", "entertainment"],
+  "categories": [
+    "games",
+    "entertainment"
+  ],
   "icons": [
     {
       "src": "/icone-192.png",
@@ -37,7 +40,12 @@
       "name": "Ranking",
       "short_name": "Ranking",
       "url": "/ranking",
-      "icons": [{ "src": "/icone-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icone-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

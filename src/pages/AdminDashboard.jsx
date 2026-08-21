@@ -13,6 +13,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { MARCA } from '../lib/seo';
 import {
   CabecalhoPagina,
   Carregando,
@@ -113,7 +114,7 @@ const AdminDashboard = () => {
       <CabecalhoPagina
         icone={<Shield size={32} aria-hidden="true" />}
         titulo="Painel do GM"
-        subtitulo="Gerenciamento do Sopra Fitas"
+        subtitulo={`Gerenciamento do ${MARCA}`}
       />
 
       {carregando ? (

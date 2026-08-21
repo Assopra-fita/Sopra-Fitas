@@ -2,7 +2,7 @@ const SITE = 'https://assoprafitas.com';
 
 // O nome da marca mora aqui e em mais nenhum lugar do JavaScript. Ele
 // aparecia escrito à mão em 10 arquivos, e trocar exigia caçar um por um.
-export const MARCA = 'Sopra Fitas';
+export const MARCA = 'Assopra Fita';
 
 // Onde o Google costuma cortar a exibição do título.
 const LIMITE_DO_TITULO = 60;
