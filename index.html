@@ -3,6 +3,23 @@
   <head>
     <meta charset="UTF-8" />
 
+    <!-- Google Tag Manager
+         Fica o mais alto possível do <head>, logo depois do charset, porque é
+         daqui que o GTM injeta as demais tags de medição. O que ele carrega é
+         decidido no painel do GTM, não neste arquivo. -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-573CZ7M5');
+    </script>
+    <!-- End Google Tag Manager -->
 
     <meta
       name="google-site-verification"
@@ -13,6 +30,7 @@
          DNS + TLS quando a primeira imagem for pedida. -->
     <link rel="preconnect" href="https://maataycmixcmozjhezfe.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.emulatorjs.org" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/icone-192.png" sizes="192x192" type="image/png" />
@@ -146,6 +164,17 @@
     </style>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-573CZ7M5"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <noscript
       ><img
         height="1"
