@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
-
-const MARCA = 'Sopra Fitas';
-const PADRAO = `${MARCA} — Jogos clássicos no navegador`;
+import { MARCA, TITULO_PADRAO as PADRAO } from '../lib/seo';
 
 // Numa SPA o <title> do index.html vale para todas as rotas, então buscador e
 // aba do navegador mostravam o mesmo texto em qualquer página.

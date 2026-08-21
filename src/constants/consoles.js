@@ -1,4 +1,7 @@
-import { semAcento } from '../lib/texto';
+// Com a extensão no caminho, este arquivo pode ser importado tanto pelo Vite
+// quanto por Node puro — é o que deixa os scripts de build usarem a mesma
+// normalização da tela, em vez de manterem uma cópia que diverge com o tempo.
+import { semAcento } from '../lib/texto.js';
 
 // Fonte única do que o site suporta. O filtro da Home e o formulário de
 // cadastro saem daqui, então não podem mais divergir — foi essa divergência

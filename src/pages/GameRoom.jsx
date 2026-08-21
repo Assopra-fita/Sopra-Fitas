@@ -11,7 +11,9 @@ import { Aviso, Botao, Carregando, EstadoErro } from '../components/ui';
 import { obterSessao } from '../services/sessao';
 import { enviarPrint as enviarPrintDaMissao } from '../services/missoes';
 import { ArquivoInvalido } from '../services/armazenamento';
-import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useSeoDaPagina } from '../hooks/useSeoDaPagina';
+import { seoDoJogo, seoDeJogoInexistente } from '../lib/seo';
+import { normalizarConsole } from '../constants/consoles';
 import { useAviso } from '../hooks/useAviso';
 import { useJogo } from '../hooks/useJogo';
 import { useRelacionados } from '../hooks/useRelacionados';
@@ -26,7 +28,18 @@ const GameRoom = () => {
   const relacionados = useRelacionados(gameId);
   const emulador = useEmulador(gameId, mostrarAviso);
 
-  useTituloDaPagina(jogo?.nome);
+  // As mesmas tags que o build escreve no HTML de cada jogo. Aqui elas cobrem
+  // o jogo cadastrado depois do último deploy, que ainda não tem página gerada.
+  //
+  // Enquanto o jogo carrega, e também quando ele não existe, o canonical já é o
+  // desta URL — nunca o da Home. Passar `undefined` aqui fazia toda página de
+  // jogo se declarar duplicata da Home durante o carregamento, e para sempre
+  // quando dava erro.
+  useSeoDaPagina(
+    jogo
+      ? seoDoJogo(jogo, normalizarConsole(jogo.console))
+      : seoDeJogoInexistente(gameId)
+  );
 
   const [sessao, setSessao] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);

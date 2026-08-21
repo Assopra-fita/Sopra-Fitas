@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { entrar, cadastrar } from '../services/sessao';
 import { useNavigate, Link } from 'react-router-dom';
 import { Gamepad2, ArrowLeft, Info, Loader2, CheckCircle2 } from 'lucide-react';
-import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useSeoDaPagina } from '../hooks/useSeoDaPagina';
+import { seoDoLogin, MARCA } from '../lib/seo';
 import { useAviso } from '../hooks/useAviso';
 import { Aviso, Botao, Campo } from '../components/ui';
 
 const Login = () => {
-  useTituloDaPagina('Entrar');
+  useSeoDaPagina(seoDoLogin());
 
   const { aviso, mostrarAviso, limparAviso } = useAviso();
 
@@ -64,7 +65,7 @@ const Login = () => {
         </div>
 
         <div>
-          <h1 className="login__titulo">Sopra Fitas</h1>
+          <h1 className="login__titulo">{MARCA}</h1>
           <p className="login__chamada">
             {criandoConta
               ? 'Crie sua conta e comece a pontuar'
@@ -145,7 +146,7 @@ const Login = () => {
         </form>
 
         <div className="login__alternar">
-          <p>{criandoConta ? 'Já tem conta?' : 'Primeira vez no Sopra Fitas?'}</p>
+          <p>{criandoConta ? 'Já tem conta?' : `Primeira vez no ${MARCA}?`}</p>
 
           <Botao
             variante="fantasma"

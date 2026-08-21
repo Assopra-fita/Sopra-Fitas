@@ -27,14 +27,15 @@ import CardTop5 from '../components/home/CardTop5';
 import CardDeJogo from '../components/home/CardDeJogo';
 import { Aviso } from '../components/ui';
 import Paginacao from '../components/home/Paginacao';
-import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useSeoDaPagina } from '../hooks/useSeoDaPagina';
+import { seoPadrao, MARCA } from '../lib/seo';
 import { useAviso } from '../hooks/useAviso';
 
 // Quanto o campo espera parar de digitar antes de escrever na URL.
 const ATRASO_DA_BUSCA = 250;
 
 const Home = () => {
-  useTituloDaPagina();
+  useSeoDaPagina(seoPadrao('/'));
 
   const { aviso, mostrarAviso, limparAviso } = useAviso();
 
@@ -275,7 +276,7 @@ const Home = () => {
             <h1 className="home__titulo">
               <img
                 src="/logo.webp"
-                alt="Sopra Fitas"
+                alt={MARCA}
                 width="700"
                 height="374"
                 fetchPriority="high"
