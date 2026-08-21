@@ -5,6 +5,7 @@ import { Gamepad2, ArrowLeft, Info, Loader2, CheckCircle2 } from 'lucide-react';
 import { useSeoDaPagina } from '../hooks/useSeoDaPagina';
 import { seoDoLogin, MARCA } from '../lib/seo';
 import { useAviso } from '../hooks/useAviso';
+import { medir, CONTA_CRIADA } from '../lib/medicao';
 import { Aviso, Botao, Campo } from '../components/ui';
 
 const Login = () => {
@@ -27,6 +28,12 @@ const Login = () => {
     try {
       if (criandoConta) {
         await cadastrar(email, senha);
+
+        // Só se chega nesta linha quando o cadastro deu certo: `cadastrar`
+        // levanta erro em qualquer outro caso. Antes o evento morava no
+        // index.html e disparava em toda página aberta, sem ninguém ter
+        // criado conta nenhuma.
+        medir(CONTA_CRIADA);
 
         // Fixo: quem acabou de se cadastrar precisa ler isto inteiro, e some
         // antes de terminar se durar três segundos.
