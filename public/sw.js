@@ -17,7 +17,7 @@
 //   o cache HTTP do navegador cuidar dele é mais simples e mais correto.
 
 // Suba a versão para invalidar tudo que ficou para trás.
-const VERSAO = 'sopra-fitas-v1';
+const VERSAO = 'assopra-fita-v2';
 const CASCA = `${VERSAO}-casca`;
 const ESTATICOS = `${VERSAO}-estaticos`;
 
@@ -54,24 +54,10 @@ self.addEventListener('activate', (evento) => {
   );
 });
 
-// Rede primeiro, cache como rede de segurança. Vale para a navegação: assim um
-// deploy novo aparece na primeira visita, e não na segunda.
-const redePrimeiro = async (requisicao) => {
-  try {
-    const resposta = await fetch(requisicao);
-    // Só guarda resposta boa: gravar um 500 ou um redirecionamento aqui
-    // deixaria o site quebrado até o usuário limpar o navegador.
-    if (resposta.ok && resposta.type === 'basic') {
-      const cache = await caches.open(CASCA);
-      cache.put('/index.html', resposta.clone());
-    }
-    return resposta;
-  } catch (e) {
-    const guardada = await caches.match('/index.html');
-    if (guardada) return guardada;
-    throw e;
-  }
-};
+// Quantas páginas visitadas ficam guardadas para abrir sem rede. Cada uma é um
+// HTML de 6 KB; o teto existe porque o acervo tem 157 jogos e guardar todos
+// seria encher a cota do navegador com página que a pessoa viu uma vez.
+const TETO_NAVEGACOES = 25;
 
 // Teto do cache de estáticos. Cada deploy gera nomes com hash novo, e os
 // antigos ficariam guardados para sempre: sem teto isso cresce a cada deploy
@@ -84,6 +70,33 @@ const aparar = async (nomeDoCache, teto) => {
   // As mais antigas saem primeiro: a ordem das chaves é a de inserção.
   for (const chave of chaves.slice(0, Math.max(0, chaves.length - teto))) {
     await cache.delete(chave);
+  }
+};
+
+// Rede primeiro, cache como rede de segurança. Vale para a navegação: assim um
+// deploy novo aparece na primeira visita, e não na segunda.
+const redePrimeiro = async (requisicao) => {
+  const cache = await caches.open(CASCA);
+
+  try {
+    const resposta = await fetch(requisicao);
+    // Só guarda resposta boa: gravar um 500 ou um redirecionamento aqui
+    // deixaria o site quebrado até o usuário limpar o navegador.
+    if (resposta.ok && resposta.type === 'basic') {
+      // Guarda sob o próprio endereço, e não sob uma chave única.
+      //
+      // Enquanto toda rota servia o mesmo index.html, uma chave só era
+      // suficiente. Agora o build gera um HTML por jogo, com título e canonical
+      // próprios: guardar tudo sob a mesma chave faria a versão sem rede
+      // devolver a página de um jogo no endereço de outro.
+      await cache.put(requisicao, resposta.clone());
+      await aparar(CASCA, TETO_NAVEGACOES + ARQUIVOS_DA_CASCA.length);
+    }
+    return resposta;
+  } catch (e) {
+    const guardada = (await cache.match(requisicao)) ?? (await cache.match('/index.html'));
+    if (guardada) return guardada;
+    throw e;
   }
 };
 
