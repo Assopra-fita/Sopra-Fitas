@@ -346,9 +346,26 @@
   background: #000;
 }
 
-.emulador__tela {
+/* Seletor com dois níveis de propósito: o `emulator.min.css` também estiliza
+   este elemento (ele carrega a classe `ejs_parent` junto) e é injetado no
+   <head> em tempo de execução, DEPOIS desta folha. Com a mesma especificidade
+   quem vem por último ganha, e a regra abaixo era ignorada. */
+.emulador > .emulador__tela {
   width: 100%;
   height: 100%;
+
+  /* `clip`, e não `hidden`. Os dois cortam o que transborda, mas `hidden` cria
+     um CONTÊINER DE ROLAGEM — e o EmulatorJS enche esta caixa de 246px com
+     514px de conteúdo (só a barra de menu escondida tem 260px).
+
+     O efeito medido no celular: qualquer `scrollIntoView` de um descendente —
+     e o próprio navegador faz isso ao focar um elemento — rolava a caixa em
+     80,5px. O jogo subia, o topo da imagem era cortado e sobrava uma tarja
+     preta embaixo, ocupando um terço da tela do emulador. Como não há barra de
+     rolagem, não existia gesto que desfizesse.
+
+     `overflow: clip` não cria contêiner de rolagem, então isso não acontece. */
+  overflow: clip;
 }
 
 /* ---------- Tela de carregamento de rota ---------- */
