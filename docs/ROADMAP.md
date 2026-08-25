@@ -15,6 +15,7 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 - [Fase 3 — Limpeza estrutural do código](#fase-3--limpeza-estrutural-do-código)
 - [Fase 4 — Layout e navegação](#fase-4--layout-e-navegação)
 - [Fase 5 — Higiene: SEO, acessibilidade e qualidade](#fase-5--higiene-seo-acessibilidade-e-qualidade)
+- [Fase 6 — Celular primeiro](#fase-6--celular-primeiro)
 - [Avaliado e descartado](#avaliado-e-descartado)
 - [Depende de checagem fora do repositório](#depende-de-checagem-fora-do-repositório)
 
@@ -22,17 +23,18 @@ Levantamento técnico completo do estado do projeto, com o que precisa ser corri
 
 ## Progresso
 
-71 de 94 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
+82 de 120 tarefas concluídas. As caixas são marcadas conforme cada item entra em produção.
 
 | Fase | Frente | Prioridade | Progresso | Feitas |
 | :---: | --- | --- | --- | :---: |
-| **0** | Dado pessoal exposto | Urgente | `██░░░░░░░░` | 1/6 |
-| **1** | Quebrado para o usuário | Alta | `███████░░░` | 18/25 |
+| **0** | Dado pessoal exposto | Urgente | `███░░░░░░░` | 2/6 |
+| **1** | Quebrado para o usuário | Alta | `████████░░` | 20/25 |
 | **2** | Peso e velocidade | Alta | `████████░░` | 8/10 |
 | **3** | Limpeza estrutural | Média | `██████████` | 23/23 |
 | **4** | Layout e navegação | Média | `██████░░░░` | 7/12 |
-| **5** | SEO, acessibilidade e qualidade | Baixa | `████████░░` | 14/18 |
-| | **Total** | | `████████░░` | **71/94** |
+| **5** | SEO, acessibilidade e qualidade | Baixa | `█████████░` | 18/19 |
+| **6** | Celular primeiro | **Urgente** | `██░░░░░░░░` | 4/25 |
+| | **Total** | | `███████░░░` | **82/120** |
 
 ---
 
@@ -80,10 +82,14 @@ flowchart LR
     F4["FASE 4<br/>Layout e navegação<br/>dias"]:::media
     F5["FASE 5<br/>SEO, acessibilidade<br/>dias"]:::baixa
 
+    F6["FASE 6<br/>Celular primeiro<br/>semanas"]:::urg
+
     F0 --> F1 --> F2 --> F3
     F2 --> F4
     F3 --> F5
     F4 --> F5
+    F1 --> F6
+    F4 --> F6
 
     classDef urg fill:#7f1d1d,stroke:#b91c1c,color:#fff
     classDef alta fill:#8a4b1f,stroke:#c2670f,color:#fff
@@ -125,9 +131,14 @@ Correção: tirar a permissão de listagem do papel anônimo, tornar o bucket pr
 
 **Tarefas**
 
-- [ ] Remover a permissão de listagem anônima do bucket `prints`
-- [ ] Tornar o bucket privado e servir ao GM por URL assinada
-- [ ] Trocar o nome do arquivo de print por identificador aleatório
+- [ ] Remover a permissão de listagem anônima do bucket `prints` — **depende de acesso**
+- [ ] Tornar o bucket privado e servir ao GM por URL assinada — **depende de acesso**
+- [x] Trocar o nome do arquivo de print por identificador aleatório
+  <br>Esta era a única das três que estava no código, e não no painel. O print
+  sobe com `crypto.randomUUID()` no lugar de `{user_id}_{timestamp}`; quem
+  guarda de quem é o print passa a ser só a coluna `user_id` da tabela
+  `missoes`. Isso corta a correlação para os envios novos — os que já estão no
+  bucket continuam nomeados pelo id antigo, e só saem de lá pelas outras duas.
 
 ## Fase 1 — O que está quebrado para o usuário
 
@@ -240,8 +251,20 @@ Correção em duas frentes: normalizar a coluna com um `UPDATE`, e trocar o camp
 - [x] Limitar a página atual ao total válido, para desfavoritar não esvaziar a tela
 - [x] Fazer a busca ignorar acentos
 - [x] Distinguir erro de estado vazio no Ranking
-- [ ] Implementar recuperação de senha
-- [ ] Criar tela de acompanhamento das missões enviadas
+- [x] Implementar recuperação de senha
+  <br>Duas pontas: "Esqueci minha senha" na tela de login pede o e-mail, e
+  `/nova-senha` recebe o link e troca a senha. A resposta é a mesma para e-mail
+  cadastrado e não cadastrado, de propósito — responder "essa conta não existe"
+  transformaria a tela num confirmador de quem tem conta aqui.
+  <br>⚠️ Falta o painel: `/nova-senha` precisa entrar na lista de
+  redirecionamentos do Auth. Fora dela o Supabase ignora o endereço e manda o
+  link para a Site URL, e a tela nunca abre.
+- [x] Criar tela de acompanhamento das missões enviadas
+  <br>`/minhas-missoes`, ligada ao perfil e citada no aviso de envio. Mostra o
+  print, o jogo, a data e a situação. A situação é comparada pelo radical
+  (`aprovad`, `rejeitad`) porque quem grava esse valor é a função
+  `aprovar_missao_gm`, que mora no banco e não neste repositório — chutar entre
+  'aprovado' e 'aprovada' faria a tela esconder envio que existe.
 
 ### 1.6 — O CDN do emulador já está quebrado
 
@@ -617,7 +640,12 @@ flowchart TB
 
 **Tarefas — Qualidade**
 
-- [ ] Zerar os 17 erros e 2 avisos do lint
+- [x] Zerar os 17 erros e 2 avisos do lint
+  <br>Os dois últimos estavam no `AnuncioLateral`, o componente órfão que fica
+  no repositório por decisão de quem cuida da monetização. O `Date.now()` do
+  cache buster saiu do render — impuro no render, ele gerava um documento
+  diferente a cada renderização, remontando o iframe e recarregando o anúncio
+  sozinho. O anúncio em si é o mesmo.
 - [x] Substituir os 24 `alert()` por feedback na interface
   <br>Eram 19 no código quando chegou a vez deles. Sobraram os 4 `window.confirm`,
   de propósito: são confirmações de ação destrutiva, e trocá-las por caixa
@@ -641,9 +669,230 @@ flowchart TB
 
 **Tarefas — Dados**
 
-- [ ] Passar a gravar o nome no cadastro e corrigir os 120 perfis sem nome
-- [ ] Disparar o evento de cadastro do pixel só no cadastro
-- [ ] Apagar os arquivos do Storage junto com o registro
+- [x] Passar a gravar o nome no cadastro
+  <br>O campo de apelido não existia no formulário: era essa a origem dos 120
+  perfis em branco. O nome vai para `raw_user_meta_data` no `signUp` — com
+  confirmação de e-mail ligada não há sessão nesse momento, e a linha em
+  `profiles` só nasce depois. Quem copia de lá para `profiles` é o `useSessao`,
+  no primeiro carregamento com sessão, numa escrita só.
+- [ ] Corrigir os 120 perfis já criados sem nome — **depende de acesso**
+  <br>Esses não têm nome em `raw_user_meta_data` nenhum para copiar: o campo
+  não existia quando eles se cadastraram. Ou entra um `UPDATE` no painel, ou
+  eles preenchem sozinhos pelo perfil.
+- [x] Disparar o evento de cadastro do pixel só no cadastro
+  <br>O `CompleteRegistration` morava no `index.html` e disparava em toda
+  página aberta. Agora sai de dentro do fluxo de cadastro, depois de o Supabase
+  confirmar que a conta foi criada.
+- [x] Apagar os arquivos do Storage junto com o registro
+  <br>A capa e a ROM saem depois da linha, e nunca antes: na ordem inversa, um
+  delete que falhasse deixaria o jogo no acervo apontando para arquivo que não
+  existe mais. A tela diz quando os arquivos ficaram para trás — permissão do
+  balde, arquivo hospedado fora — em vez de anunciar uma limpeza que não houve.
+  As 10 ROMs e 11 capas já órfãs continuam lá: essas dependem de faxina no
+  painel.
+
+## Fase 6 — Celular primeiro
+
+O celular é por onde o público entra, e por isso esta fase vem antes do resto do que sobrou. Todas as medições saíram de um aparelho físico — Redmi 9A, Android 11, Chrome 151, 2 GB de RAM, viewport de 360×700 CSS — dirigido pelo Chrome DevTools Protocol, com o jogo rodando. O critério para dizer que um jogo "roda" é ele **animar**: quadros distintos capturados ao longo do tempo. Existir um `<canvas>` não conta, e essa distinção derrubou meia dúzia de conclusões pelo caminho.
+
+**Um detalhe do aparelho explica boa parte desta fase:** o Redmi 9A é `armeabi-v7a`, e o Chrome nele é **de 32 bits**. O processo renderizador tem cerca de 3 GB de espaço de endereçamento, e é esse teto — não a RAM — que limita quantos jogos abrem por visita.
+
+---
+
+### 6.1 — Os controles são desenhados por cima do jogo
+
+O EmulatorJS monta o gamepad virtual **dentro** do canvas. Medido com o jogo rodando, nos três modos possíveis:
+
+| Modo | Viewport | Canvas do jogo | % da tela | Jogo coberto |
+| --- | --- | --- | ---: | ---: |
+| Retrato | 360×700 | 326×246 | 31,8% | **45,3%** |
+| Paisagem | 772×260 | 283×213 | 30,0% | **54,0%** |
+| Paisagem + tela cheia | 800×360 | 800×360 | **100%** | 12,6% |
+
+Os três blocos de controle têm tamanho **fixo** e nunca se adaptam: `ejs_virtualGamepad_left` 125×125, `ejs_virtualGamepad_right` 130×130, `ejs_virtualGamepad_bottom` 124×30. Num canvas de 326×246 eles comem quase metade da imagem; em tela cheia caem na tarja preta ao lado do jogo (d-pad em x=10, botões em x=660) e deixam de atrapalhar.
+
+**Girar o celular sem entrar em tela cheia é a pior das três opções** — 54% do jogo coberto, contra 45,3% em pé. Quem gira esperando melhorar, piora.
+
+Duas descobertas explicam por que quase ninguém chega no modo que funciona:
+
+- **O botão "Tela cheia" fica fora da tela em retrato.** A barra tem 482px de conteúdo em 326px visíveis: 156px escondidos, com `scrollbar-width: none` ([jogo.css:397](../src/styles/jogo.css#L397)) e nenhuma sombra ou seta indicando que rola. Botão a botão: Sair (66×44) ✓, Salvar (78×44) ✓, Carregar (92×44) ✓, Reiniciar (92×44) ✗ cortado, **Tela cheia (102×44) ✗ fora**.
+- **`window.EJS_VirtualGamepadSettings` é `undefined`.** O gamepad virtual nunca foi configurado; está tudo no padrão da biblioteca.
+
+Em tela cheia sobram dois estorvos menores: "Modo"/"Start" e "Rápido"/"Lento" ficam no centro-baixo, sobre o jogo, e as bordas dos botões X e A encostam na imagem.
+
+**Tarefas**
+
+- [ ] Levar quem abre um jogo no celular direto para tela cheia, deitado
+  <br>É o único dos três modos em que o jogo ocupa a tela toda e os controles saem de cima dele. [`useEmulador.js:61-71`](../src/hooks/useEmulador.js#L61-L71) já tenta `requestFullscreen` + `orientation.lock('landscape')`; falta disparar no momento certo e explicar ao jogador o que aconteceu.
+- [ ] Dar afordância de rolagem à barra de controles, ou fazer os 5 botões caberem em 360px
+  <br>Enquanto "Tela cheia" estiver fora da tela sem nenhuma pista, o modo jogável continua invisível para quem usa celular.
+- [ ] Tirar "Modo", "Start", "Rápido" e "Lento" de cima do jogo em tela cheia
+  <br>⚠️ Depende de confirmar na fonte se `EJS_VirtualGamepadSettings` permite reposicionar botão a botão.
+- [ ] Dar saída, salvar e carregar dentro da tela cheia
+  <br>Só `#tela-do-jogo` entra em fullscreen, então a barra do site some. Hoje o único caminho de volta é o gesto do sistema.
+- [ ] Não esconder o envio de print com o celular deitado
+  <br>`.sala__abaixo` fica `display: none` em paisagem: somem a ficha do jogo e o botão de missão, que é a única mecânica de pontuação do site.
+
+---
+
+### 6.2 — Três defeitos que impediam jogar, corrigidos
+
+Estavam empilhados, e cada um mascarava o seguinte.
+
+- [x] O emulador voltou a desenhar na tela
+  <br>`EJS_startOnLoaded` estava `true` e pulava a tela de início da biblioteca. Sem esse toque não há gesto do usuário, o Chrome mantém o `AudioContext` suspenso pela política de autoplay, e como o laço principal do core Emscripten é movido pelo áudio, o emulador não desenhava **um quadro sequer**. O estado enganava: `started: true`, `paused: false`, canvas de 652×491 — e tela preta. Forçando `resume()` à mão, o logo da SEGA aparecia no mesmo instante.
+- [x] Passou a ser possível abrir mais de um jogo por visita
+  <br>O `loader.js` do EmulatorJS não tem guarda: toda vez que roda, anexa um `<script>` novo do `emulator.min.js`. Esse arquivo declara classes no topo de um script clássico, então a segunda execução morre com `Identifier 'EJS_STORAGE' has already been declared` — e declaração léxica não some ao remover a tag. Como a navegação do site é SPA e ninguém recarrega a página, **na prática só dava para jogar um jogo por visita**, sem nenhuma mensagem. Medido: o emulador passou a montar em 6 de 6 trocas.
+- [x] O jogo parou de sair do lugar dentro da moldura
+  <br>A moldura usava `overflow: hidden`, que **cria contêiner de rolagem**. O EmulatorJS enche essa caixa de 246px com 514px de conteúdo (só a barra de menu escondida tem 260px), então qualquer `scrollIntoView` de um descendente — o navegador faz isso sozinho ao focar algo — rolava a caixa em 80,5px: o topo da imagem sumia e sobrava uma tarja preta embaixo. Sem barra de rolagem, não havia gesto que desfizesse. Resolvido com `overflow: clip`, que corta sem criar rolagem.
+
+---
+
+### 6.3 — O limite de jogos por sessão
+
+Não está resolvido, e não é bug do site. Medido depois das correções da 6.2, com o critério de animar:
+
+| # | Jogo | Core | Reserva | Rodou | RAM livre |
+| ---: | --- | --- | ---: | :---: | ---: |
+| 1 | Sonic 2 | `segaMD` | 512 MB | ✅ | 444 MB |
+| 2 | Mario World | `snes` | 128 MB | ✅ | 245 MB |
+| 3 | Yu-Gi-Oh | `gba` | 128 MB | ✅ | 322 MB |
+| 4 | Sonic 2 | `segaMD` | 512 MB | ❌ | 456 MB |
+| 5 | Mario World | `snes` | 128 MB | ✅ | 350 MB |
+
+Dois números matam a hipótese de vazamento no site: **o heap JS fica em 33–36 MB do primeiro ao último jogo**, e o aparelho **nunca ficou sem RAM** — 245 a 456 MB livres em todas as falhas. O erro é `WebAssembly.instantiate(): Out of memory`, que é espaço de endereçamento, não memória.
+
+**O mecanismo, com fonte:** cada core reserva um bloco **contíguo** no `instantiate` e nunca o devolve. Lendo a seção de memória (id 5) dos binários `.wasm` do 4.2.3: `fceumm` (NES), `snes9x` e `mgba` (GBA) pedem **128 MB**; **`genesis_plus_gx` (Mega Drive), `picodrive` e `mupen64plus_next` (N64) pedem 512 MB**. Isso explica por que o limite não é um contador, é soma: 512+128+128 = 768 MB couberam; o Sonic seguinte pediu mais 512 e não coube; o Mario World depois dele pediu 128 e coube.
+
+**Não há saída pelo lado da biblioteca.** O EmulatorJS 4.2.3 é a versão mais recente (julho de 2025) e a instância expõe 96 métodos, nenhum deles `destroy`, `dispose`, `terminate` ou `unload`. O `callEvent('exit')` que o site chama salva a SRAM, para o laço e desmonta o sistema de arquivos — não libera memória.
+
+**A alternativa medida: Nostalgist.js.** Roda os mesmos cores libretro, é MIT e tem `exit()` de verdade (revoga os blobs do WASM e do JS, remove os listeners do Emscripten). Testado no mesmo aparelho, mesma ROM, mesmo critério:
+
+| | EmulatorJS 4.2.3 | Nostalgist 0.21.1 |
+| --- | ---: | ---: |
+| Mega Drives seguidos que rodaram | **1** | **5** |
+| Tempo até pronto, do 2º em diante | ~8 s | **2,3 s** |
+| Tempo até o jogo animar | 11–17 s | **3,9 s** |
+| Peso da biblioteca | 700 KB | **54 KB** |
+| Reserva do core de Mega Drive | 512 MB | **128 MB** |
+
+Duas ressalvas que precisam constar: o 6º jogo **ainda** deu `Out of memory`, então o `exit()` do Nostalgist também não devolve a memória — o ganho vem do core ser quatro vezes menor, não da biblioteca ser melhor nisso. E o **Nostalgist não traz interface**: nada de gamepad virtual, menus ou botões de save state. Trocar significa construir os controles de toque, o que é trabalho de semanas — mas é também a chance de resolver a 6.1, já que o gamepad que hoje cobre 45% do jogo é justamente o que viria a ser substituído.
+
+**Tarefas**
+
+- [ ] Mostrar mensagem própria quando o `instantiate` falhar, com o que fazer
+  <br>Hoje o jogador vê "Falha ao iniciar o jogo" em vermelho, que é texto da biblioteca, sem dizer que basta fechar a aba e abrir de novo. É a correção mais barata e não depende de decisão nenhuma.
+- [ ] Decidir sobre trocar o EmulatorJS pelo Nostalgist.js
+  <br>Quadruplica os jogos por sessão e corta o tempo de abertura em dois terços, ao custo de reescrever os controles de toque e o save state. Decisão de produto, não de código.
+- [ ] Evitar o core de 512 MB onde houver equivalente de 128 MB
+  <br>⚠️ Suspeita, ainda não medida: `picodrive` também reserva 512 MB, então não serve de troca para Mega Drive dentro do EmulatorJS.
+
+---
+
+### 6.4 — Velocidade de abertura
+
+- [x] Anúncios e medição saíram do caminho crítico
+  <br>GTM, `gpt.js` e Meta Pixel passaram a esperar o emulador montar, com teto de tempo para nunca deixarem de carregar. Nenhum anúncio foi removido e o slot continua preenchendo — conferido 14 s depois: `googletag` ativo, `dataLayer` populado, `fbq` presente e iframe de 250px no slot.
+
+| Tempo até o botão de iniciar aparecer | Antes | Depois |
+| --- | ---: | ---: |
+| Cache frio | 7.352 ms | **2.218 ms** |
+| Cache quente | 5.565 ms | **1.625 ms** |
+
+Composição das 92 requisições da página de jogo, antes da mudança: site 11 req · CDN do emulador 8 · ROM 2 · Supabase 7 · **anúncios e medição 57 req e 88 KB**, ou seja 62% das requisições e 94% dos bytes.
+
+O que sobra é o próprio emulador: depois de tocar em iniciar, ainda são **cerca de 8 segundos** até o primeiro quadro. É o download de 1,15 MB de core comprimido em 7z mais a descompactação **em JavaScript** (`extract7z.js`, 274 KB) num processador de 32 bits.
+
+**Tarefas**
+
+- [ ] Adiar a consulta de "jogos relacionados"
+  <br>São 2,6 s de Supabase no caminho crítico para uma lista que só aparece abaixo da dobra.
+- [ ] Remover a consulta a `cdn.emulatorjs.org/stable/data/version.json`
+  <br>A versão está fixada em 4.2.3; essa requisição pergunta qual é a estável e não muda nada.
+- [ ] Encurtar os 8 segundos entre iniciar e o primeiro quadro
+  <br>Dentro do EmulatorJS não há como fugir do 7z. O Nostalgist serve `.wasm` direto, sem descompactação em JavaScript — ver 6.3.
+
+---
+
+### 6.5 — Layout de celular
+
+**A grade de jogos é o último bloco da página.** Ordem medida em coluna única:
+
+| # | Bloco | Topo | Altura |
+| ---: | --- | ---: | ---: |
+| 1 | Cabeçalho | 0 | 65 |
+| 2 | Logo | 85 | 118 |
+| 3 | Busca | 223 | 104 |
+| 4 | Filtros | 347 | 43 |
+| 5 | Anúncio 300×250 | 430 | 250 |
+| 6 | Desafios | 710 | 407 |
+| 7 | Anúncio 250×250 — **sem criativo** | 1157 | 250 |
+| 8 | Top 5 | 1437 | 224 |
+| 9 | **Grade de jogos** | **1691** | 1755 |
+
+São **2,4 telas de rolagem até o primeiro jogo**, num site cujo produto é o jogo. A Home inteira tem 3.586px, 5,1 telas.
+
+**A faixa de filtros esconde 7 dos 10 consoles.** 986px de conteúdo em 360px visíveis: 626px escondidos, 3 pílulas inteiras na tela, `scrollbar-width: none`, sem máscara nem sombra. Nada sugere que existam mais consoles.
+
+**Dois alvos de toque reprovam o mínimo de 24px da WCAG**, ambos na Home:
+
+| Elemento | Tamanho | Causa |
+| --- | --- | --- |
+| `.topo__link` "Ranking" | **16 × 44** | [paginas.css:715](../src/styles/paginas.css#L715) define `min-height` e nunca largura; [:774](../src/styles/paginas.css#L774) esconde o texto no celular e sobra o ícone de 16px |
+| `.lateral__ver-tudo` | **41,9 × 16,8** | [paginas.css:582](../src/styles/paginas.css#L582) só define cor e `font-size`, sem `padding` nem `min-height` |
+
+**Tarefas**
+
+- [ ] Subir a grade de jogos na ordem visual do celular
+  <br>Reabre um item que a Fase 4 tinha marcado como fora de escopo por mexer na posição dos anúncios. Com o celular como prioridade, 2,4 telas até o produto não se sustenta.
+- [ ] Corrigir os dois alvos que reprovam a WCAG
+- [ ] Indicar que a faixa de filtros rola
+- [ ] Trocar `min-height: 100vh` por `100dvh` nos 7 pontos onde aparece
+  <br>Medido: `100vh` resolve para 756,5px numa tela de 700px — **131px de rolagem morta** em toda página que caberia inteira.
+- [ ] Declarar `color-scheme: dark`
+  <br>Medido `normal` na raiz e no `body`: `<select>`, `input[type=file]` e `input[type=number]` são desenhados com esquema claro sobre card escuro.
+- [ ] Reavaliar as pílulas de filtro (35px) e a paginação (38px)
+  <br>A Fase 5 aceitou as duas com o argumento de que levá-las a 44px somaria ~52px acima da grade. Se a grade subir, o argumento cai.
+
+---
+
+### 6.6 — Anúncios no celular
+
+| Onde | Slot | Tamanho | Preenchido |
+| --- | --- | --- | --- |
+| Home | `div-gpt-ad-1775680124469-0` | 300×250 | sim |
+| Home | `div-gpt-ad-1775680168607-0` | 250×250 | **não, sem iframe** |
+| Sala | `.sala__lateral--esquerda` | 360×345 | contém o 300×250 |
+| Sala | `.sala__lateral--direita` | 360×345 | contém o 250×250 vazio |
+
+A Home reserva **500px** de anúncio e a sala de jogo **690px**, com `min-height: 250px` mantido mesmo sem criativo. Metade desse espaço, nas duas telas, está vazio. A coluna central da Home tem **332px** úteis: um criativo de 336px, que os slots declaram aceitar, transborda.
+
+**Tarefas**
+
+- [ ] Não reservar altura quando o slot não preenche
+  <br>Reabre outro item que a Fase 4 tinha marcado como fora de escopo. **Efeito na receita: nenhum** — espaço em branco não rende, e recuperá-lo sobe o conteúdo que rende.
+- [ ] Descobrir por que o segundo slot nunca preenche
+  <br>⚠️ Depende do painel do Google Ad Manager. O slot está declarado e o `display()` roda; a resposta vem sem criativo.
+- [ ] Tirar 336×280 da lista de tamanhos aceitos, ou alargar a coluna
+- [ ] Usar IDs de anúncio distintos por rota
+  <br>Terceiro item reaberto da Fase 4. Os mesmos IDs na Home e na sala fazem o `googletag.display()` da segunda rota não reexibir depois da navegação SPA — **isso é impressão perdida, não ganha**.
+
+---
+
+### Avaliado e descartado nesta fase
+
+| Suspeita | Veredito |
+| --- | --- |
+| "A ROM do Sonic 2 está corrompida como as 22 de `public/`" | **Refutado.** Baixada e verificada: 1.048.576 bytes exatos, potência de 2, cabeçalho `SEGA GENESIS (C)SEGA 1992.SEP` em `0x100`, zero ocorrências de `EF BF BD` |
+| "O aparelho não tem RAM para o emulador" | **Refutado.** Falha com 245 a 456 MB livres, e com o heap JS parado em 33 MB |
+| "Sobram globais `EJS_*` e é por isso que estoura a memória" | **Sobram mesmo — oito delas — mas não é a causa.** Apagar todas continuou estourando. Pior: apagar as classes da biblioteca junto quebrou o segundo jogo de outro jeito |
+| "`Cross-Origin-Opener-Policy` força processo novo e libera a memória" | **Refutado na medição.** O `pid` do renderizador não mudou em 6 navegações |
+| "Iframe de outra origem ganha processo próprio e libera tudo" | **Refutado.** O iframe não apareceu como alvo separado no CDP: o Chrome desliga isolamento de site em aparelho de pouca memória |
+| "Atualizar o EmulatorJS resolve" | **Refutado.** 4.2.3 já é a versão mais recente, de julho de 2025 |
+| "O estado vazio da grade fica espremido numa coluna" | **Refutado.** Medido ocupando os 332px inteiros |
+| "A margem negativa do 'Esqueci minha senha' cobre o botão Entrar" | **Refutado.** `margin-top: -10px` contra `gap: 15px` deixa 5px de folga, e o toque no aparelho funciona |
+| "As telas de conta têm alvos de toque pequenos" | **Refutado.** Login, `/nova-senha` e `/minhas-missoes`: zero alvos abaixo de 44px |
+| "Alguma rota rola de lado no celular" | **Refutado.** Nenhuma das 9 rotas varridas tem rolagem horizontal |
 
 ## Avaliado e descartado
 

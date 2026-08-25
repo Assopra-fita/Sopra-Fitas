@@ -41,7 +41,7 @@ Não existe servidor de aplicação, não existe API própria. Toda regra de neg
 | Peça | Versão | Observação |
 | --- | --- | --- |
 | React | 19.2 | sem `StrictMode` — ver [`src/main.jsx`](src/main.jsx#L6) |
-| React Router | 7.11 | `BrowserRouter`, 13 rotas planas, sem rotas aninhadas |
+| React Router | 7.11 | `BrowserRouter`, 14 rotas planas, sem rotas aninhadas |
 | Supabase JS | 2.90 | cliente único exportado de [`src/supabaseClient.js`](src/supabaseClient.js#L9) |
 | lucide-react | 0.562 | biblioteca de ícones |
 | rolldown-vite | 7.2.5 | **não é o Vite** — ver abaixo |
@@ -90,7 +90,7 @@ Sopra-Fitas/
 ├── eslint.config.js        # proíbe estilo no JSX, entre outras regras
 ├── .prettierrc
 │
-├── src/                    # todo o código-fonte — 67 arquivos, ~6.800 linhas
+├── src/                    # todo o código-fonte — 73 arquivos, ~7.800 linhas
 │   ├── main.jsx            # bootstrap
 │   ├── App.jsx             # as rotas do produto
 │   ├── supabaseClient.js   # cliente Supabase singleton
@@ -99,7 +99,7 @@ Sopra-Fitas/
 │   ├── services/           # ÚNICO lugar que fala com o Supabase — 7 arquivos
 │   ├── hooks/              # sessão, catálogo, favoritos, avisos, emulador…
 │   ├── lib/                # funções puras: texto, paginação, estado de jogo
-│   ├── pages/              # uma página por rota — 12 arquivos
+│   ├── pages/              # uma página por rota — 14 arquivos
 │   ├── components/
 │   │   ├── ui/             # peças compartilhadas: Botao, Card, Campo, Tabela…
 │   │   ├── home/           # cabeçalho, cards e paginação da vitrine
