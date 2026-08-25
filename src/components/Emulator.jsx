@@ -4,6 +4,44 @@ import React, { useEffect, useRef } from 'react';
 // quebrar todos os jogos sem aviso.
 const CDN = 'https://cdn.emulatorjs.org/4.2.3/data/';
 
+// Controles virtuais do Mega Drive, sem os botões de velocidade.
+//
+// O gamepad virtual do EmulatorJS é desenhado DENTRO do canvas — medido em
+// celular, ele cobre 45,3% da imagem em retrato. Parte disso é jogo: o d-pad e
+// os botões de ação precisam estar ao alcance do polegar. Mas quatro dos
+// botões ficam em `location: "center"`, bem no miolo da tela, e dois deles não
+// são do videogame: "Rápido" e "Lento" são truque de emulador.
+//
+// A biblioteca só acrescenta os botões de velocidade quando NÃO existe um
+// `VirtualGamepadSettings` — ela empurra `speedControlButtons` no ramo padrão
+// de cada esquema de controle. Declarar o layout, ainda que idêntico ao
+// padrão, é o que os remove.
+//
+// Fora isso, este layout é o mesmo do 4.2.3, com os mesmos `input_value`, que
+// são os números de botão do libretro e não podem mudar. Reposicionar o d-pad
+// e os botões de ação para fora da imagem depende de mover os agrupamentos
+// `.ejs_virtualGamepad_*`, que é CSS e está na Fase 6 do roadmap.
+const CONTROLES = {
+  segaMD: [
+    { type: 'button', text: 'A', id: 'a', location: 'right', right: 145, top: 70, bold: true, input_value: 1 },
+    { type: 'button', text: 'B', id: 'b', location: 'right', right: 75, top: 70, bold: true, input_value: 0 },
+    { type: 'button', text: 'C', id: 'c', location: 'right', right: 5, top: 70, bold: true, input_value: 8 },
+    { type: 'button', text: 'X', id: 'x', location: 'right', right: 145, top: 0, bold: true, input_value: 10 },
+    { type: 'button', text: 'Y', id: 'y', location: 'right', right: 75, top: 0, bold: true, input_value: 9 },
+    { type: 'button', text: 'Z', id: 'z', location: 'right', right: 5, top: 0, bold: true, input_value: 11 },
+    { type: 'dpad', id: 'dpad', location: 'left', left: '50%', right: '50%', joystickInput: false, inputValues: [4, 5, 6, 7] },
+    { type: 'button', text: 'Mode', id: 'mode', location: 'center', left: -5, fontSize: 15, block: true, input_value: 2 },
+    { type: 'button', text: 'Start', id: 'start', location: 'center', left: 60, fontSize: 15, block: true, input_value: 3 },
+  ],
+};
+
+// De qual esquema de controle é este core.
+const ESQUEMA_DO_CORE = {
+  genesis_plus_gx: 'segaMD',
+  picodrive: 'segaMD',
+  segaMD: 'segaMD',
+};
+
 // Script que não faz nada, para o loader "carregar" no lugar do emulator.min.js
 // quando ele já foi executado neste documento. Ver o comentário no efeito.
 const SCRIPT_VAZIO = 'data:text/javascript,void%200';
@@ -88,6 +126,7 @@ const Emulator = ({ gameUrl, core, onPronto, aoFalhar }) => {
         'EJS_DEBUG_XX',
         'EJS_paths',
         'EJS_adBlocked',
+        'EJS_VirtualGamepadSettings',
       ]) {
         // `delete` falha calado em global de script clássico declarada com
         // `var` (não-configurável), então a atribuição é o caminho de reserva.
@@ -128,6 +167,11 @@ const Emulator = ({ gameUrl, core, onPronto, aoFalhar }) => {
     // o logo da SEGA aparecia no mesmo instante.
     window.EJS_startOnLoaded = false;
     window.EJS_DEBUG_XX = false;
+
+    const esquema = ESQUEMA_DO_CORE[core];
+    if (esquema && CONTROLES[esquema]) {
+      window.EJS_VirtualGamepadSettings = CONTROLES[esquema];
+    }
 
     // Segundo jogo em diante, no MESMO documento: impede o loader de executar
     // o emulator.min.js outra vez.
