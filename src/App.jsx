@@ -3,7 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import GameRoom from './pages/GameRoom';
 import Login from './pages/Login';
+import NovaSenha from './pages/NovaSenha';
+import { CAMINHO_NOVA_SENHA } from './services/sessao';
 import Perfil from './pages/Perfil';
+import MinhasMissoes from './pages/MinhasMissoes';
 import Ranking from './pages/Ranking';
 import NaoEncontrada from './pages/NaoEncontrada';
 import RotaAdmin from './components/RotaAdmin';
@@ -35,7 +38,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/jogar/:gameId" element={<GameRoom />} />
           <Route path="/login" element={<Login />} />
+
+          {/* Destino do link de recuperação de senha. O endereço precisa estar
+              na lista de redirecionamentos do Auth, no painel do Supabase —
+              fora dela o link cai na Home e esta tela nunca abre. */}
+          <Route path={CAMINHO_NOVA_SENHA} element={<NovaSenha />} />
+
           <Route path="/perfil" element={<Perfil />} />
+          <Route path="/minhas-missoes" element={<MinhasMissoes />} />
           <Route path="/ranking" element={<Ranking />} />
 
           {/* ==============================

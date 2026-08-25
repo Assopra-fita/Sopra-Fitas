@@ -9,4 +9,10 @@ Disallow: /admin-usuarios
 Disallow: /admin-gerenciar-jogos
 Disallow: /painel-admin-jogos
 
+# Telas de conta: exigem login e não têm conteúdo público. A de nova senha
+# ainda chega por link de uso único, que não deve virar resultado de busca.
+Disallow: /perfil
+Disallow: /minhas-missoes
+Disallow: /nova-senha
+
 Sitemap: https://assoprafitas.com/sitemap.xml

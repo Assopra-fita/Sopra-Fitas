@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { obterSessao } from '../services/sessao';
 import { obterPerfil, atualizarNome } from '../services/perfis';
 import { Link, useNavigate } from 'react-router-dom';
-import { Coins, Trophy, Shield } from 'lucide-react';
+import { Coins, Trophy, Shield, ClipboardList } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { useAviso } from '../hooks/useAviso';
 import { MARCA } from '../lib/seo';
@@ -111,6 +111,14 @@ const Perfil = () => {
             <Trophy color="var(--conquista)" aria-hidden="true" />
             <div className="perfil__numero-valor">Ver</div>
             <small>Ranking</small>
+          </Link>
+
+          {/* Até aqui o jogador mandava o print e nunca mais sabia o que
+              aconteceu com ele: não havia tela nenhuma mostrando o status. */}
+          <Link className="perfil__numero" to="/minhas-missoes">
+            <ClipboardList color="var(--primaria)" aria-hidden="true" />
+            <div className="perfil__numero-valor">Ver</div>
+            <small>Missões</small>
           </Link>
         </div>
 

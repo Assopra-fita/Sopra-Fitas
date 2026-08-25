@@ -68,3 +68,49 @@ export const enviarArquivo = async ({ balde, caminho, arquivo, substituir = fals
 
   return publicUrl;
 };
+
+// Nome de arquivo que não conta nada sobre quem enviou.
+//
+// O print ia para o bucket como `{user_id}_{timestamp}`, e o bucket responde à
+// listagem com a chave anônima: bastava listar para amarrar cada print a uma
+// conta, e `profiles` devolvia o nome de quem era. A associação passa a existir
+// só na coluna `user_id` da tabela `missoes` — quem a fecha para o público é a
+// policy de RLS dessa tabela, que ainda está na lista de conferir no painel.
+export const nomeAleatorio = (extensao) => {
+  // `randomUUID` existe desde 2021 mas exige contexto seguro; o
+  // `getRandomValues` cobre o resto sem trazer dependência nenhuma.
+  const id =
+    crypto.randomUUID?.() ??
+    Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) =>
+      b.toString(16).padStart(2, '0')
+    ).join('');
+
+  return extensao ? `${id}.${extensao}` : id;
+};
+
+// Caminho do arquivo dentro do balde, a partir da URL pública gravada na linha.
+// O Storage sempre publica em `.../object/public/{balde}/{caminho}`; devolve
+// null para qualquer endereço fora desse formato, que é o caso do jogo
+// cadastrado com a capa apontando para fora do projeto.
+const PREFIXO_PUBLICO = '/storage/v1/object/public/';
+
+export const caminhoNoBalde = (url, balde) => {
+  if (typeof url !== 'string') return null;
+
+  const marca = `${PREFIXO_PUBLICO}${balde}/`;
+  const corte = url.indexOf(marca);
+  if (corte === -1) return null;
+
+  const caminho = url.slice(corte + marca.length).split('?')[0];
+  return caminho ? decodeURIComponent(caminho) : null;
+};
+
+// Apaga arquivos de um balde. Lista vazia não é erro nem ida à rede: quem
+// chama não deveria precisar conferir antes.
+export const removerArquivos = async (balde, caminhos) => {
+  const alvos = caminhos.filter(Boolean);
+  if (!alvos.length) return;
+
+  const { error } = await supabase.storage.from(balde).remove(alvos);
+  if (error) throw error;
+};

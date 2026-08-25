@@ -1,5 +1,10 @@
 import { supabase, desembrulhar, contar } from './consulta';
-import { enviarArquivo, validarImagem } from './armazenamento';
+import {
+  enviarArquivo,
+  extensaoDe,
+  nomeAleatorio,
+  validarImagem,
+} from './armazenamento';
 
 // O ciclo da missão: o jogador envia um print, o GM confere e credita pontos.
 // É o único jeito de ganhar ponto no site.
@@ -32,13 +37,14 @@ export const contarPendentes = () =>
 export const enviarPrint = async ({ userId, gameId, gameNome, arquivo }) => {
   validarImagem(arquivo, 'O print');
 
-  const extensao = arquivo.name.split('.').pop();
   const printUrl = await enviarArquivo({
     balde: 'prints',
-    // O nome do arquivo carrega o id do usuário, e o bucket é público: quem
-    // listar o bucket correlaciona cada print a uma conta. Trocar isto por um
-    // identificador aleatório é item da Fase 0 e depende do painel do Supabase.
-    caminho: `${userId}_${Date.now()}.${extensao}`,
+    // Identificador aleatório, nunca o id de quem enviou: o nome do arquivo
+    // viaja para qualquer um que liste o bucket, e o bucket ainda responde à
+    // listagem anônima. Quem sabe de quem é o print é a coluna `user_id`
+    // desta mesma linha. Fechar a listagem é a outra metade, e depende do
+    // painel do Supabase.
+    caminho: nomeAleatorio(extensaoDe(arquivo)),
     arquivo,
   });
 
@@ -68,4 +74,19 @@ export const aprovarMissao = ({ idMissao, idJogador, pontos }) =>
 export const rejeitarMissao = (id) =>
   desembrulhar(
     supabase.from('missoes').update({ status: 'rejeitado' }).eq('id', id)
+  );
+
+// O que o jogador enviou e em que pé está cada envio.
+//
+// Sem esta consulta ele mandava o print e nunca mais sabia o que aconteceu: o
+// status só existia na fila do GM, e nem a aprovação nem a recusa avisavam
+// ninguém. Pede as colunas nomeadas e não `*`: a linha tem o print e o id do
+// jogador, e a tela não precisa carregar o segundo para desenhar o primeiro.
+export const listarMinhasMissoes = (userId) =>
+  desembrulhar(
+    supabase
+      .from('missoes')
+      .select('id, game_id, game_nome, print_url, status, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
   );

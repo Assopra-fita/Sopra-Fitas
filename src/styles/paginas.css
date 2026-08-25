@@ -27,17 +27,22 @@
 
 .perfil__numeros {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--esp-md);
   justify-content: center;
   margin: var(--esp-xl) 0;
 }
 
+/* O `min-width` é o que decide entre três colunas apertadas e duas mais uma
+   embaixo: abaixo dele o terceiro atalho passa para a linha de baixo em vez de
+   espremer "Ranking" e "Missões" em duas linhas de texto cada. */
 .perfil__numero {
   background: var(--superficie-alta);
   border: 1px solid var(--borda);
   border-radius: var(--raio-g);
   padding: var(--esp-md);
   flex: 1;
+  min-width: 92px;
   color: var(--texto);
   display: block;
 }
@@ -51,6 +56,117 @@
   flex-direction: column;
   gap: var(--esp-md);
   margin-top: var(--esp-lg);
+}
+
+/* ---------- Missões enviadas pelo jogador ---------- */
+.envios {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+  padding: 0;
+  margin: var(--esp-lg) 0 0;
+}
+
+.envio {
+  display: flex;
+  gap: var(--esp-md);
+  align-items: flex-start;
+  /* A borda esquerda é o que separa as três situações à distância de um
+     relance, sem depender do ícone nem da leitura do rótulo. */
+  border-left: 4px solid var(--borda-clara);
+}
+
+.envio--pendente {
+  border-left-color: var(--primaria);
+}
+
+.envio--aprovada {
+  border-left-color: var(--sucesso-texto);
+}
+
+.envio--rejeitada {
+  border-left-color: var(--perigo-borda);
+}
+
+/* Miniatura de tamanho fixo: o print vem do aparelho de quem enviou, em
+   qualquer proporção, e `contain` mostra a imagem inteira em vez de recortar
+   justamente o canto onde costuma estar a pontuação. */
+.envio__print {
+  flex: 0 0 96px;
+  height: 96px;
+  background: var(--superficie-alta);
+  border-radius: var(--raio-m);
+  overflow: hidden;
+}
+
+.envio__print img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.envio__dados {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-xs);
+}
+
+.envio__jogo {
+  font-size: 1.05rem;
+}
+
+.envio__jogo a {
+  color: var(--texto);
+}
+
+.envio__jogo a:hover {
+  color: var(--primaria);
+}
+
+.envio__situacao {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-xs);
+  font-weight: bold;
+}
+
+.envio--pendente .envio__situacao {
+  color: var(--primaria);
+}
+
+.envio--aprovada .envio__situacao {
+  color: var(--sucesso-texto);
+}
+
+.envio--rejeitada .envio__situacao {
+  color: var(--perigo-texto);
+}
+
+.envio__explicacao {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.envio__data {
+  color: var(--texto-fraco);
+  font-size: 0.8rem;
+}
+
+/* Abaixo disto a miniatura e o texto não convivem na mesma linha sem o nome do
+   jogo quebrar letra a letra. */
+@media (max-width: 420px) {
+  .envio {
+    flex-direction: column;
+  }
+
+  .envio__print {
+    flex: none;
+    width: 100%;
+    height: 160px;
+  }
 }
 
 /* ---------- Estados compartilhados entre telas ---------- */
@@ -294,6 +410,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--esp-md);
+}
+
+/* Fica entre o formulário e a divisória do "criar conta", com margem negativa
+   para colar no botão de entrar: é ali que a pessoa acabou de errar a senha e
+   é ali que ela procura a saída. */
+.login__esqueci {
+  align-self: center;
+  margin-top: calc(var(--esp-sm) * -1);
 }
 
 .login__alternar {

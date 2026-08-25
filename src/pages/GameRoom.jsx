@@ -84,7 +84,9 @@ const GameRoom = () => {
 
       setModalAberto(false);
       setArquivo(null);
-      mostrarAviso('Missão enviada! O GM vai analisar seu print.');
+      mostrarAviso(
+        'Missão enviada! Acompanhe em Perfil › Minhas missões.'
+      );
     } catch (falha) {
       // Arquivo errado tem mensagem própria e já explica o que fazer; o resto
       // é falha de rede ou do banco.
