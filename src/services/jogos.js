@@ -1,5 +1,5 @@
 import { supabase, desembrulhar, contar } from './consulta';
-import { enviarArquivo } from './armazenamento';
+import { caminhoNoBalde, enviarArquivo, removerArquivos } from './armazenamento';
 
 // Tudo que o site lê ou escreve na tabela `jogos`, que é o acervo cadastrado
 // pelo painel do GM. O acervo do código vive em constants/games.js e não passa
@@ -26,8 +26,39 @@ export const listarAcervo = () =>
 export const atualizarJogo = (id, dados) =>
   desembrulhar(supabase.from('jogos').update(dados).eq('id', id));
 
-export const removerJogo = (id) =>
-  desembrulhar(supabase.from('jogos').delete().eq('id', id));
+// Apaga a linha e, em seguida, a capa e a ROM que só ela referenciava.
+//
+// A ordem importa. A linha é a fonte da verdade: apagando os arquivos primeiro,
+// um delete que falhasse deixaria o jogo no acervo apontando para arquivo que
+// não existe mais — card com capa quebrada e emulador em tela preta. Na ordem
+// inversa o pior caso é arquivo órfão, que é justamente o que já vinha
+// acumulando: 10 ROMs e 11 capas sem dono no Storage.
+//
+// Falhar ao apagar arquivo não derruba a operação, porque a linha já saiu e não
+// há como voltar atrás. O retorno diz o que sobrou, para a tela contar a
+// verdade em vez de dizer "removido" e deixar 8 MB para trás.
+export const removerJogo = async (jogo) => {
+  await desembrulhar(supabase.from('jogos').delete().eq('id', jogo.id));
+
+  // Nem todo jogo tem arquivo no Storage: parte do acervo foi cadastrada com a
+  // capa ou a ROM apontando para fora do projeto. `caminhoNoBalde` devolve null
+  // nesses casos, e a contagem é o que deixa a tela dizer "não havia nada para
+  // apagar" em vez de anunciar uma limpeza que não aconteceu.
+  const daCapa = caminhoNoBalde(jogo.capa_url, 'capas');
+  const daRom = caminhoNoBalde(jogo.rom_url, 'roms');
+  const quantos = [daCapa, daRom].filter(Boolean).length;
+
+  try {
+    await Promise.all([
+      removerArquivos('capas', [daCapa]),
+      removerArquivos('roms', [daRom]),
+    ]);
+    return { arquivosRemovidos: true, quantos };
+  } catch (falha) {
+    console.error('Erro ao apagar os arquivos do Storage:', falha);
+    return { arquivosRemovidos: false, quantos, falha };
+  }
+};
 
 export const contarJogos = () =>
   contar(supabase.from('jogos').select('*', { count: 'exact', head: true }));

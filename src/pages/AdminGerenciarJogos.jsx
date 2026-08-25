@@ -74,16 +74,25 @@ const AdminGerenciarJogos = () => {
     }
   };
 
-  const deletarJogo = async (id, nome) => {
-    if (!window.confirm(`Tem certeza que deseja deletar o jogo "${nome}"?`))
+  const deletarJogo = async (jogo) => {
+    if (!window.confirm(`Tem certeza que deseja deletar o jogo "${jogo.nome}"?`))
       return;
 
     try {
-      await removerJogo(id);
+      const { arquivosRemovidos, quantos } = await removerJogo(jogo);
       recarregar();
-      // A ROM e a capa continuam no Storage: quem apaga a linha não apaga os
-      // arquivos, e quem for limpar precisa saber que eles ficaram lá.
-      mostrarAviso(`"${nome}" saiu do acervo. Os arquivos continuam no Storage.`);
+
+      // Três desfechos diferentes, e nenhum deles é "removido" seco: apagar a
+      // linha e deixar 8 MB de ROM para trás no Storage foi como se juntaram
+      // as 10 ROMs e as 11 capas órfãs que já estão lá.
+      mostrarAviso(
+        !arquivosRemovidos
+          ? `"${jogo.nome}" saiu do acervo, mas a capa e a ROM continuam no Storage.`
+          : quantos === 0
+            ? `"${jogo.nome}" saiu do acervo. Ele não tinha arquivo no Storage.`
+            : `"${jogo.nome}" saiu do acervo, junto com a capa e a ROM.`,
+        { erro: !arquivosRemovidos }
+      );
     } catch (e) {
       mostrarAviso('Erro ao deletar: ' + e.message, { erro: true });
     }
@@ -184,7 +193,7 @@ const AdminGerenciarJogos = () => {
             <Botao
               variante="perigo"
               className="btn--icone"
-              onClick={() => deletarJogo(j.id, j.nome)}
+              onClick={() => deletarJogo(j)}
               aria-label={`Deletar ${j.nome}`}
             >
               <Trash2 size={18} aria-hidden="true" />
