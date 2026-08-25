@@ -41,12 +41,17 @@ const GameRoom = () => {
       : seoDeJogoInexistente(gameId)
   );
 
+  // Falha do emulador ao iniciar, separada do erro de "jogo não encontrado":
+  // aqui o jogo existe, o que faltou foi memória no navegador.
+  const [falhaDoEmulador, setFalhaDoEmulador] = useState(null);
+
   const [sessao, setSessao] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [arquivo, setArquivo] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
+    setFalhaDoEmulador(null);
     window.scrollTo(0, 0);
 
     let ativo = true;
@@ -127,11 +132,32 @@ const GameRoom = () => {
         ) : (
           <div className="sala__coluna">
             <div className="sala__tela" id={emulador.ID_DA_TELA}>
-              <Emulator
-                gameUrl={jogo.rom_url}
-                core={jogo.core}
-                onPronto={emulador.aoPronto}
-              />
+              {/* O emulador sai da árvore quando falha, em vez de a mensagem
+                  ser desenhada por cima dele. Disputar `z-index` com a barra de
+                  menu da biblioteca não funcionou — o botão de ajustes ficava
+                  por cima do texto — e desmontar ainda dispara o encerramento,
+                  soltando o que a instância morta ainda segurava. */}
+              {falhaDoEmulador === 'memoria' ? (
+                <div className="sala__sem-memoria" role="alert">
+                  <h2>O navegador ficou sem memória</h2>
+                  <p>
+                    Cada jogo aberto reserva um pedaço de memória que o
+                    navegador só devolve quando a aba fecha. Depois de alguns
+                    jogos na mesma visita, não sobra espaço para o próximo.
+                  </p>
+                  <p className="sala__sem-memoria-saida">
+                    <strong>Feche esta aba e abra o jogo de novo.</strong>{' '}
+                    Voltar para a Home não resolve.
+                  </p>
+                </div>
+              ) : (
+                <Emulator
+                  gameUrl={jogo.rom_url}
+                  core={jogo.core}
+                  onPronto={emulador.aoPronto}
+                  aoFalhar={setFalhaDoEmulador}
+                />
+              )}
             </div>
 
             <BarraDeControles

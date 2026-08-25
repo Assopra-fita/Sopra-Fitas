@@ -23,14 +23,16 @@ const emulatorJsJaExecutou = () => {
 // O EmulatorJS é configurado por variáveis globais e cria a instância real em
 // window.EJS_emulator. Atenção: window.EJS_player é só o SELETOR CSS de onde
 // montar — chamar métodos nele não funciona, é uma string.
-const Emulator = ({ gameUrl, core, onPronto }) => {
+const Emulator = ({ gameUrl, core, onPronto, aoFalhar }) => {
   const containerRef = useRef(null);
 
   // Guardado em ref para o efeito abaixo não remontar o emulador toda vez que
   // o pai recriar a função.
   const prontoRef = useRef(onPronto);
+  const falhaRef = useRef(aoFalhar);
   useEffect(() => {
     prontoRef.current = onPronto;
+    falhaRef.current = aoFalhar;
   });
 
   useEffect(() => {
@@ -164,7 +166,31 @@ const Emulator = ({ gameUrl, core, onPronto }) => {
       window.dispatchEvent(new Event('assopra:emulador-pronto'));
     };
 
-    // --- 3. INJEÇÃO DO SCRIPT ---
+    // --- 3. AVISO QUANDO O EMULADOR NÃO CONSEGUE INICIAR ---
+    //
+    // O `WebAssembly.instantiate` falha por falta de espaço de endereçamento e
+    // a rejeição não é tratada por ninguém: o jogador fica olhando para um
+    // "Falha ao iniciar o jogo" em vermelho, que é texto da biblioteca, sem
+    // saber que basta fechar a aba.
+    //
+    // Cada core reserva um bloco contíguo — 128 MB em NES, SNES e GBA; 512 MB
+    // em Mega Drive e N64 — e o EmulatorJS 4.2.3 não tem como devolvê-lo: a
+    // instância expõe 96 métodos e nenhum destroy. Num Chrome de 32 bits, que
+    // é o de boa parte dos celulares de entrada, o espaço acaba depois de
+    // alguns jogos. Ver a Fase 6 do roadmap.
+    //
+    // `failedToStart` é a propriedade que a própria biblioteca levanta, e serve
+    // para separar "acabou a memória" de qualquer outra falha de abertura.
+    const aoRejeitar = (evento) => {
+      const motivo = String(evento?.reason?.message ?? evento?.reason ?? '');
+      if (!/Cannot allocate Wasm memory|Out of memory/i.test(motivo)) return;
+
+      evento.preventDefault();
+      if (typeof falhaRef.current === 'function') falhaRef.current('memoria');
+    };
+    window.addEventListener('unhandledrejection', aoRejeitar);
+
+    // --- 4. INJEÇÃO DO SCRIPT ---
     const script = document.createElement('script');
     script.src = `${CDN}loader.js`;
     script.id = 'emulator-script';
@@ -172,8 +198,9 @@ const Emulator = ({ gameUrl, core, onPronto }) => {
 
     document.body.appendChild(script);
 
-    // --- 4. LIMPEZA (troca de jogo ou saída da tela) ---
+    // --- 5. LIMPEZA (troca de jogo ou saída da tela) ---
     return () => {
+      window.removeEventListener('unhandledrejection', aoRejeitar);
       if (typeof prontoRef.current === 'function') prontoRef.current(null);
       encerrar();
     };

@@ -94,6 +94,8 @@
    jogo de 728px e obrigava a rolar para ver o próprio jogo. Os 150px
    descontados são a barra de controles mais o respiro da coluna. */
 .sala__tela {
+  /* Contexto de posicionamento do aviso de memória esgotada. */
+  position: relative;
   width: min(100%, calc((100vh - 150px) * 4 / 3));
   width: min(100%, calc((100dvh - 150px) * 4 / 3));
   aspect-ratio: 4 / 3;
@@ -103,6 +105,57 @@
   border: 2px solid var(--borda);
   border-bottom: none;
   border-radius: 10px 10px 0 0;
+}
+
+/* ---------- Aviso de memória esgotada ----------
+   Cobre a moldura inteira porque o que está atrás é a mensagem em vermelho da
+   própria biblioteca, que diz "Falha ao iniciar o jogo" e não explica nada.
+   `position: absolute` sobre `.sala__tela`, que é o elemento com a proporção
+   4:3 e o recorte. */
+.sala__sem-memoria {
+  position: absolute;
+  inset: 0;
+  /* Acima da barra de menu e do botão de ajustes que o EmulatorJS deixa
+     flutuando na moldura — medido, eles cobriam o fim do texto. */
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--esp-sm);
+  padding: var(--esp-lg);
+  background: var(--fundo);
+  color: var(--texto-suave);
+  text-align: center;
+  overflow-y: auto;
+}
+
+.sala__sem-memoria h2 {
+  color: var(--primaria);
+  font-size: 1.05rem;
+}
+
+.sala__sem-memoria p {
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.sala__sem-memoria-saida {
+  color: var(--texto);
+}
+
+/* Na moldura de 246px do celular o texto inteiro não cabe sem apertar. */
+@media (max-width: 480px) {
+  .sala__sem-memoria {
+    padding: var(--esp-sm) var(--esp-md);
+  }
+
+  .sala__sem-memoria h2 {
+    font-size: 0.95rem;
+  }
+
+  .sala__sem-memoria p {
+    font-size: 0.78rem;
+  }
 }
 
 /* ---------- Barra de controles ---------- */
