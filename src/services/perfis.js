@@ -1,4 +1,4 @@
-import { supabase, desembrulhar, contar } from './consulta';
+import { supabase, desembrulhar, escrever, contar } from './consulta';
 
 // Tudo que o site lê ou escreve na tabela `profiles`.
 //
@@ -24,7 +24,10 @@ export const obterPapel = async (userId) => {
 };
 
 export const atualizarNome = (userId, nome) =>
-  desembrulhar(supabase.from('profiles').update({ nome }).eq('id', userId));
+  escrever(
+    supabase.from('profiles').update({ nome }).eq('id', userId).select('id'),
+    'o nome'
+  );
 
 // Ranking público: id, nome e pontos, nada além disso.
 export const listarRanking = (limite = 50) =>
@@ -37,10 +40,16 @@ export const listarJogadores = () =>
   desembrulhar(UM('*').order('pontos', { ascending: false }));
 
 export const atualizarPontos = (userId, pontos) =>
-  desembrulhar(supabase.from('profiles').update({ pontos }).eq('id', userId));
+  escrever(
+    supabase.from('profiles').update({ pontos }).eq('id', userId).select('id'),
+    'os pontos'
+  );
 
 export const definirPapel = (userId, papel) =>
-  desembrulhar(supabase.from('profiles').update({ role: papel }).eq('id', userId));
+  escrever(
+    supabase.from('profiles').update({ role: papel }).eq('id', userId).select('id'),
+    'o papel'
+  );
 
 export const contarJogadores = () =>
   contar(supabase.from('profiles').select('*', { count: 'exact', head: true }));

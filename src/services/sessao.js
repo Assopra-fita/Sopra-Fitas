@@ -29,6 +29,50 @@ export const assinarSessao = (aoMudar) => {
   return () => subscription.unsubscribe();
 };
 
+// --- Recuperação de senha que funciona onde quer que o link caia ---
+//
+// O link do e-mail volta para o endereço passado em `redirectTo`, MAS só se
+// esse endereço estiver na lista de redirecionamentos do painel do Auth. Fora
+// da lista, o Supabase ignora o `redirectTo` e manda para a Site URL — que
+// aqui é a Home. O jogador chegaria na vitrine, sem tela de trocar senha e sem
+// entender por quê.
+//
+// Como a lista fica num painel que nem todo mundo do time acessa, o site não
+// depende dela: em vez de exigir que o link caia em /nova-senha, ele detecta a
+// recuperação em QUALQUER rota e leva para lá.
+//
+// A assinatura é feita no carregamento do módulo, e não dentro de um
+// componente, de propósito: o cliente lê o fragmento da URL durante a própria
+// inicialização, e o evento pode disparar antes de o React montar. Assinando
+// aqui, o evento é guardado e entregue a quem chegar depois.
+let recuperacaoDetectada = false;
+const ouvintesDeRecuperacao = new Set();
+
+supabase.auth.onAuthStateChange((evento) => {
+  if (evento !== 'PASSWORD_RECOVERY') return;
+
+  recuperacaoDetectada = true;
+  for (const ouvinte of ouvintesDeRecuperacao) {
+    try {
+      ouvinte();
+    } catch (e) {
+      console.error('Falha ao tratar a recuperação de senha:', e);
+    }
+  }
+});
+
+// Avisa quando o link de recuperação for reconhecido. Chama na hora se ele já
+// tiver sido reconhecido antes desta assinatura.
+export const aoDetectarRecuperacao = (aoRecuperar) => {
+  if (recuperacaoDetectada) {
+    aoRecuperar();
+    return () => {};
+  }
+
+  ouvintesDeRecuperacao.add(aoRecuperar);
+  return () => ouvintesDeRecuperacao.delete(aoRecuperar);
+};
+
 // O Supabase responde em inglês. Quem erra a senha não deveria receber
 // "Invalid login credentials" num site em português.
 const EM_PORTUGUES = {
@@ -85,7 +129,16 @@ export const cadastrar = async (email, senha, nome) => {
   if (error) throw traduzir(error);
 };
 
-export const sair = () => supabase.auth.signOut();
+// Sair conferindo o erro, e não de olhos fechados.
+//
+// O `signOut` só apaga a sessão local depois de o servidor responder: falha de
+// rede que não seja 401, 403 ou 404 retorna ANTES de limpar. Ignorando o erro,
+// a tela dizia "Você saiu da conta" com o token ainda válido no aparelho e a
+// renovação automática ligada — pior num computador compartilhado.
+export const sair = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw traduzir(error);
+};
 
 // Recuperação de senha. Quem esquecia a senha perdia a conta e os pontos
 // junto: não havia caminho nenhum de volta na tela de login.

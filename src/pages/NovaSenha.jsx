@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, KeyRound, Loader2 } from 'lucide-react';
-import { obterSessao, definirNovaSenha } from '../services/sessao';
+import {
+  obterSessao,
+  definirNovaSenha,
+  aoDetectarRecuperacao,
+} from '../services/sessao';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { useAviso } from '../hooks/useAviso';
 import { MARCA } from '../lib/seo';
@@ -26,21 +30,40 @@ const NovaSenha = () => {
   const [salvando, setSalvando] = useState(false);
   const [trocada, setTrocada] = useState(false);
 
+  // Autoriza a troca só quando a sessão veio de um LINK DE RECUPERAÇÃO, e não
+  // por haver qualquer sessão aberta.
+  //
+  // Conferir apenas `Boolean(sessao)` abria dois buracos. Um: quem pegasse um
+  // aparelho destravado trocava a senha da conta logada sem saber a senha
+  // atual, só abrindo este endereço. Dois: o cliente do Supabase não derruba a
+  // sessão existente quando o login pela URL falha, então um link vencido da
+  // conta B, aberto num aparelho logado na conta A, trocava a senha de A.
+  //
+  // `aoDetectarRecuperacao` responde pelo evento PASSWORD_RECOVERY, que a
+  // biblioteca só emite depois de o servidor validar o token do link.
   useEffect(() => {
     let ativo = true;
+    let veioDeLink = false;
 
+    const cancelar = aoDetectarRecuperacao(() => {
+      veioDeLink = true;
+      if (ativo) {
+        setAutorizado(true);
+        setConferindo(false);
+      }
+    });
+
+    // Se o evento não chegar, ainda é preciso sair do "conferindo" — mas sem
+    // autorizar nada. Ter sessão não basta.
     obterSessao()
-      .then((sessao) => {
-        if (!ativo) return;
-        setAutorizado(Boolean(sessao));
-      })
       .catch((e) => console.error('Erro ao conferir a sessão:', e))
       .finally(() => {
-        if (ativo) setConferindo(false);
+        if (ativo && !veioDeLink) setConferindo(false);
       });
 
     return () => {
       ativo = false;
+      cancelar();
     };
   }, []);
 

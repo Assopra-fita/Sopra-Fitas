@@ -1,15 +1,20 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from 'react-router-dom';
 import Home from './pages/Home';
 import GameRoom from './pages/GameRoom';
 import Login from './pages/Login';
 import NovaSenha from './pages/NovaSenha';
-import { CAMINHO_NOVA_SENHA } from './services/sessao';
 import Perfil from './pages/Perfil';
 import MinhasMissoes from './pages/MinhasMissoes';
 import Ranking from './pages/Ranking';
 import NaoEncontrada from './pages/NaoEncontrada';
 import RotaAdmin from './components/RotaAdmin';
+import { aoDetectarRecuperacao, CAMINHO_NOVA_SENHA } from './services/sessao';
 
 // A área do GM é carregada sob demanda: só um punhado de pessoas a usa, e sem
 // isso ela viajava no mesmo arquivo que todo visitante anônimo baixa.
@@ -20,6 +25,34 @@ const AdminGerenciarJogos = lazy(() => import('./pages/AdminGerenciarJogos'));
 const AdminUsuarios = lazy(() => import('./pages/AdminUsuarios'));
 const AdminDesafios = lazy(() => import('./pages/AdminDesafios'));
 
+// Leva para a tela de trocar a senha assim que o link de recuperação for
+// reconhecido, esteja o visitante em que rota estiver.
+//
+// Sem isto, a recuperação só funciona se `/nova-senha` estiver na lista de
+// redirecionamentos do painel do Auth. Fora da lista, o Supabase manda o link
+// para a Site URL e o jogador cai na Home sem entender por quê. Aqui o site
+// para de depender de configuração externa para uma coisa que ele consegue
+// resolver sozinho.
+const LevaParaNovaSenha = () => {
+  const navigate = useNavigate();
+
+  useEffect(
+    () =>
+      aoDetectarRecuperacao(() => {
+        // `window.location` e não `useLocation`: o efeito assina uma vez só, e
+        // a rota atual precisa ser lida no momento do evento, não no da
+        // assinatura. `replace` para o botão voltar não devolver ao link já
+        // usado, que não vale duas vezes.
+        if (window.location.pathname !== CAMINHO_NOVA_SENHA) {
+          navigate(CAMINHO_NOVA_SENHA, { replace: true });
+        }
+      }),
+    [navigate]
+  );
+
+  return null;
+};
+
 const Carregando = () => (
   <div className="carregando-rota">
     Carregando painel...
@@ -29,6 +62,8 @@ const Carregando = () => (
 function App() {
   return (
     <Router>
+      <LevaParaNovaSenha />
+
       <Suspense fallback={<Carregando />}>
         <Routes>
           {/* ==============================
