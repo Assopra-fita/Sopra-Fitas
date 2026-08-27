@@ -2,7 +2,12 @@ const SITE = 'https://assoprafitas.com';
 
 // O nome da marca mora aqui e em mais nenhum lugar do JavaScript. Ele
 // aparecia escrito à mão em 10 arquivos, e trocar exigia caçar um por um.
-export const MARCA = 'Assopra Fita';
+//
+// O DOMÍNIO é outra coisa e não acompanha: `assoprafitas.com` continua sendo o
+// endereço enquanto o novo não é registrado. Nome e endereço divergirem por um
+// tempo é normal; o que não pode é o canonical apontar para domínio que não
+// existe.
+export const MARCA = 'Sopra Fitas';
 
 // Onde o Google costuma cortar a exibição do título.
 const LIMITE_DO_TITULO = 60;
