@@ -2,7 +2,7 @@
 
 Emulador de videogames clássicos que roda dentro do navegador, sem instalar nada. O jogador escolhe uma fita do acervo, joga na hora, e pode enviar print da pontuação para ganhar pontos, subir no ranking e disputar os desafios do mês.
 
-**Produção:** <https://sopra-fitas.vercel.app>
+**Produção:** <https://assoprafitas.com>
 **Repositório:** `git@github.com:Assopra-fita/Sopra-Fitas.git` — branch principal `main`
 
 ---
@@ -41,7 +41,7 @@ Não existe servidor de aplicação, não existe API própria. Toda regra de neg
 | Peça | Versão | Observação |
 | --- | --- | --- |
 | React | 19.2 | sem `StrictMode` — ver [`src/main.jsx`](src/main.jsx#L6) |
-| React Router | 7.11 | `BrowserRouter`, 13 rotas planas, sem rotas aninhadas |
+| React Router | 7.11 | `BrowserRouter`, 14 rotas planas, sem rotas aninhadas |
 | Supabase JS | 2.90 | cliente único exportado de [`src/supabaseClient.js`](src/supabaseClient.js#L9) |
 | lucide-react | 0.562 | biblioteca de ícones |
 | rolldown-vite | 7.2.5 | **não é o Vite** — ver abaixo |
@@ -86,45 +86,60 @@ O `git clone` baixa cerca de **93 MB** de histórico e o diretório de trabalho 
 Sopra-Fitas/
 ├── index.html              # shell da SPA + tags de anúncio e Meta Pixel
 ├── vite.config.js          # config do build (mínima: só o plugin do React)
-├── vercel.json             # rewrite catch-all para a SPA
-├── eslint.config.js
+├── vercel.json             # rewrite catch-all da SPA + cabeçalhos de cache
+├── eslint.config.js        # proíbe estilo no JSX, entre outras regras
 ├── .prettierrc
 │
-├── src/                    # TODO o código-fonte — 24 arquivos, ~5.000 linhas
-│   ├── main.jsx            # bootstrap (6 linhas)
-│   ├── App.jsx             # as 13 rotas do produto (62 linhas)
-│   ├── supabaseClient.js   # cliente Supabase singleton (9 linhas)
-│   ├── index.css           # único CSS importado (91 linhas)
-│   ├── App.css             # ÓRFÃO: nenhum arquivo importa
-│   ├── constants/
-│   │   └── games.js        # catálogo estático (518 linhas)
-│   ├── pages/              # 13 arquivos, uma página por rota
-│   ├── components/         # 4 arquivos, só 2 em uso
-│   └── assets/             # órfão do template Vite
+├── src/                    # todo o código-fonte — 73 arquivos, ~7.800 linhas
+│   ├── main.jsx            # bootstrap
+│   ├── App.jsx             # as rotas do produto
+│   ├── supabaseClient.js   # cliente Supabase singleton
+│   ├── registrarPWA.js     # registra o service worker, só em produção
+│   ├── constants/          # acervo estático e a lista de consoles suportados
+│   ├── services/           # ÚNICO lugar que fala com o Supabase — 7 arquivos
+│   ├── hooks/              # sessão, catálogo, favoritos, avisos, emulador…
+│   ├── lib/                # funções puras: texto, paginação, estado de jogo
+│   ├── pages/              # uma página por rota — 14 arquivos
+│   ├── components/
+│   │   ├── ui/             # peças compartilhadas: Botao, Card, Campo, Tabela…
+│   │   ├── home/           # cabeçalho, cards e paginação da vitrine
+│   │   └── jogo/           # barra de controles, ficha, relacionados, modal
+│   └── styles/             # todo o CSS — 6 arquivos, um ponto de entrada
 │
-├── public/                 # ~400 MB de binários, copiados verbatim para o dist
+├── public/                 # ~196 MB de binários, copiados verbatim para o dist
 │   ├── *.sfc *.md *.nes …  # ROMs
-│   ├── *.jpg *.png         # capas
-│   ├── roms/               # NÃO REFERENCIADA por nenhuma linha de código
-│   ├── capas/              # NÃO REFERENCIADA por nenhuma linha de código
-│   ├── ads.txt
-│   └── manifest.json
+│   ├── *.webp *.png        # capas
+│   ├── sw.js               # service worker
+│   ├── manifest.json       # nome, ícone e cores do app instalado
+│   ├── icone-*.png         # ícones do PWA
+│   ├── robots.txt · sitemap.xml
+│   └── ads.txt
 │
 └── dist/                   # gerado pelo build, não versionado
 ```
 
-O que **não existe** e vale saber de antemão: nenhum `Context`/`Provider`, nenhum hook customizado, nenhum componente de layout ou header compartilhado, nenhum teste, nenhum TypeScript, nenhuma pasta de migrations do banco.
+O que **não existe** e vale saber de antemão: nenhum `Context`/`Provider`,
+nenhum teste automatizado no repositório, nenhum TypeScript, nenhuma pasta de
+migrations do banco.
+
+Três regras estruturais que o código segue hoje, e que valem para quem for
+mexer:
+
+| Regra | Onde vive | Como é garantida |
+| --- | --- | --- |
+| Nenhum estilo no JSX | `src/styles/` | regra de lint que falha o build da revisão |
+| Nenhuma tela monta consulta | `src/services/` | só `services/consulta.js` importa o cliente do Supabase |
+| Layout é CSS, não JavaScript | media queries | sobrou um uso de breakpoint em JS, que decide conteúdo e não aparência |
 
 ### Ordem sugerida de leitura
 
-Não há um "core": há três arquivos que concentram quase tudo e o resto são folhas.
-
-1. [`src/main.jsx`](src/main.jsx) → [`src/App.jsx`](src/App.jsx) → [`src/supabaseClient.js`](src/supabaseClient.js) — o esqueleto, 77 linhas somadas
-2. [`src/constants/games.js`](src/constants/games.js) — dados puros, entenda o formato antes do resto
-3. [`src/pages/Home.jsx`](src/pages/Home.jsx) — 894 linhas, o maior arquivo; concentra sessão, catálogo, busca, favoritos, ranking e anúncios
-4. [`src/pages/GameRoom.jsx`](src/pages/GameRoom.jsx) — 688 linhas; emulador, controles e envio de missão
-5. [`src/components/Emulator.jsx`](src/components/Emulator.jsx) — a ponte com o EmulatorJS
-6. As sete telas de admin — todas são variações do mesmo padrão: um `useEffect` de busca, um handler de escrita, estilos inline
+1. [`src/main.jsx`](src/main.jsx) → [`src/App.jsx`](src/App.jsx) — o esqueleto e as rotas
+2. [`src/constants/games.js`](src/constants/games.js) — o acervo do código, fonte única; entenda o formato antes do resto
+3. [`src/services/`](src/services/) — o que o site lê e escreve, por domínio
+4. [`src/pages/Home.jsx`](src/pages/Home.jsx) — a vitrine: busca, filtro e paginação, com o estado na URL
+5. [`src/pages/GameRoom.jsx`](src/pages/GameRoom.jsx) — a sala de jogo, que orquestra os hooks de `src/hooks/use{Jogo,Relacionados,Emulador}.js`
+6. [`src/components/Emulator.jsx`](src/components/Emulator.jsx) — a ponte com o EmulatorJS, e o lugar mais frágil do projeto
+7. As seis telas de admin — todas seguem o mesmo desenho: um hook de consulta, `services/` para escrever, `components/ui` para desenhar
 
 ## Build e deploy
 
@@ -137,7 +152,7 @@ flowchart LR
     JS --> DIST
     CSS --> DIST
     DIST --> VER["Vercel"]
-    VER --> PROD["sopra-fitas.vercel.app"]
+    VER --> PROD["assoprafitas.com"]
 ```
 
 O build gera **um único bundle**, sem divisão de código: as sete telas administrativas viajam no mesmo arquivo que o visitante anônimo baixa.
@@ -152,22 +167,34 @@ Como 100% do estilo é inline no JSX e não há componente compartilhado, não e
 | --- | --- |
 | Adicionar ou remover uma rota | [`src/App.jsx:27-57`](src/App.jsx#L27-L57) — única tabela de rotas |
 | Apontar para outro projeto Supabase | [`src/supabaseClient.js:4-7`](src/supabaseClient.js#L4-L7) — único lugar |
-| Adicionar um jogo pelo código | **duas** edições em [`src/constants/games.js`](src/constants/games.js) — ver [CATALOGO-DE-JOGOS.md](docs/CATALOGO-DE-JOGOS.md) |
-| Grade, busca, filtros ou paginação da vitrine | [`src/pages/Home.jsx`](src/pages/Home.jsx) — filtro em `:173`, `jogosPorPagina` em `:136`, categorias em `:160`, card em `:700` |
-| Barra de controles do emulador | [`src/pages/GameRoom.jsx:349-382`](src/pages/GameRoom.jsx#L349-L382), estilo em `:123-136` |
+| Adicionar um jogo pelo código | **uma** entrada em [`src/constants/games.js`](src/constants/games.js), com os nove campos — ver [CATALOGO-DE-JOGOS.md](docs/CATALOGO-DE-JOGOS.md) |
+| Grade, busca, filtros ou paginação da vitrine | [`src/pages/Home.jsx`](src/pages/Home.jsx) e o bloco `.home__` de [`src/styles/paginas.css`](src/styles/paginas.css); as categorias saem de [`src/constants/consoles.js`](src/constants/consoles.js) |
+| Barra de controles do emulador | [`src/pages/GameRoom.jsx`](src/pages/GameRoom.jsx); o visual e os três modos de tela em [`src/styles/jogo.css`](src/styles/jogo.css) |
 | Versão ou CDN do EmulatorJS | [`src/components/Emulator.jsx:39`](src/components/Emulator.jsx#L39) e `:45` — os dois únicos pontos |
 | Anúncios | slots em [`index.html:35-63`](index.html#L35-L63); âncoras em `Home.jsx:397` e `:603`, `GameRoom.jsx:269` e `:584` |
 | Meta Pixel | [`index.html:69-103`](index.html#L69-L103) |
-| Altura da tela de jogo (`100vh`/`100dvh`) | [`src/index.css:29-38`](src/index.css#L29-L38) |
-| Regra de celular deitado | [`src/pages/GameRoom.jsx:24-30`](src/pages/GameRoom.jsx#L24-L30) |
-| Breakpoints da Home | [`src/pages/Home.jsx:43-44`](src/pages/Home.jsx#L43-L44) |
-| Logo da Home | `<img src="/logo.jpg">` em [`src/pages/Home.jsx:507`](src/pages/Home.jsx#L507) — arquivo `public/logo.jpg` |
-| Favicon, título, manifest | [`index.html:11-24`](index.html#L11-L24) e `public/manifest.json` |
+| Altura da tela de jogo (`100vh`/`100dvh`) | [`src/styles/jogo.css`](src/styles/jogo.css) |
+| Regra de celular deitado | media query no fim de [`src/styles/jogo.css`](src/styles/jogo.css) — não é mais JavaScript |
+| Breakpoints da Home | [`src/styles/paginas.css`](src/styles/paginas.css); o único que sobrou em JavaScript decide quantos números a paginação mostra, em [`src/hooks/useBreakpoint.js`](src/hooks/useBreakpoint.js) |
+| Logo da Home | `public/logo.webp`, usado em [`src/pages/Home.jsx`](src/pages/Home.jsx) e no cabeçalho em [`src/components/home/CabecalhoHome.jsx`](src/components/home/CabecalhoHome.jsx) |
+| Favicon e título | [`index.html`](index.html); o título por rota vem de [`src/hooks/useTituloDaPagina.js`](src/hooks/useTituloDaPagina.js) |
+| Nome, ícone e cores do app instalado | [`public/manifest.json`](public/manifest.json) e os `public/icone-*.png` |
+| O que fica guardado para funcionar sem rede | [`public/sw.js`](public/sw.js) |
+| Cor de cada coisa, espaçamento, raio | [`src/styles/tokens.css`](src/styles/tokens.css) — mexer aqui muda o site inteiro |
+| Qualquer consulta ao banco | [`src/services/`](src/services/) — nenhuma tela monta consulta |
 | Comportamento de rota inexistente em produção | [`vercel.json`](vercel.json) |
 
 ## Armadilhas do repositório
 
 Coisas que não aparecem em nenhuma busca por `import` e que quebram silenciosamente.
+
+**O site é instalável, e isso vem com um service worker.** [`public/sw.js`](public/sw.js) guarda a casca e os arquivos com hash no nome, para o site abrir sem rede. Três coisas a saber antes de mexer nele:
+
+- ele **não** guarda ROM, nada do Supabase e nada do CDN do emulador, e isso é deliberado: o acervo passa de 70 MB e estourar a cota faz o navegador apagar o cache inteiro sem avisar
+- a navegação é sempre rede primeiro, então um deploy novo chega na primeira visita. Se você inverter isso para acelerar, passa a existir gente presa em versão velha
+- ao mudar a estratégia de cache, suba a constante `VERSAO`: é o que apaga o que ficou para trás
+
+Se algum dia o service worker causar problema em produção, a saída é publicar um `sw.js` que chama `self.registration.unregister()` e apaga os caches. Isso devolve o site ao estado sem service worker no próximo carregamento — testado.
 
 **`.md` aqui não é Markdown.** São 45 ROMs de Mega Drive com extensão `.md` dentro de `public/`, algumas com 8 MB. Um `find . -name '*.md'` ou um Prettier apontado para a raiz vai bater nelas. Os únicos Markdown de verdade são este README e os arquivos em `docs/`.
 

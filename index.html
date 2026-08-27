@@ -3,34 +3,160 @@
   <head>
     <meta charset="UTF-8" />
 
+    <!-- Fila de anúncios e medição — sai do caminho crítico
+         =====================================================
+         Medido num Redmi 9A (Android 11, Chrome 151, 2 GB, CPU de 32 bits),
+         tempo até o botão JOGAR do emulador aparecer:
+
+           cache frio, com estes scripts no caminho crítico ... 7.352 ms
+           cache frio, com eles fora ......................... 1.979 ms
+           cache quente, dentro .............................. 5.565 ms
+           cache quente, fora ................................ 1.570 ms
+
+         São 3,7x. Não se remove anúncio nenhum aqui: eles apenas param de
+         disputar CPU e rede com o download e a descompactação do core, que
+         é 1,15 MB de 7z extraído em JavaScript. A impressão continua
+         acontecendo — o visitante segue na página, jogando.
+
+         Toda tag abaixo se inscreve por `aoLiberarAnuncios`. Há teto de
+         tempo: se nada disparar, carrega assim mesmo. Falha aqui é receita
+         perdida, então o caminho de segurança é obrigatório. -->
+    <script>
+      (function () {
+        var jaLiberou = false;
+        var fila = [];
+
+        window.aoLiberarAnuncios = function (fn) {
+          if (jaLiberou) fn();
+          else fila.push(fn);
+        };
+
+        function liberar() {
+          if (jaLiberou) return;
+          jaLiberou = true;
+          for (var i = 0; i < fila.length; i++) {
+            try {
+              fila[i]();
+            } catch (e) {
+              /* uma tag que quebra não pode derrubar as outras */
+            }
+          }
+          fila.length = 0;
+        }
+        window.liberarAnuncios = liberar;
+
+        var naSalaDeJogo = /^\/jogar\//.test(location.pathname);
+
+        if (naSalaDeJogo) {
+          // O app avisa quando o emulador terminou de montar.
+          window.addEventListener('assopra:emulador-pronto', liberar, { once: true });
+        } else {
+          window.addEventListener(
+            'load',
+            function () {
+              setTimeout(liberar, 800);
+            },
+            { once: true }
+          );
+        }
+
+        // Teto: rede ruim, erro no app, rota inesperada — carrega do mesmo jeito.
+        setTimeout(liberar, naSalaDeJogo ? 12000 : 4000);
+      })();
+    </script>
+
+    <!-- Google Tag Manager
+         O que ele carrega é decidido no painel do GTM, não neste arquivo. -->
+    <script>
+      aoLiberarAnuncios(function () {
+        (function (w, d, s, l, i) {
+          w[l] = w[l] || [];
+          w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+          var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != 'dataLayer' ? '&l=' + l : '';
+          j.async = true;
+          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+          f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-573CZ7M5');
+      });
+    </script>
+    <!-- End Google Tag Manager -->
+
     <meta
       name="google-site-verification"
       content="ydWvfOgu1UHLxJMyANsOeDiULgjdDuhsij1aTOOKIdU"
     />
 
-    <link rel="icon" href="/logo.png" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <!-- As capas e o banco vêm do Supabase; abrir a conexão cedo economiza o
+         DNS + TLS quando a primeira imagem for pedida. -->
+    <link rel="preconnect" href="https://maataycmixcmozjhezfe.supabase.co" crossorigin />
+    <!-- Virou caminho crítico agora que o anúncio saiu da frente: preconnect
+         resolve DNS e TLS antes de o loader ser pedido, não só o DNS. -->
+    <link rel="preconnect" href="https://cdn.emulatorjs.org" crossorigin />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/icone-192.png" sizes="192x192" type="image/png" />
+    <!-- O iOS não lê o manifest para escolher ícone: ele quer esta tag, e
+         quer um PNG opaco, porque compõe transparência sobre preto. -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Assopra Fita" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Sem `user-scalable=no`: bloquear o zoom impede quem enxerga pouco de
+         ampliar a tela, e é reprovação direta no critério 1.4.4 do WCAG. -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta name="theme-color" content="#121212" />
     <meta
       name="description"
-      content="Assopra Fita - O seu emulador de nostalgia clássica direto no navegador."
+      content="Jogue os clássicos de Super Nintendo, Mega Drive, Game Boy e mais direto no navegador, sem instalar nada."
     />
 
-    <title>Assopra Fita</title>
+    <title>Assopra Fita — Jogos clássicos no navegador</title>
+    <link rel="canonical" href="https://assoprafitas.com/" />
 
-    <script
-      async
-      src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"
-      crossorigin="anonymous"
-    ></script>
+    <!-- Prévia ao compartilhar o link. Sem isto, colar o endereço no WhatsApp
+         ou no Facebook não mostrava nada além da URL crua. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Assopra Fita" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:url" content="https://assoprafitas.com/" />
+    <meta property="og:title" content="Assopra Fita — Jogos clássicos no navegador" />
+    <meta
+      property="og:description"
+      content="Jogue os clássicos de Super Nintendo, Mega Drive, Game Boy e mais direto no navegador, sem instalar nada."
+    />
+    <meta property="og:image" content="https://assoprafitas.com/og-imagem.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Assopra Fita — Jogos clássicos no navegador" />
+    <meta
+      name="twitter:description"
+      content="Jogue os clássicos de Super Nintendo, Mega Drive, Game Boy e mais direto no navegador, sem instalar nada."
+    />
+    <meta name="twitter:image" content="https://assoprafitas.com/og-imagem.jpg" />
+
+    <!-- O gpt.js passa a ser injetado pela fila, e não por uma tag no HTML:
+         `async` só promete não bloquear o parser, e ele continuava competindo
+         pela rede e pela CPU junto com o core do emulador. -->
     <script>
       window.googletag = window.googletag || { cmd: [] };
+
+      aoLiberarAnuncios(function () {
+        var g = document.createElement('script');
+        g.async = true;
+        g.crossOrigin = 'anonymous';
+        g.src = 'https://securepubads.g.doubleclick.net/tag/js/gpt.js';
+        document.head.appendChild(g);
+      });
 
       googletag.cmd.push(function () {
         googletag.defineSlot(
@@ -63,10 +189,11 @@
       });
     </script>
 
-    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- Meta Pixel Code -->
     <script>
+      aoLiberarAnuncios(function () {
       !(function (f, b, e, v, n, t, s) {
         if (f.fbq) return;
         n = f.fbq = function () {
@@ -92,15 +219,8 @@
       );
       fbq('init', '2296012391231311');
       fbq('track', 'PageView');
-      fbq('track', 'CompleteRegistration');
+      });
     </script>
-    <noscript
-      ><img
-        height="1"
-        width="1"
-        style="display: none"
-        src="https://www.facebook.com/tr?id=2296012391231311&ev=PageView&noscript=1"
-    /></noscript>
     <!-- End Meta Pixel Code -->
 
     <style>
@@ -108,11 +228,30 @@
         margin: 0;
         background-color: #121212;
         color: white;
-        font-family: 'Inter', sans-serif;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
+          Arial, sans-serif;
       }
     </style>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-573CZ7M5"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=2296012391231311&ev=PageView&noscript=1"
+    /></noscript>
     <div id="root"></div>
 
     <script type="module" src="/src/main.jsx"></script>

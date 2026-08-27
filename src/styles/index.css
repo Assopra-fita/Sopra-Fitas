@@ -1,0 +1,7 @@
+/* Único ponto de entrada de estilo do projeto.
+   A ordem importa: os tokens precisam existir antes de serem usados. */
+@import './tokens.css';
+@import './base.css';
+@import './componentes.css';
+@import './paginas.css';
+@import './jogo.css';

@@ -1,0 +1,531 @@
+/* Sala de jogo.
+   Esta tela tem arquivo próprio porque é a única com três modos de layout, e
+   os três agora são media query em vez de ternário lendo window.innerWidth:
+
+   1. desktop  — dois trilhos de 300px e o jogo no meio
+   2. celular  — coluna única, trilhos abaixo do jogo
+   3. deitado  — a tela inteira é do jogo, o resto some
+
+   O par 100vh/100dvh é fallback para navegadores sem dvh (Chrome < 108 e
+   Safari < 15.4): a primeira declaração de cada par é a de reserva. */
+
+.sala {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--fundo);
+  color: var(--texto);
+}
+
+/* ---------- Trilhos de publicidade ----------
+   Medidas preservadas exatamente como estavam no JSX: 300px de largura, 20px
+   de respiro e a mesma superfície. Ficam escondidos, nunca desmontados: o
+   googletag.display só roda uma vez por slot, então remontar mata o anúncio. */
+.sala__lateral {
+  width: 300px;
+  padding: var(--esp-lg);
+  background: var(--superficie);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sala__lateral--esquerda {
+  order: 1;
+  border-right: 1px solid var(--borda);
+}
+
+.sala__lateral--direita {
+  order: 4;
+  border-left: 1px solid var(--borda);
+}
+
+.sala__rotulo-anuncio {
+  margin-bottom: var(--esp-sm);
+  color: var(--texto-fraco);
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+/* ---------- Coluna central ---------- */
+.sala__principal {
+  flex: 1;
+  order: 2;
+  min-width: 320px;
+  max-width: 1000px;
+  padding: var(--esp-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.sala__coluna {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sala__abaixo {
+  width: 100%;
+}
+
+.sala__falha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-md);
+  padding: 50px var(--esp-lg);
+  color: var(--perigo-texto);
+  text-align: center;
+}
+
+.sala__falha-titulo {
+  color: var(--texto);
+  font-size: 1.4rem;
+}
+
+/* ---------- Tela do emulador ---------- */
+/* A largura é a menor entre a coluna disponível e a que o 4:3 permite dentro
+   da altura da janela. Sem o teto, uma janela de 600px de altura recebia um
+   jogo de 728px e obrigava a rolar para ver o próprio jogo. Os 150px
+   descontados são a barra de controles mais o respiro da coluna. */
+.sala__tela {
+  /* Contexto de posicionamento do aviso de memória esgotada. */
+  position: relative;
+  width: min(100%, calc((100vh - 150px) * 4 / 3));
+  width: min(100%, calc((100dvh - 150px) * 4 / 3));
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 0 50px rgb(0 0 0 / 0.8);
+  border: 2px solid var(--borda);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+}
+
+/* ---------- Aviso de memória esgotada ----------
+   Cobre a moldura inteira porque o que está atrás é a mensagem em vermelho da
+   própria biblioteca, que diz "Falha ao iniciar o jogo" e não explica nada.
+   `position: absolute` sobre `.sala__tela`, que é o elemento com a proporção
+   4:3 e o recorte. */
+.sala__sem-memoria {
+  position: absolute;
+  inset: 0;
+  /* Acima da barra de menu e do botão de ajustes que o EmulatorJS deixa
+     flutuando na moldura — medido, eles cobriam o fim do texto. */
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--esp-sm);
+  padding: var(--esp-lg);
+  background: var(--fundo);
+  color: var(--texto-suave);
+  text-align: center;
+  overflow-y: auto;
+}
+
+.sala__sem-memoria h2 {
+  color: var(--primaria);
+  font-size: 1.05rem;
+}
+
+.sala__sem-memoria p {
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.sala__sem-memoria-saida {
+  color: var(--texto);
+}
+
+/* Na moldura de 246px do celular o texto inteiro não cabe sem apertar. */
+@media (max-width: 480px) {
+  .sala__sem-memoria {
+    padding: var(--esp-sm) var(--esp-md);
+  }
+
+  .sala__sem-memoria h2 {
+    font-size: 0.95rem;
+  }
+
+  .sala__sem-memoria p {
+    font-size: 0.78rem;
+  }
+}
+
+/* ---------- Barra de controles ---------- */
+.barra-jogo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--esp-sm);
+  padding: var(--esp-sm);
+  margin-bottom: var(--esp-lg);
+  background: var(--superficie-alta);
+  border: 2px solid var(--borda);
+  border-radius: 0 0 10px 10px;
+}
+
+.barra-jogo__botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-xs);
+  min-height: var(--alvo-toque);
+  padding: 0 12px;
+  background: var(--borda);
+  color: var(--texto);
+  border: 1px solid var(--borda-clara);
+  border-radius: var(--raio-p);
+  font: inherit;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.barra-jogo__botao:hover {
+  filter: brightness(1.2);
+}
+
+/* O tamanho do ícone é decisão de aparência e muda com o modo da tela, então
+   sai daqui e não de uma prop calculada no JavaScript. */
+.barra-jogo__botao svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.barra-jogo__botao--sair {
+  background: var(--perigo);
+  border-color: var(--perigo-borda);
+  font-weight: bold;
+}
+
+.barra-jogo__botao--tela-cheia {
+  background: var(--primaria);
+  color: var(--primaria-texto);
+  border-color: var(--primaria);
+  font-weight: bold;
+}
+
+.barra-jogo__divisor {
+  width: 1px;
+  margin: 0 var(--esp-xs);
+  background: var(--borda-clara);
+}
+
+/* ---------- Aviso de salvar/carregar ----------
+   A aparência vem do bloco `.aviso`, compartilhado com o resto do site; aqui
+   só o encaixe: ele sobe para colar na barra de controles. */
+.sala__aviso {
+  width: 100%;
+  margin-top: calc(var(--esp-lg) * -1);
+  margin-bottom: var(--esp-lg);
+}
+
+/* ---------- Ficha do jogo ---------- */
+.painel-jogo {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--esp-lg);
+  padding: var(--esp-lg);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+}
+
+/* min-width:0 junto com a base de 250px: sem ele o bloco não encolhe abaixo
+   da base e o texto invade o respiro do painel — 12px medidos em 320px. */
+.painel-jogo__texto {
+  flex: 1 1 250px;
+  min-width: 0;
+}
+
+.painel-jogo__titulo {
+  margin-bottom: var(--esp-sm);
+  font-size: 2rem;
+}
+
+.painel-jogo__ficha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-md);
+  margin-bottom: var(--esp-md);
+  color: var(--texto-fraco);
+  font-size: 0.9rem;
+}
+
+.painel-jogo__ficha span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-xs);
+}
+
+.painel-jogo__descricao {
+  color: var(--texto-suave);
+  line-height: 1.6;
+}
+
+/* ---------- Cartão de missão ---------- */
+.painel-missao {
+  width: 100%;
+  padding: var(--esp-lg);
+  background: var(--superficie-alta);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+}
+
+.painel-missao__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  margin-bottom: var(--esp-sm);
+  color: var(--primaria);
+  font-size: 1.1rem;
+}
+
+.painel-missao__texto {
+  margin-bottom: var(--esp-md);
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+/* Só vira coluna fixa quando a linha comporta descrição e cartão lado a lado.
+   Entre 768 e 1199px a coluna central não tem os 570px necessários, e o
+   cartão de 300px fixos deixava até 218px vazios ao lado. */
+@media (min-width: 1200px) {
+  .painel-missao {
+    width: 300px;
+    flex: 0 0 300px;
+  }
+}
+
+/* ---------- Jogos relacionados ---------- */
+.relacionados {
+  width: 100%;
+  margin-top: var(--esp-xl);
+}
+
+.relacionados__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  margin-bottom: var(--esp-lg);
+  color: var(--texto-suave);
+  font-size: 1.1rem;
+}
+
+/* 130px em vez de 150px: com 150 a grade caía para uma coluna só em telas de
+   320px, e o card ia a 280px de largura. */
+.relacionados__grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--esp-md);
+}
+
+.relacionados__card {
+  display: block;
+  padding: var(--esp-sm);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-m);
+  color: var(--texto);
+}
+
+.relacionados__card:hover {
+  border-color: var(--borda-clara);
+}
+
+/* Duas linhas de altura fixa: sem isto, um nome comprido deixa o card mais
+   alto que o vizinho da mesma linha. */
+.relacionados__nome {
+  display: block;
+  min-height: 2.4em;
+  font-size: 0.8rem;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+/* ---------- Modal de enviar print ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--esp-lg);
+  background: rgb(0 0 0 / 0.8);
+}
+
+.modal__caixa {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  padding: var(--esp-xl);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 15px;
+}
+
+.modal__fechar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: var(--alvo-toque);
+  height: var(--alvo-toque);
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+
+.modal__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  margin-bottom: var(--esp-lg);
+  padding-right: var(--alvo-toque);
+  color: var(--primaria);
+  font-size: 1.3rem;
+}
+
+.modal__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+}
+
+/* ---------- Celular: coluna única ----------
+   Mesma condição que o JavaScript avaliava: largura pequena OU altura
+   pequena, porque um celular deitado tem largura de desktop. */
+@media (max-width: 767px), (max-height: 599px) {
+  .sala__lateral {
+    width: 100%;
+  }
+
+  .sala__lateral--esquerda {
+    order: 3;
+    border-right: none;
+    border-bottom: 1px solid var(--borda);
+  }
+
+  .sala__lateral--direita {
+    order: 4;
+    border-left: none;
+    border-top: 1px solid var(--borda);
+  }
+
+  .sala__principal {
+    min-width: 0;
+    padding: var(--esp-md);
+  }
+
+  .painel-jogo__titulo {
+    font-size: 1.5rem;
+  }
+}
+
+/* A barra tem 5 botões com rótulo, que somam mais que a largura de um celular
+   e quebravam em 3 linhas e 144px de altura, contra 210px de emulador. Rolar
+   na horizontal custa menos altura do que empilhar. */
+@media (max-width: 480px) {
+  .barra-jogo {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 6px;
+    scrollbar-width: none;
+  }
+
+  .barra-jogo__botao {
+    flex: 0 0 auto;
+    padding: 0 10px;
+  }
+}
+
+/* ---------- Celular deitado: a tela é toda do jogo ----------
+   A consulta precisa do teto de largura. Sem ele, uma janela de desktop com
+   600px de altura ou menos caía neste modo e a página inteira sumia: sem
+   título, sem cartão de missão, sem enviar print e sem rolagem possível.
+   Medido em 1024x600, 1280x600 e 1280x560; a 900x601 voltava ao normal. */
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 900px) {
+  .sala {
+    height: 100vh;
+    height: 100dvh;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    overflow: hidden;
+    /* Deitado, o recorte da câmera fica na lateral */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .sala__lateral,
+  .sala__abaixo {
+    display: none;
+  }
+
+  .sala__principal {
+    min-width: 0;
+    max-width: none;
+    min-height: 0;
+    padding: 0;
+  }
+
+  .sala__coluna {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Deitado quem manda é a altura: a largura sai do aspect-ratio */
+  .sala__tela {
+    flex: 1 1 0;
+    min-height: 0;
+    width: auto;
+    max-width: 100%;
+    border: none;
+    border-radius: 0;
+  }
+
+  .barra-jogo {
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    margin-bottom: 0;
+    padding: 4px;
+    padding-bottom: calc(4px + env(safe-area-inset-bottom));
+    border: none;
+    border-radius: 0;
+  }
+
+  .barra-jogo__botao {
+    min-height: 40px;
+    padding: 0 10px;
+    /* 0,75rem = 12px, que é o piso de texto legível. Era 0,7rem. */
+    font-size: 0.75rem;
+  }
+
+  .barra-jogo__botao svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .sala__aviso {
+    flex-shrink: 0;
+    margin: 0;
+  }
+}

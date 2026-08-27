@@ -1,0 +1,91 @@
+/* Reset e regras que valem para o documento inteiro. */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--fundo);
+  color: var(--texto);
+  /* Sem Inter. Ela era a primeira da lista e nunca foi carregada: não há
+     @font-face nem link para fonte no projeto, e medindo a largura do texto
+     com "Inter" o resultado é idêntico ao de uma fonte inexistente. O site
+     sempre renderizou com a fonte do sistema — a declaração só escondia isso,
+     e dava tipografia diferente para quem tivesse Inter instalada. */
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--primaria);
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* Foco visível em tudo que recebe teclado.
+   ATENÇÃO: estilo inline vence CSS. Enquanto houver `outline: 'none'` escrito
+   dentro do JSX, esta regra não alcança aquele elemento. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--primaria);
+  outline-offset: 2px;
+  border-radius: var(--raio-p);
+}
+
+/* Quem prefere menos movimento não recebe transição nenhuma. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* A classe animate-spin era usada em 6 telas e nunca existiu: o projeto não
+   tem Tailwind, então todos os indicadores de carregamento ficavam parados. */
+.animate-spin {
+  animation: girar 1s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Barra de rolagem */
+::-webkit-scrollbar {
+  width: 10px;
+  background: var(--superficie);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--borda-clara);
+  border-radius: var(--raio-p);
+}
+
+/* Texto que só o leitor de tela lê. Serve para dar contexto a um número
+   solto, como a pilha de pontos do cabeçalho. */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

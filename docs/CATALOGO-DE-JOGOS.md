@@ -2,7 +2,7 @@
 
 Guia operacional do acervo. Cadastrar um jogo é a tarefa mais frequente do projeto e a que mais dá errado em silêncio, porque o catálogo tem **três fontes que nunca se sincronizam** e **dois caminhos de cadastro com convenções diferentes**.
 
-- [1. As três fontes do catálogo](#1-as-três-fontes-do-catálogo)
+- [1. As duas fontes do catálogo](#1-as-duas-fontes-do-catálogo)
 - [2. O contrato de um jogo](#2-o-contrato-de-um-jogo)
 - [3. Consoles, cores e extensões](#3-consoles-cores-e-extensões)
 - [4. Adicionar um jogo pelo código](#4-adicionar-um-jogo-pelo-código)
@@ -13,59 +13,64 @@ Guia operacional do acervo. Cadastrar um jogo é a tarefa mais frequente do proj
 
 ---
 
-## 1. As três fontes do catálogo
+## 1. As duas fontes do catálogo
 
 ```mermaid
 flowchart LR
-    subgraph EST["src/constants/games.js — acervo estático"]
-        AR["array games<br/>27 jogos · 6 campos"]
-        DB["objeto gamesDb<br/>indexado por id · 27 jogos · 8 campos"]
-    end
-    SUP[("tabela jogos<br/>Supabase")]
+    EST["src/constants/games.js<br/>acervo estático · 23 jogos · 9 campos<br/>ROMs em public/, versionadas no git"]
+    SUP[("tabela jogos<br/>Supabase · cadastrada pelo painel")]
 
-    AR -->|"única fonte da vitrine"| HOME["Home<br/>grade, busca, filtros"]
-    SUP -->|"concatenado na frente"| HOME
+    EST -->|"games[]"| HOME["Home<br/>grade, busca, filtros"]
+    SUP -->|"unido por id, banco na frente"| HOME
 
-    DB -->|"consultado PRIMEIRO"| GAME["GameRoom<br/>resolve a ROM"]
-    SUP -->|"consultado só se o id não existir em gamesDb"| GAME
+    EST -->|"acharJogo(id) · O(1)"| GAME["GameRoom<br/>resolve a ROM"]
+    SUP -->|"consultado só se o id não existir no acervo"| GAME
 
     HOME -->|"/jogar/:id"| GAME
 ```
 
-As três fontes têm papéis diferentes e **precedências opostas**, e é daí que vêm os problemas:
+O acervo estático é **uma estrutura só**. Antes eram duas — um array lido pela
+vitrine e um objeto lido pela sala de jogo — e editar uma sem a outra produzia
+um jogo que aparecia na vitrine e não abria, ou que abria por link direto e não
+aparecia na vitrine. Hoje o arquivo exporta:
+
+| Exportação | O que é | Quem usa |
+| --- | --- | --- |
+| `games` | o array, na ordem de exibição | [`useCatalogo`](../src/hooks/useCatalogo.js), [`gerar-sitemap.mjs`](../scripts/gerar-sitemap.mjs) |
+| `acharJogo(id)` | busca por id em O(1), sobre um índice montado uma vez | [`GameRoom`](../src/pages/GameRoom.jsx) |
+| `outrosJogos(id)` | todos menos um, para os relacionados | [`GameRoom`](../src/pages/GameRoom.jsx) |
+
+O que **continua** valendo é a precedência oposta entre as duas telas:
 
 | | Home | GameRoom |
 | --- | --- | --- |
-| Fonte lida | `games[]` + tabela `jogos` | `gamesDb{}` e, se não achar, tabela `jogos` |
+| Fonte lida | `games` + tabela `jogos` | acervo estático e, se não achar, tabela `jogos` |
 | Precedência | banco **na frente** do estático | estático **antes** do banco |
-| Referência | [`Home.jsx:64`](../src/pages/Home.jsx#L64) | [`GameRoom.jsx:185-196`](../src/pages/GameRoom.jsx#L185-L196) |
+| Referência | [`useCatalogo.js:8-14`](../src/hooks/useCatalogo.js#L8-L14) | [`GameRoom.jsx:185-207`](../src/pages/GameRoom.jsx#L185-L207) |
 
-> ⚠️ **A armadilha:** cadastrar pelo painel um `id` que já existe em `gamesDb` faz a vitrine mostrar a versão do banco e o emulador rodar a versão estática. São dados diferentes na mesma tela.
-
-E dentro do próprio arquivo estático, as duas estruturas são consumidas por telas diferentes:
-
-- A **Home** só lê `games[]` — [`Home.jsx:16`](../src/pages/Home.jsx#L16) e [`:30`](../src/pages/Home.jsx#L30)
-- A **GameRoom** só lê `gamesDb{}` — [`GameRoom.jsx:19`](../src/pages/GameRoom.jsx#L19) e [`:185`](../src/pages/GameRoom.jsx#L185)
-
-Editar só uma delas produz um jogo que **aparece na vitrine e não abre**, ou que **abre por link direto e não aparece na vitrine**.
+> ⚠️ **A armadilha que sobrou:** cadastrar pelo painel um `id` que já existe no
+> acervo estático faz a vitrine mostrar a versão do banco e o emulador rodar a
+> versão do código. São dados diferentes na mesma tela. Use identificadores que
+> não colidam.
 
 ## 2. O contrato de um jogo
 
-As duas estruturas guardam os mesmos jogos com campos diferentes:
+Toda entrada tem os **nove campos**, todos obrigatórios:
 
-| Campo | `games[]` | `gamesDb{}` | Para que serve |
-| --- | :---: | :---: | --- |
-| `id` | ✅ | ✅ | chave da URL `/jogar/:id` |
-| `nome` | ✅ | ✅ | título no card e na sala de jogo |
-| `console` | ✅ | ❌ | **só** o filtro por categoria da Home |
-| `core` | ✅ | ✅ | qual emulador carregar |
-| `rom_url` | ✅ | ✅ | o binário |
-| `capa_url` | ✅ | ✅ | imagem do card |
-| `ano` | ❌ | ✅ | ficha técnica na sala de jogo |
-| `fabricante` | ❌ | ✅ | ficha técnica na sala de jogo |
-| `descricao` | ❌ | ✅ | texto na sala de jogo |
+| Campo | Para que serve |
+| --- | --- |
+| `id` | chave da URL `/jogar/:id` |
+| `nome` | título no card e na sala de jogo |
+| `console` | filtro por categoria da Home — precisa existir em [`consoles.js`](../src/constants/consoles.js) |
+| `core` | qual emulador carregar |
+| `rom_url` | o binário |
+| `capa_url` | imagem do card |
+| `ano` | ficha técnica na sala de jogo |
+| `fabricante` | ficha técnica na sala de jogo |
+| `descricao` | texto na sala de jogo |
 
-Do jogo resolvido, **apenas `rom_url` e `core` chegam ao emulador** ([`GameRoom.jsx:320`](../src/pages/GameRoom.jsx#L320)). Todo o resto é apresentação.
+Do jogo resolvido, **apenas `rom_url` e `core` chegam ao emulador**. Todo o
+resto é apresentação.
 
 ## 3. Consoles, cores e extensões
 
@@ -107,17 +112,15 @@ O sintoma de um `core` inválido é **tela preta sem nenhum erro visível** — 
 ```mermaid
 flowchart TB
     A["1. Colocar a ROM na raiz de public/"] --> B["2. Colocar a capa na raiz de public/"]
-    B --> C["3. Adicionar entrada no array games<br/>id, nome, console, core, rom_url, capa_url"]
-    C --> D["4. Adicionar entrada no objeto gamesDb<br/>id, nome, core, rom_url, capa_url, ano, fabricante, descricao"]
-    D --> E{"Console novo?"}
-    E -->|sim| F["5. Adicionar ao array categorias<br/>Home.jsx:160"]
-    E -->|não| G["Conferir no navegador"]
-    F --> G
+    B --> C["3. Uma entrada em games, com os nove campos"]
+    C --> D{"Console novo?"}
+    D -->|sim| E["4. Adicionar ao array CONSOLES<br/>src/constants/consoles.js"]
+    D -->|não| F["Conferir no navegador"]
+    E --> F
 ```
 
-Os quatro primeiros passos são **obrigatórios**. Pular o passo 3 ou o 4 é o erro mais comum.
-
-**Passo 3** — em [`src/constants/games.js`](../src/constants/games.js), no array que começa na linha 1:
+**Passo 3** — em [`src/constants/games.js`](../src/constants/games.js), dentro do
+bloco do console correspondente:
 
 ```js
 {
@@ -126,26 +129,29 @@ Os quatro primeiros passos são **obrigatórios**. Pular o passo 3 ou o 4 é o e
   console: 'SNES',
   core: 'snes9x',
   rom_url: '/meu-jogo.sfc',
-  capa_url: '/meu-jogo.jpg',
-},
-```
-
-**Passo 4** — no objeto que começa na linha 235, com a chave **igual ao `id`**:
-
-```js
-'snes-meu-jogo': {
-  id: 'snes-meu-jogo',
-  rom_url: '/meu-jogo.sfc',
-  core: 'snes9x',
-  nome: 'Meu Jogo',
+  capa_url: '/meu-jogo.webp',
   ano: '1994',
   fabricante: 'Capcom',
-  capa_url: '/meu-jogo.jpg',
   descricao: 'Uma frase sobre o jogo.',
 },
 ```
 
-**Passo 5** — o valor de `console` precisa bater **exatamente** com um item do array `categorias` em [`Home.jsx:160-171`](../src/pages/Home.jsx#L160-L171), incluindo maiúsculas. O filtro é comparação literal ([`Home.jsx:181`](../src/pages/Home.jsx#L181)): `'Mega Drive'` não bate com `'MEGA DRIVE'`.
+É **uma** edição só. Antes eram duas, num array e num objeto separados, e
+esquecer a segunda era o erro mais comum do repositório.
+
+**Passo 4** — o valor de `console` precisa existir como `valor` em
+[`src/constants/consoles.js`](../src/constants/consoles.js), que é a fonte única
+do que o site suporta: dela saem tanto os filtros da vitrine quanto a lista do
+formulário de cadastro.
+
+A comparação **não é mais literal**: [`normalizarConsole`](../src/constants/consoles.js)
+tira acento, espaço sobrando e caixa antes de comparar, e ainda resolve
+sinônimos, então `'Super Nintendo'`, `'super nintendo'` e `'SNES'` caem todos na
+mesma categoria. Foi essa comparação literal que deixou 67 jogos do banco
+invisíveis em qualquer filtro.
+
+Um valor desconhecido não vira `null`: continua aparecendo em "Todos", só não
+ganha filtro próprio.
 
 ## 5. Adicionar um jogo pelo painel
 
@@ -175,10 +181,17 @@ Diferenças que importam em relação ao caminho pelo código:
 | --- | --- | --- |
 | Onde o binário fica | `public/`, versionado no git | Supabase Storage, bucket `roms` |
 | Origem servida ao emulador | mesmo domínio | domínio do Supabase |
-| Vocabulário de `core` | `snes9x`, `mgba`, … | `snes`, `gba`, … |
-| Campo `console` | valor fixo escolhido por você | **texto livre**, sem `select` |
+| Campo `console` | escrito à mão na entrada | escolhido num `select` fechado |
+| Campo `core` | escrito à mão na entrada | **derivado** do console escolhido |
+| Extensão da ROM | por sua conta | validada contra o console antes de subir |
 | Precisa de deploy | sim | não, é imediato |
-| Aparece na GameRoom | sempre | **só se o `id` não existir em `gamesDb`** |
+| Aparece na GameRoom | sempre | **só se o `id` não existir no acervo estático** |
+
+Os dois caminhos usam hoje o **mesmo vocabulário de `core`** — o nome do núcleo
+do EmulatorJS, como `snes9x` e `mgba` — porque o formulário deriva o core de
+[`consoles.js`](../src/constants/consoles.js) em vez de aceitar texto livre. Era
+essa divergência que gravava 55 jogos como `'Super Nintendo'`, valor que nenhum
+filtro reconhecia, e 20 jogos com core incompatível com a extensão da ROM.
 
 > ⚠️ **`upsert: true` nos dois uploads** ([`AdminJogos.jsx:41`](../src/pages/AdminJogos.jsx#L41) e [`:52`](../src/pages/AdminJogos.jsx#L52)): recadastrar o mesmo `id` sobrescreve os arquivos anteriores sem aviso.
 >
@@ -209,49 +222,85 @@ O acervo tem duas metades independentes, e as duas têm problemas diferentes.
 
 | Medida | Valor |
 | --- | --- |
-| Jogos cadastrados | 27 |
-| **Jogos que efetivamente abrem** | **22** |
-| Arquivos em `public/` | 256 |
-| Peso total de `public/` | ~397 MB |
-| Peso do que o catálogo realmente usa | ~66 MB |
-| Arquivos na raiz sem entrada no catálogo | 83 (~133 MB) |
-| Duplicação pura nas subpastas | ~200 MB |
+| Jogos cadastrados | 24 |
+| **Jogos que abrem** | **24** |
+| Inconsistências entre `console`, `core` e extensão | nenhuma |
+| ROMs ou capas locais apontando para arquivo inexistente | nenhuma |
+| Arquivos em `public/` | 135 |
+| Peso total de `public/` | 196,8 MB |
+| Peso do que o catálogo realmente usa | 70,4 MB |
+| Arquivos na raiz sem entrada no catálogo | 89 (126,5 MB) |
+
+Distribuição por console:
+
+| Console | Jogos | `core` |
+| --- | :---: | --- |
+| Super Nintendo | 15 | `snes9x` |
+| Master System | 2 | `smsplus` |
+| Nintendo (NES) | 2 | `nestopia` |
+| Game Boy Advance | 2 | `mgba` |
+| Game Boy / Color | 1 | `gambatte` |
+| Nintendo 64 | 1 | `mupen64plus_next` |
+| Atari 2600 | 1 | `stella2014` |
+| Mega Drive | **0** | `genesis_plus_gx` |
+
+Uma capa ainda é carregada de fora do domínio, da Wikipédia: `sms-sonic`.
+
+O `snes-supermarioworld` saiu do código: era o mesmo Super Mario World que já
+existia no banco como `snes-mario-world`, com id diferente, e por isso a
+deduplicação por id de `useCatalogo.js` não o pegava — o jogo aparecia duas
+vezes na vitrine. Ficou o do banco, que tem a capa no Storage do projeto em vez
+de hotlink da Wikipédia, e descrição completa. A ROM local, de 512 KB, saiu
+junto por não ter mais quem a referenciasse.
 
 ### Acervo do banco — tabela `jogos`
 
 | Medida | Valor |
 | --- | --- |
 | Jogos cadastrados | 133 |
-| **Jogos que não iniciam** | **49 (37%)** |
-| — com `rom_url` apontando para um **PNG** | 29 |
-| — com `core` incompatível com a extensão | 20 |
+| **Jogos que não iniciam** | **47 (35%)** |
+| — com `rom_url` apontando para uma **imagem** | 29 |
+| — com `core` incompatível com a extensão | 18 |
 
-Os 29 casos de PNG têm todos o mesmo padrão: o nome-base do arquivo é idêntico ao da capa, ou seja **a imagem da capa foi selecionada no campo da ROM** no formulário de cadastro. O emulador recebe ~220 KB de PNG onde esperava a ROM.
+Os 29 casos de imagem têm todos o mesmo padrão: o nome-base do arquivo é
+idêntico ao da capa, ou seja **a imagem da capa foi selecionada no campo da
+ROM** no formulário de cadastro. O emulador recebe um PNG onde esperava a ROM.
 
-Os outros 20 têm ROM válida e `core` errado — ROM de SNES com core `nes`, ROM de GBA com core `snes`, `.swc` mandado para o core de GBA.
+Os outros 18 têm ROM válida e `core` errado — ROM de SNES com core `nes`, ROM
+de GBA com core `snes`, `.swc` mandado para o core de GBA. Outros 2 usam cores
+fora do mapa conferido, `neogeo` e `gbc`, e não entram nessa conta.
 
-> O rodapé da Home anuncia o total de linhas carregadas ([`Home.jsx:888`](../src/pages/Home.jsx#L888)), não o total de jogos que abrem. O número exibido é otimista.
+> Os dois caminhos de entrada desse lixo já estão fechados: o formulário de
+> cadastro valida a extensão contra o console e deriva o `core`, em vez de
+> aceitar texto livre. O que está no banco de antes continua lá.
 
-### Os quatro jogos quebrados do acervo estático
+### A coluna `console` está suja, mas não esconde mais ninguém
 
-O `rom_url` aponta para um arquivo que não existe:
+A coluna tem **10 grafias distintas** para 8 consoles, incluindo erros de
+digitação:
 
-| Jogo | Catálogo pede | Existe em `public/` |
-| --- | --- | --- |
-| Batman Forever | `/batman-forever.sfc` | `batman-forever.md` |
-| Battletoads | `/battletoads.sfc` | `battletoads.md` |
-| Battletoads & Double Dragon | `/battletoads-double-dragon.sfc` | `battletoads-double-dragon.md` |
-| Super Mario 64 | `/Super_Mario_64.z64` | `mario64.z64` |
+| Grafia | Registros |
+| --- | :---: |
+| `Super Nintendo` | 55 |
+| `MEGA DRIVE` | 33 |
+| `GAME BOY` | 19 |
+| `SNES` | 12 |
+| `Game Boy` | 8 |
+| `GBA` | 2 |
+| `Nintendo` · `Super Nitendo` · `Game boy` · `game Boy` | 1 cada |
 
-Os três primeiros estão cadastrados como SNES com core `snes9x`, mas os arquivos no disco são ROMs de Mega Drive — o cabeçalho traz `SEGA GENESIS` / `SEGA MEGA DRIVE` no offset `0x100`. Ou seja, **o console e o core também estão errados**, não só o nome do arquivo.
+Isso **já foi neutralizado no cliente**: [`normalizarConsole`](../src/constants/consoles.js)
+tira acento, caixa e espaço e resolve sinônimos antes de comparar. Medido contra
+a tabela real, **133 de 133 registros caem num filtro** — inclusive os quatro
+com grafia errada. Limpar a coluna no banco continua valendo, mas hoje é
+arrumação, não correção de bug.
 
-**Um quinto jogo não abre por outro motivo:** Asteroids, por causa do core `stella` inexistente (ver seção 3). Total: **22 dos 27 abrem**.
+### ⚠️ As 22 ROMs de Mega Drive em `public/` estão corrompidas
 
-**Três capas quebradas:** `/sonicthehedgehog.jpg`, `/dkc.jpg` (existe `dkc.png`) e `/supermarioworld.jpg`. As três existem apenas em `gamesDb`, então o defeito aparece na barra "jogos relacionados" da sala de jogo, não na grade da Home.
-
-### ⚠️ Todas as 22 ROMs de Mega Drive em `public/` estão corrompidas
-
-Não adianta apenas corrigir os nomes: **os arquivos `.md` da raiz de `public/` estão inutilizáveis**. Foram re-encodados como texto UTF-8 em algum ponto do histórico, e todo byte `>= 0x80` virou a sequência `EF BF BD` (o caractere de substituição U+FFFD).
+**O filtro Mega Drive não tem nenhum jogo no acervo estático**, e é por isso: os
+binários existem, mas não servem. Foram re-encodados como texto UTF-8 em algum
+ponto do histórico, e todo byte `>= 0x80` virou a sequência `EF BF BD`, o
+caractere de substituição U+FFFD.
 
 | Sintoma | Verificação |
 | --- | --- |
@@ -260,11 +309,13 @@ Não adianta apenas corrigir os nomes: **os arquivos `.md` da raiz de `public/` 
 | Contagem de `EF BF BD` | de 148 mil a 2 milhões de ocorrências por arquivo — **em todos os 22** |
 | Cabeçalho destruído | offset 0 de `battletoads.md` é `00 EF BF BD EF BF BD…` no lugar do vetor de stack do 68000 |
 
-As ROMs SEGA em **outros** formatos estão intactas — `.smd` e `.bin` têm zero ocorrências de `EF BF BD` e tamanho correto. A corrupção atingiu especificamente a extensão `.md`.
+As ROMs SEGA em **outros** formatos estão intactas — `.smd` e `.bin` têm zero
+ocorrências de `EF BF BD` e tamanho correto. A corrupção atingiu especificamente
+a extensão `.md`.
 
-Para reativar o Mega Drive é preciso **substituir os binários**, não renomeá-los.
-
-**O filtro MEGA DRIVE não tem nenhum jogo no acervo estático.** A categoria existe em [`Home.jsx:165`](../src/pages/Home.jsx#L165) mas nenhum dos 27 jogos tem esse `console` — enquanto 22 ROMs de Mega Drive ocupam espaço em `public/` sem entrada no catálogo, todas corrompidas. Os jogos de Mega Drive que aparecem na Home vêm da tabela `jogos` do Supabase.
+Para reativar o Mega Drive é preciso **substituir os binários**, não
+renomeá-los. Enquanto isso não acontece, os jogos de Mega Drive que aparecem na
+Home vêm todos da tabela `jogos` do Supabase.
 
 ## 8. Diagnóstico de "o jogo não abre"
 
@@ -288,10 +339,29 @@ Roteiro rápido:
 flowchart TB
     A["Tela preta ao abrir o jogo"] --> B{"curl devolve text/html?"}
     B -->|sim| C["rom_url aponta para arquivo inexistente<br/>conferir nome e extensão em public/"]
-    B -->|não| D{"O jogo aparece na vitrine?"}
-    D -->|"não, mas o link direto abre"| E["falta a entrada no array games"]
-    D -->|"sim, mas o link direto não abre"| F["falta a entrada no objeto gamesDb"]
-    D -->|"aparece e carrega, mas fica preto"| G["core provavelmente inválido<br/>conferir vocabulário: snes9x vs snes"]
+    B -->|não| D{"O arquivo é mesmo a ROM?"}
+    D -->|"content-type de imagem"| E["a capa foi enviada no campo da ROM<br/>29 casos assim no banco"]
+    D -->|"é binário de verdade"| F{"O core bate com a extensão?"}
+    F -->|não| G["core inválido ou trocado<br/>conferir contra consoles.js"]
+    F -->|sim| H["conferir o console no filtro da Home"]
+```
+
+Um jogo do acervo estático não some mais da vitrine nem deixa de abrir por
+descuido de cadastro: a entrada é uma só, e a vitrine e a sala de jogo leem a
+mesma. Se o jogo aparece num lugar e não no outro, ele vem da tabela `jogos`.
+
+Para conferir o acervo inteiro de uma vez, sem abrir o navegador:
+
+```bash
+node --input-type=module -e "
+  import { games } from './src/constants/games.js';
+  for (const j of games) {
+    const r = await fetch('http://localhost:5173' + j.rom_url);
+    const tipo = r.headers.get('content-type');
+    if (tipo?.includes('text/html')) console.log('FALTA', j.id, j.rom_url);
+  }
+  console.log('conferidos', games.length);
+"
 ```
 
 ---

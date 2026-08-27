@@ -1,276 +1,172 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
-import { Link } from 'react-router-dom';
 import {
-  ArrowLeft,
-  CheckCircle,
-  XCircle,
-  User,
-  Gamepad2,
-  Shield,
-  Coins,
-  Loader2,
-} from 'lucide-react';
+  listarPendentes,
+  aprovarMissao,
+  rejeitarMissao,
+} from '../services/missoes';
+import { CheckCircle, User, Shield, Coins } from 'lucide-react';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { useAviso } from '../hooks/useAviso';
+import {
+  Aviso,
+  Botao,
+  CabecalhoPagina,
+  Campo,
+  Card,
+  Carregando,
+  CascaDePagina,
+  EstadoVazio,
+  LinkVoltar,
+} from '../components/ui';
+
+// O GM confirma ou altera este valor antes de depositar.
+const RECOMPENSA_PADRAO = 500;
 
 const AdminMissoes = () => {
+  useTituloDaPagina('Validar missões');
+
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
+
   const [missoes, setMissoes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [pontosInput, setPontosInput] = useState({});
+  const [carregando, setCarregando] = useState(true);
+  const [pontos, setPontos] = useState({});
+
+  const consultarPendentes = async () => {
+    try {
+      return await listarPendentes();
+    } catch (e) {
+      console.error('Erro ao buscar as missões pendentes:', e);
+      return null;
+    }
+  };
+
+  const aplicar = (lista) => {
+    setMissoes(lista);
+    setPontos(Object.fromEntries(lista.map((m) => [m.id, RECOMPENSA_PADRAO])));
+  };
 
   useEffect(() => {
-    fetchMissoesPendentes();
+    let ativo = true;
+
+    const carregar = async () => {
+      const lista = await consultarPendentes();
+      if (!ativo) return;
+
+      if (lista) aplicar(lista);
+      setCarregando(false);
+    };
+
+    carregar();
+    return () => {
+      ativo = false;
+    };
   }, []);
 
-  const fetchMissoesPendentes = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('missoes')
-      .select(`*, profiles (nome, email)`)
-      .eq('status', 'pendente')
-      .order('created_at', { ascending: false });
-
-    if (!error && data) {
-      setMissoes(data);
-      const iniciais = {};
-      data.forEach((m) => (iniciais[m.id] = 500));
-      setPontosInput(iniciais);
-    }
-    setLoading(false);
+  const recarregar = async () => {
+    setCarregando(true);
+    const lista = await consultarPendentes();
+    if (lista) aplicar(lista);
+    setCarregando(false);
   };
 
-  const handlePontosChange = (id, valor) => {
-    setPontosInput((prev) => ({ ...prev, [id]: valor }));
-  };
+  const aprovar = async (missao) => {
+    const valor = parseInt(pontos[missao.id], 10);
+    if (!Number.isFinite(valor) || valor <= 0)
+      return mostrarAviso('Informe um valor de pontos maior que zero.', { erro: true });
 
-  const aprovarMissao = async (missao) => {
-    const pontosParaDar = parseInt(pontosInput[missao.id]) || 0;
-
-    if (pontosParaDar <= 0) return alert('Valor inválido!');
-    if (
-      !window.confirm(
-        `Confirmar depósito de ${pontosParaDar} pontos para ${missao.profiles?.nome}?`
-      )
-    )
+    const jogador = missao.profiles?.nome || 'este jogador';
+    if (!window.confirm(`Confirmar depósito de ${valor} pontos para ${jogador}?`))
       return;
 
     try {
-      const { error } = await supabase.rpc('aprovar_missao_gm', {
-        id_missao: missao.id,
-        id_jogador: missao.user_id,
-        qtd_pontos: pontosParaDar,
+      await aprovarMissao({
+        idMissao: missao.id,
+        idJogador: missao.user_id,
+        pontos: valor,
       });
+    } catch (e) {
+      return mostrarAviso('Erro no banco: ' + e.message, { erro: true });
+    }
 
-      if (error) throw error;
+    mostrarAviso(`${valor} pontos depositados para ${jogador}.`);
+    recarregar();
+  };
 
-      alert('✅ PONTOS DEPOSITADOS COM SUCESSO!');
-      fetchMissoesPendentes();
-    } catch (error) {
-      alert('Erro no Banco: ' + error.message);
+  const rejeitar = async (id) => {
+    if (!window.confirm('Tem certeza que deseja rejeitar este print?')) return;
+
+    try {
+      await rejeitarMissao(id);
+      recarregar();
+    } catch (e) {
+      mostrarAviso('Erro ao rejeitar: ' + e.message, { erro: true });
     }
   };
 
-  const rejeitarMissao = async (id) => {
-    if (!window.confirm('Tem certeza que deseja rejeitar este print?')) return;
-    await supabase.from('missoes').update({ status: 'rejeitado' }).eq('id', id);
-    fetchMissoesPendentes();
-  };
-
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#121212',
-        color: 'white',
-        padding: '40px',
-        fontFamily: 'Inter, sans-serif',
-      }}
-    >
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        {/* ROTA CORRIGIDA PARA O DASHBOARD */}
-        <Link
-          to="/admin-dashboard"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            color: '#aaa',
-            textDecoration: 'none',
-            marginBottom: '20px',
-            fontSize: '0.9rem',
-          }}
-        >
-          <ArrowLeft size={18} /> Voltar ao Painel do GM
-        </Link>
+    <CascaDePagina largura="medio">
+      <LinkVoltar para="/admin-dashboard">Voltar ao painel do GM</LinkVoltar>
 
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            marginBottom: '30px',
-          }}
-        >
-          <Shield color="#fca311" size={32} />
-          <h2 style={{ margin: 0, color: '#fca311' }}>
-            Validação de Missões (GM)
-          </h2>
-        </div>
+      <CabecalhoPagina
+        icone={<Shield size={32} aria-hidden="true" />}
+        titulo="Validação de missões"
+        subtitulo="Prints enviados pelos jogadores, à espera de conferência"
+      />
 
-        {loading ? (
-          <div style={{ textAlign: 'center', marginTop: '50px' }}>
-            <Loader2 className="animate-spin" size={40} color="#fca311" />
-            <p style={{ color: '#aaa' }}>Buscando prints pendentes...</p>
-          </div>
-        ) : missoes.length === 0 ? (
-          <div
-            style={{
-              textAlign: 'center',
-              background: '#1e1e1e',
-              padding: '40px',
-              borderRadius: '15px',
-              border: '1px solid #333',
-            }}
-          >
-            <CheckCircle
-              size={50}
-              color="#00ff88"
-              style={{ marginBottom: '15px' }}
-            />
-            <p style={{ fontSize: '1.2rem' }}>
-              Tudo limpo! Nenhum print pendente.
-            </p>
-          </div>
-        ) : (
-          missoes.map((m) => (
-            <div
-              key={m.id}
-              style={{
-                background: '#1e1e1e',
-                padding: '20px',
-                borderRadius: '15px',
-                marginBottom: '25px',
-                border: '1px solid #333',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '15px',
-                }}
-              >
-                <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-                >
-                  <User size={18} color="#aaa" />
-                  <span style={{ fontWeight: 'bold' }}>
-                    {m.profiles?.nome || 'Jogador Desconhecido'}
-                  </span>
-                </div>
-                <div
-                  style={{
-                    background: '#252525',
-                    padding: '5px 12px',
-                    borderRadius: '20px',
-                    fontSize: '0.85rem',
-                    color: '#fca311',
-                    border: '1px solid #444',
-                  }}
-                >
-                  {m.game_nome}
-                </div>
-              </div>
+      <Aviso aviso={aviso} aoFechar={limparAviso} />
 
-              <div
-                style={{
-                  position: 'relative',
-                  overflow: 'hidden',
-                  borderRadius: '8px',
-                  marginBottom: '20px',
-                  border: '2px solid #333',
-                }}
-              >
-                <img
-                  src={m.print_url}
-                  style={{ width: '100%', display: 'block' }}
-                  alt="prova da missão"
-                />
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '15px',
-                  alignItems: 'center',
-                  marginBottom: '20px',
-                  background: '#161616',
-                  padding: '15px',
-                  borderRadius: '10px',
-                }}
-              >
-                <Coins size={22} color="#fca311" />
-                <span style={{ fontWeight: '500' }}>Recompensa:</span>
-                <input
-                  type="number"
-                  value={pontosInput[m.id]}
-                  onChange={(e) => handlePontosChange(m.id, e.target.value)}
-                  style={{
-                    width: '100px',
-                    background: '#252525',
-                    color: '#fff',
-                    border: '1px solid #444',
-                    padding: '8px',
-                    borderRadius: '6px',
-                    outline: 'none',
-                  }}
-                />
-                <span style={{ color: '#aaa', fontSize: '0.9rem' }}>
-                  pontos
-                </span>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1.5fr',
-                  gap: '15px',
-                }}
-              >
-                <button
-                  onClick={() => rejeitarMissao(m.id)}
-                  style={{
-                    padding: '12px',
-                    background: 'transparent',
-                    color: '#ff4444',
-                    border: '1px solid #ff4444',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  REJEITAR PRINT
-                </button>
-                <button
-                  onClick={() => aprovarMissao(m)}
-                  style={{
-                    padding: '12px',
-                    background: '#00ff88',
-                    color: '#000',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  APROVAR E DEPOSITAR
-                </button>
-              </div>
+      {carregando ? (
+        <Carregando>Buscando prints pendentes...</Carregando>
+      ) : missoes.length === 0 ? (
+        <EstadoVazio icone={<CheckCircle size={50} aria-hidden="true" />}>
+          Tudo limpo! Nenhum print pendente.
+        </EstadoVazio>
+      ) : (
+        missoes.map((missao) => (
+          <Card key={missao.id}>
+            <div className="missao__topo">
+              <p className="missao__jogador">
+                <User size={18} aria-hidden="true" />
+                {missao.profiles?.nome || 'Jogador desconhecido'}
+              </p>
+              <span className="missao__jogo">{missao.game_nome}</span>
             </div>
-          ))
-        )}
-      </div>
-    </div>
+
+            <div className="missao__print">
+              <img
+                src={missao.print_url}
+                alt={`Print enviado por ${missao.profiles?.nome || 'jogador desconhecido'} em ${missao.game_nome}`}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+
+            <div className="missao__recompensa">
+              <Coins size={22} aria-hidden="true" />
+
+              <Campo
+                type="number"
+                min="1"
+                compacto
+                rotulo="Recompensa em pontos"
+                className="missao__campo"
+                value={pontos[missao.id] ?? RECOMPENSA_PADRAO}
+                onChange={(e) =>
+                  setPontos((atual) => ({ ...atual, [missao.id]: e.target.value }))
+                }
+              />
+            </div>
+
+            <div className="missao__acoes">
+              <Botao variante="perigo" onClick={() => rejeitar(missao.id)}>
+                Rejeitar print
+              </Botao>
+              <Botao onClick={() => aprovar(missao)}>Aprovar e depositar</Botao>
+            </div>
+          </Card>
+        ))
+      )}
+    </CascaDePagina>
   );
 };
 

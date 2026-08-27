@@ -1,310 +1,199 @@
 import React, { useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { cadastrarJogo } from '../services/jogos';
 import {
-  Gamepad2,
-  Upload,
-  PlusCircle,
-  CheckCircle,
-  Loader2,
-  ArrowLeft,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+  validarImagem,
+  validarRom,
+  ArquivoInvalido,
+} from '../services/armazenamento';
+import { PlusCircle, Loader2 } from 'lucide-react';
+import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
+import { CONSOLES, acharConsole, aceitarRom } from '../constants/consoles';
+import {
+  Botao,
+  CabecalhoPagina,
+  Campo,
+  Card,
+  CascaDePagina,
+  LinkVoltar,
+} from '../components/ui';
 
 const AdminJogos = () => {
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState('');
+  useTituloDaPagina('Cadastrar jogo');
 
-  // Estados do Formulário
+  const [enviando, setEnviando] = useState(false);
+  const [aviso, setAviso] = useState(null);
+
   const [id, setId] = useState('');
   const [nome, setNome] = useState('');
-  const [consoleNome, setConsoleNome] = useState('Super Nintendo'); // Novo estado para a coluna console
-  const [core, setCore] = useState('snes');
+  // O console é escolhido numa lista fechada e o core sai dele. Antes os dois
+  // eram livres e divergiam: 55 jogos ficaram gravados como 'Super Nintendo',
+  // valor que nenhum filtro da Home reconhecia.
+  const [consoleNome, setConsoleNome] = useState(CONSOLES[0].valor);
+  const core = acharConsole(consoleNome)?.core ?? '';
   const [ano, setAno] = useState('');
   const [fabricante, setFabricante] = useState('');
   const [descricao, setDescricao] = useState('');
 
-  // Estados dos Arquivos
   const [capaFile, setCapaFile] = useState(null);
   const [romFile, setRomFile] = useState(null);
 
-  const handleUpload = async (e) => {
+  const enviar = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setStatus('Enviando arquivos...');
+
+    const definicao = acharConsole(consoleNome);
+    if (!definicao) {
+      setAviso({ erro: true, texto: 'Escolha um console da lista.' });
+      return;
+    }
+
+    // Valida ANTES de subir: sem isto, a capa já foi enviada no campo da ROM
+    // 29 vezes, e o emulador recebe um PNG onde esperava o jogo.
+    try {
+      validarImagem(capaFile, 'A capa');
+      validarRom(romFile, definicao.extensoes, definicao.rotulo);
+    } catch (erro) {
+      if (erro instanceof ArquivoInvalido) {
+        setAviso({ erro: true, texto: erro.message });
+        return;
+      }
+      throw erro;
+    }
+
+    setEnviando(true);
+    setAviso({ erro: false, texto: 'Enviando arquivos...' });
 
     try {
-      // 1. Upload da Capa
-      const capaExt = capaFile.name.split('.').pop();
-      const capaPath = `${id}-capa.${capaExt}`;
-      const { data: capaData, error: capaError } = await supabase.storage
-        .from('capas')
-        .upload(capaPath, capaFile, { upsert: true });
+      await cadastrarJogo({
+        id,
+        capa: capaFile,
+        rom: romFile,
+        dados: { nome, console: consoleNome, core, ano, fabricante, descricao },
+      });
 
-      if (capaError) throw capaError;
-      const capaUrl = supabase.storage.from('capas').getPublicUrl(capaPath)
-        .data.publicUrl;
-
-      // 2. Upload da ROM
-      const romExt = romFile.name.split('.').pop();
-      const romPath = `${id}.${romExt}`;
-      const { data: romData, error: romError } = await supabase.storage
-        .from('roms')
-        .upload(romPath, romFile, { upsert: true });
-
-      if (romError) throw romError;
-      const romUrl = supabase.storage.from('roms').getPublicUrl(romPath)
-        .data.publicUrl;
-
-      // 3. Salvar no Banco de Dados
-      const { error: dbError } = await supabase.from('jogos').insert([
-        {
-          id,
-          nome,
-          console: consoleNome, // Enviando para a coluna 'console'
-          core,
-          ano,
-          fabricante,
-          descricao,
-          capa_url: capaUrl,
-          rom_url: romUrl,
-        },
-      ]);
-
-      if (dbError) throw dbError;
-
-      setStatus('✅ Jogo cadastrado com sucesso!');
-      // Resetar campos
+      setAviso({ erro: false, texto: 'Jogo cadastrado com sucesso.' });
       setId('');
       setNome('');
-      setConsoleNome('Super Nintendo');
+      setConsoleNome(CONSOLES[0].valor);
       setAno('');
       setFabricante('');
       setDescricao('');
-      setCore('snes');
       setCapaFile(null);
       setRomFile(null);
       e.target.reset();
-    } catch (error) {
-      console.error(error);
-      setStatus('❌ Erro: ' + error.message);
+    } catch (erro) {
+      console.error(erro);
+      setAviso({ erro: true, texto: 'Erro: ' + erro.message });
     } finally {
-      setLoading(false);
+      setEnviando(false);
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#121212',
-        color: 'white',
-        padding: '40px',
-        fontFamily: 'Inter, sans-serif',
-      }}
-    >
-      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-        <Link
-          to="/admin-dashboard"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            color: '#aaa',
-            textDecoration: 'none',
-            marginBottom: '20px',
-            fontSize: '0.9rem',
-            transition: 'color 0.2s',
-          }}
-          onMouseEnter={(e) => (e.target.style.color = '#fca311')}
-          onMouseLeave={(e) => (e.target.style.color = '#aaa')}
-        >
-          <ArrowLeft size={18} />
-          Voltar ao Painel do GM
-        </Link>
+    <CascaDePagina largura="estreito">
+      <LinkVoltar para="/admin-dashboard">Voltar ao painel do GM</LinkVoltar>
 
-        <div
-          style={{
-            background: '#1e1e1e',
-            padding: '30px',
-            borderRadius: '15px',
-            border: '1px solid #333',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              marginBottom: '20px',
-            }}
+      <CabecalhoPagina
+        icone={<PlusCircle size={32} aria-hidden="true" />}
+        titulo="Adicionar novo jogo"
+        subtitulo="Os arquivos vão para o Storage do Supabase, não para o repositório"
+      />
+
+      <Card>
+        <form onSubmit={enviar} className="admin__formulario">
+          <Campo
+            rotulo="Identificador único"
+            ajuda="Vira o endereço do jogo, como /jogar/snes-super-mario-world"
+            placeholder="snes-super-mario-world"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+            autoComplete="off"
+            required
+          />
+
+          <Campo
+            rotulo="Nome do jogo"
+            placeholder="Super Mario World"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            autoComplete="off"
+            required
+          />
+
+          <Campo
+            rotulo="Console"
+            tipo="select"
+            opcoes={CONSOLES.map((c) => ({ valor: c.valor, rotulo: c.rotulo }))}
+            ajuda={`Emulador: ${core} · ROM aceita: ${aceitarRom(consoleNome).replaceAll(',', ', ')}`}
+            value={consoleNome}
+            onChange={(e) => setConsoleNome(e.target.value)}
+            required
+          />
+
+          <Campo
+            rotulo="Ano de lançamento"
+            placeholder="1990"
+            value={ano}
+            onChange={(e) => setAno(e.target.value)}
+            autoComplete="off"
+          />
+
+          <Campo
+            rotulo="Fabricante"
+            placeholder="Nintendo"
+            value={fabricante}
+            onChange={(e) => setFabricante(e.target.value)}
+            autoComplete="off"
+          />
+
+          <Campo
+            rotulo="Descrição curta"
+            tipo="textarea"
+            placeholder="Uma frase sobre o jogo."
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+          />
+
+          <Campo
+            rotulo="Capa do jogo"
+            tipo="file"
+            accept="image/*"
+            ajuda="Imagem que aparece no card da vitrine"
+            onChange={(e) => setCapaFile(e.target.files[0])}
+            required
+          />
+
+          <Campo
+            rotulo="Arquivo da ROM"
+            tipo="file"
+            accept={aceitarRom(consoleNome)}
+            ajuda="O jogo em si. Enviar a capa aqui abre o emulador em tela preta."
+            onChange={(e) => setRomFile(e.target.files[0])}
+            required
+          />
+
+          <Botao type="submit" cheio disabled={enviando}>
+            {enviando ? (
+              <>
+                <Loader2 className="animate-spin" size={20} aria-hidden="true" />
+                Enviando...
+              </>
+            ) : (
+              'Subir jogo para o site'
+            )}
+          </Botao>
+        </form>
+
+        {aviso && (
+          <p
+            className={`jogos__aviso${aviso.erro ? ' jogos__aviso--erro' : ''}`}
+            role={aviso.erro ? 'alert' : 'status'}
           >
-            <PlusCircle color="#fca311" size={30} />
-            <h2 style={{ margin: 0 }}>Adicionar Novo Jogo</h2>
-          </div>
-
-          <form
-            onSubmit={handleUpload}
-            style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}
-          >
-            <input
-              placeholder="ID Único (ex: atari-pacman)"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
-              required
-              style={inputStyle}
-            />
-            <input
-              placeholder="Nome do Jogo"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              required
-              style={inputStyle}
-            />
-
-            {/* CAMPO CONSOLE ADICIONADO AQUI */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-              <label style={{ fontSize: '0.8rem', color: '#fca311', marginLeft: '5px' }}>Nome do Console (Exibido no site)</label>
-              <input
-                placeholder="Ex: Super Nintendo, Master System"
-                value={consoleNome}
-                onChange={(e) => setConsoleNome(e.target.value)}
-                required
-                style={inputStyle}
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <div style={{ flex: 2 }}>
-                <label style={{ fontSize: '0.8rem', color: '#aaa', marginLeft: '5px' }}>Core (Emulador)</label>
-                <select
-                  value={core}
-                  onChange={(e) => setCore(e.target.value)}
-                  style={inputStyle}
-                >
-                  <optgroup label="Nintendo" style={{ background: '#1e1e1e' }}>
-                    <option value="snes">Super Nintendo</option>
-                    <option value="nes">Nintendo (NES)</option>
-                    <option value="gba">GameBoy Advance</option>
-                    <option value="gbc">GameBoy Color</option>
-                    <option value="n64">Nintendo 64</option>
-                  </optgroup>
-                  <optgroup label="Sega" style={{ background: '#1e1e1e' }}>
-                    <option value="segaMD">Mega Drive</option>
-                    <option value="sms">Master System</option>
-                    <option value="gg">Game Gear</option>
-                  </optgroup>
-                  <optgroup label="Outros" style={{ background: '#1e1e1e' }}>
-                    <option value="atari">Atari 2600</option>
-                    <option value="psx">PlayStation 1</option>
-                    <option value="neogeo">Neo Geo</option>
-                    <option value="mame">Arcade (MAME)</option>
-                  </optgroup>
-                </select>
-              </div>
-              
-              <div style={{ flex: 1 }}>
-                <label style={{ fontSize: '0.8rem', color: '#aaa', marginLeft: '5px' }}>Ano</label>
-                <input
-                  placeholder="Ano"
-                  value={ano}
-                  onChange={(e) => setAno(e.target.value)}
-                  style={inputStyle}
-                />
-              </div>
-            </div>
-
-            <input
-              placeholder="Fabricante (ex: Atari, Konami, Sega)"
-              value={fabricante}
-              onChange={(e) => setFabricante(e.target.value)}
-              style={inputStyle}
-            />
-            <textarea
-              placeholder="Descrição curta"
-              value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
-              style={{ ...inputStyle, height: '80px', resize: 'none' }}
-            />
-
-            <div style={uploadBoxStyle}>
-              <p style={labelFileStyle}>Capa do Jogo:</p>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setCapaFile(e.target.files[0])}
-                required
-              />
-            </div>
-
-            <div style={uploadBoxStyle}>
-              <p style={labelFileStyle}>Arquivo da ROM:</p>
-              <input
-                type="file"
-                onChange={(e) => setRomFile(e.target.files[0])}
-                required
-              />
-            </div>
-
-            <button type="submit" disabled={loading} style={btnStyle}>
-              {loading ? (
-                <Loader2 className="animate-spin" size={20} />
-              ) : (
-                'SUBIR JOGO PARA O SITE'
-              )}
-            </button>
-          </form>
-
-          {status && (
-            <p
-              style={{
-                marginTop: '20px',
-                textAlign: 'center',
-                color: status.includes('❌') ? '#ff4444' : '#00ff88',
-              }}
-            >
-              {status}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
+            {aviso.texto}
+          </p>
+        )}
+      </Card>
+    </CascaDePagina>
   );
-};
-
-// Estilos auxiliares para manter o código limpo
-const inputStyle = {
-  width: '100%',
-  padding: '12px',
-  borderRadius: '8px',
-  border: '1px solid #333',
-  background: '#252525',
-  color: 'white',
-  outline: 'none',
-};
-
-const uploadBoxStyle = {
-  border: '1px dashed #444',
-  padding: '15px',
-  borderRadius: '10px',
-};
-
-const labelFileStyle = {
-  margin: '0 0 10px 0',
-  fontSize: '0.9rem',
-  color: '#aaa',
-};
-
-const btnStyle = {
-  background: '#fca311',
-  color: '#1a1a2e',
-  padding: '15px',
-  borderRadius: '10px',
-  border: 'none',
-  fontWeight: 'bold',
-  cursor: 'pointer',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
 };
 
 export default AdminJogos;

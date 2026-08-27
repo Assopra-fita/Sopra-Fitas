@@ -1,313 +1,262 @@
 import React, { useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { entrar, cadastrar, pedirRecuperacaoDeSenha } from '../services/sessao';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-  Gamepad2,
-  User,
-  Lock,
-  ArrowLeft,
-  Info,
-  Loader2,
-  Mail,
-  CheckCircle2,
-} from 'lucide-react';
+import { Gamepad2, ArrowLeft, Info, Loader2, CheckCircle2, KeyRound } from 'lucide-react';
+import { useSeoDaPagina } from '../hooks/useSeoDaPagina';
+import { seoDoLogin, MARCA } from '../lib/seo';
+import { useAviso } from '../hooks/useAviso';
+import { medir, CONTA_CRIADA } from '../lib/medicao';
+import { Aviso, Botao, Campo } from '../components/ui';
+
+// As três coisas que esta tela faz. Era um booleano de dois estados até a
+// recuperação de senha entrar; com três, booleano vira condição aninhada.
+const ENTRAR = 'entrar';
+const CRIAR = 'criar';
+const RECUPERAR = 'recuperar';
+
+const TEXTOS = {
+  [ENTRAR]: {
+    chamada: 'Entre para continuar jogando',
+    tituloInstrucoes: 'Antes de entrar',
+    acao: 'Entrar',
+  },
+  [CRIAR]: {
+    chamada: 'Crie sua conta e comece a pontuar',
+    tituloInstrucoes: 'Passo a passo',
+    acao: 'Criar conta grátis',
+  },
+  [RECUPERAR]: {
+    chamada: 'Recupere o acesso à sua conta',
+    tituloInstrucoes: 'Como funciona',
+    acao: 'Enviar link de recuperação',
+  },
+};
 
 const Login = () => {
+  useSeoDaPagina(seoDoLogin());
+
+  const { aviso, mostrarAviso, limparAviso } = useAviso();
+
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [senha, setSenha] = useState('');
 
-  // false = Tela de Login (Padrão) | true = Tela de Cadastro
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [modo, setModo] = useState(ENTRAR);
+  const textos = TEXTOS[modo];
 
-  const handleAuth = async (e) => {
+  const enviar = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setEnviando(true);
 
     try {
-      if (isSignUp) {
-        // --- LÓGICA DE CADASTRO ---
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-        if (error) throw error;
-        alert(
-          '🎉 Conta criada! O link de confirmação foi enviado para o seu e-mail (verifique o Spam).'
+      if (modo === CRIAR) {
+        await cadastrar(email, senha, nome);
+
+        // Só se chega nesta linha quando o cadastro deu certo: `cadastrar`
+        // levanta erro em qualquer outro caso. Antes o evento morava no
+        // index.html e disparava em toda página aberta, sem ninguém ter
+        // criado conta nenhuma.
+        medir(CONTA_CRIADA);
+
+        // Fixo: quem acabou de se cadastrar precisa ler isto inteiro, e some
+        // antes de terminar se durar três segundos.
+        mostrarAviso(
+          'Conta criada! O link de confirmação foi enviado para o seu e-mail — confira também a caixa de spam.',
+          { fixo: true }
         );
-        setIsSignUp(false); // Volta para login após cadastrar
+        setModo(ENTRAR);
+      } else if (modo === RECUPERAR) {
+        await pedirRecuperacaoDeSenha(email);
+
+        // A mesma frase para e-mail cadastrado e não cadastrado, de propósito:
+        // responder "essa conta não existe" transforma a tela num confirmador
+        // de quem tem conta aqui, para qualquer um que teste uma lista.
+        mostrarAviso(
+          'Se houver conta com esse e-mail, o link de redefinição chegou lá — confira também a caixa de spam.',
+          { fixo: true }
+        );
+        setModo(ENTRAR);
       } else {
-        // --- LÓGICA DE LOGIN ---
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
+        await entrar(email, senha);
         navigate('/');
       }
-    } catch (error) {
-      alert(error.message);
+    } catch (erro) {
+      mostrarAviso(erro.message, { erro: true });
     } finally {
-      setLoading(false);
+      setEnviando(false);
     }
   };
 
+  // O e-mail ATRAVESSA a troca de modo, e é de propósito: quem erra a senha e
+  // toca em "Esqueci minha senha" acabou de digitar exatamente o e-mail que a
+  // recuperação precisa — apagá-lo obriga a digitar de novo no celular, que é
+  // onde digitar custa mais. A senha não atravessa: a de entrar não serve para
+  // criar conta, e deixá-la no campo depois de trocar de tela é o tipo de
+  // sobra que faz alguém cadastrar sem perceber a senha de outra conta.
+  const irPara = (proximo) => {
+    limparAviso();
+    setModo(proximo);
+    setNome('');
+    setSenha('');
+  };
+
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #121212, #1a1a2e)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: '"Inter", sans-serif',
-        padding: '20px',
-      }}
-    >
-      <div
-        style={{
-          background: '#1e1e1e',
-          padding: '30px',
-          borderRadius: '20px',
-          border: '1px solid #333',
-          width: '100%',
-          maxWidth: '400px',
-          textAlign: 'center',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-          position: 'relative',
-        }}
-      >
-        {/* Botão Voltar */}
-        <Link
-          to="/"
-          style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            color: '#aaa',
-            cursor: 'pointer',
-          }}
-        >
-          <ArrowLeft size={24} />
+    <main className="login">
+      <div className="login__caixa">
+        <Link to="/" className="login__voltar" aria-label="Voltar para a Home">
+          <ArrowLeft size={24} aria-hidden="true" />
         </Link>
 
-        {/* Ícone Logo */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginBottom: '15px',
-          }}
-        >
-          <div
-            style={{
-              background: 'linear-gradient(45deg, #fca311, #ffc300)',
-              padding: '12px',
-              borderRadius: '50%',
-              boxShadow: '0 0 15px rgba(255, 165, 0, 0.4)',
-            }}
-          >
-            <Gamepad2 size={32} color="#1a1a2e" />
-          </div>
+        <div className="login__marca" aria-hidden="true">
+          <Gamepad2 size={32} />
         </div>
 
-        <h2 style={{ color: '#fff', marginBottom: '5px', fontSize: '1.5rem' }}>
-          Sopra Fitas
-        </h2>
-        <p style={{ color: '#aaa', marginBottom: '20px', fontSize: '0.9rem' }}>
-          {isSignUp
-            ? 'Crie sua conta e salve o progresso!'
-            : 'Faça login para continuar jogando.'}
-        </p>
+        <div>
+          <h1 className="login__titulo">{MARCA}</h1>
+          <p className="login__chamada">{textos.chamada}</p>
+        </div>
 
-        {/* --- CAIXA DE INSTRUÇÕES (SEMPRE VISÍVEL) --- */}
-        <div
-          style={{
-            background: 'rgba(252, 163, 17, 0.1)',
-            border: '1px solid #fca311',
-            borderRadius: '10px',
-            padding: '12px',
-            marginBottom: '20px',
-            textAlign: 'left',
-          }}
-        >
-          <h4
-            style={{
-              color: '#fca311',
-              margin: '0 0 8px 0',
-              fontSize: '0.85rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
-            {isSignUp ? <Info size={16} /> : <CheckCircle2 size={16} />}
-            {isSignUp ? 'Passo a Passo:' : 'Dica Importante:'}
-          </h4>
+        <section className="login__instrucoes">
+          <h2 className="login__instrucoes-titulo">
+            {modo === CRIAR ? (
+              <Info size={16} aria-hidden="true" />
+            ) : modo === RECUPERAR ? (
+              <KeyRound size={16} aria-hidden="true" />
+            ) : (
+              <CheckCircle2 size={16} aria-hidden="true" />
+            )}
+            {textos.tituloInstrucoes}
+          </h2>
 
-          <ul
-            style={{
-              margin: 0,
-              paddingLeft: '20px',
-              color: '#ccc',
-              fontSize: '0.75rem',
-              lineHeight: '1.4',
-            }}
-          >
-            {isSignUp ? (
-              // Texto do Modo Cadastro (ATUALIZADO)
+          <ul>
+            {modo === CRIAR && (
               <>
                 <li>
-                  Use um <strong>e-mail válido</strong> (você receberá um link
-                  do <strong>Supabase</strong>).
+                  O <strong>apelido</strong> é o nome que aparece no ranking.
+                  Dá para trocar depois, no seu perfil.
                 </li>
                 <li>
-                  Senha deve ter no mínimo <strong>6 dígitos</strong>.
+                  Use um <strong>e-mail de verdade</strong>: você vai receber um
+                  link de confirmação.
                 </li>
                 <li>
-                  Depois de cadastrar, <strong>confirme no seu e-mail</strong>.
+                  A senha precisa de no mínimo <strong>6 caracteres</strong>.
                 </li>
-                <li style={{ color: '#fff', marginTop: '4px' }}>
-                  ⚠️ Sem confirmar o e-mail, o login não funciona!
+                <li className="login__aviso">
+                  Sem confirmar o e-mail, o login não funciona.
                 </li>
               </>
-            ) : (
-              // Texto do Modo Login
+            )}
+
+            {modo === ENTRAR && (
               <>
-                <li>Para salvar seus jogos na nuvem, você precisa logar.</li>
-                <li>Ainda não tem conta? Clique em "Criar Conta Agora".</li>
                 <li>
-                  Não recebeu o e-mail do Supabase? Olhe sua caixa de Spam.
+                  Entrar serve para <strong>pontuar e enviar missões</strong>. O
+                  progresso dos jogos fica salvo neste aparelho.
+                </li>
+                <li>Ainda não tem conta? Toque em "Criar conta".</li>
+                <li>Não recebeu o e-mail de confirmação? Veja o spam.</li>
+              </>
+            )}
+
+            {modo === RECUPERAR && (
+              <>
+                <li>
+                  Informe o e-mail da conta. Você recebe um{' '}
+                  <strong>link para escolher uma senha nova</strong>.
+                </li>
+                <li>O link vale por uma hora e só pode ser usado uma vez.</li>
+                <li className="login__aviso">
+                  Seus pontos continuam na conta — trocar a senha não apaga nada.
                 </li>
               </>
             )}
           </ul>
-        </div>
+        </section>
 
-        {/* --- FORMULÁRIO --- */}
-        <form
-          onSubmit={handleAuth}
-          style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
-        >
-          <div style={{ position: 'relative' }}>
-            <Mail
-              size={18}
-              color="#666"
-              style={{ position: 'absolute', left: '15px', top: '13px' }}
-            />
-            <input
-              type="email"
-              placeholder="Seu e-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 12px 12px 40px',
-                borderRadius: '10px',
-                border: '1px solid #333',
-                background: '#252525',
-                color: 'white',
-                outline: 'none',
-                fontSize: '0.95rem',
-              }}
+        <Aviso aviso={aviso} aoFechar={limparAviso} />
+
+        <form onSubmit={enviar} className="login__formulario">
+          {modo === CRIAR && (
+            <Campo
+              rotulo="Apelido no ranking"
+              placeholder="Como você quer ser chamado"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              autoComplete="nickname"
+              maxLength={30}
               required
             />
-          </div>
+          )}
 
-          <div style={{ position: 'relative' }}>
-            <Lock
-              size={18}
-              color="#666"
-              style={{ position: 'absolute', left: '15px', top: '13px' }}
-            />
-            <input
-              type="password"
-              placeholder="Sua senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+          <Campo
+            rotulo="E-mail"
+            tipo="email"
+            placeholder="voce@exemplo.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+          />
+
+          {/* A recuperação manda um link e não confere senha nenhuma: pedir a
+              senha aqui só teria como resposta possível a que a pessoa esqueceu. */}
+          {modo !== RECUPERAR && (
+            <Campo
+              rotulo="Senha"
+              tipo="password"
+              placeholder="Mínimo de 6 caracteres"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              autoComplete={modo === CRIAR ? 'new-password' : 'current-password'}
               minLength={6}
-              style={{
-                width: '100%',
-                padding: '12px 12px 12px 40px',
-                borderRadius: '10px',
-                border: '1px solid #333',
-                background: '#252525',
-                color: 'white',
-                outline: 'none',
-                fontSize: '0.95rem',
-              }}
               required
             />
-          </div>
+          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              padding: '12px',
-              borderRadius: '10px',
-              border: 'none',
-              background: 'linear-gradient(45deg, #fca311, #ffc300)',
-              color: '#1a1a2e',
-              fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              marginTop: '8px',
-              fontSize: '0.95rem',
-              transition: 'transform 0.2s',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            {loading ? (
-              <Loader2 className="animate-spin" size={18} />
-            ) : isSignUp ? (
-              'CADASTRAR GRÁTIS'
+          <Botao type="submit" cheio disabled={enviando}>
+            {enviando ? (
+              <Loader2 className="animate-spin" size={18} aria-hidden="true" />
             ) : (
-              'ENTRAR'
+              textos.acao
             )}
-          </button>
+          </Botao>
         </form>
 
-        <div
-          style={{
-            marginTop: '20px',
-            borderTop: '1px solid #333',
-            paddingTop: '15px',
-          }}
-        >
-          <p
-            style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '10px' }}
+        {modo === ENTRAR && (
+          <Botao
+            variante="fantasma"
+            compacto
+            className="login__esqueci"
+            onClick={() => irPara(RECUPERAR)}
+            disabled={enviando}
           >
-            {isSignUp ? 'Já criou sua conta?' : 'Primeira vez no Sopra Fitas?'}
+            Esqueci minha senha
+          </Botao>
+        )}
+
+        <div className="login__alternar">
+          <p>
+            {modo === CRIAR
+              ? 'Já tem conta?'
+              : modo === RECUPERAR
+                ? 'Lembrou a senha?'
+                : `Primeira vez no ${MARCA}?`}
           </p>
-          <button
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setEmail('');
-              setPassword('');
-            }}
-            disabled={loading}
-            style={{
-              background: 'transparent',
-              border: '1px solid #555',
-              color: '#ddd',
-              padding: '8px 20px',
-              borderRadius: '20px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              transition: 'all 0.2s',
-            }}
-            onMouseOver={(e) => (e.target.style.borderColor = '#fca311')}
-            onMouseOut={(e) => (e.target.style.borderColor = '#555')}
+
+          <Botao
+            variante="fantasma"
+            compacto
+            onClick={() => irPara(modo === ENTRAR ? CRIAR : ENTRAR)}
+            disabled={enviando}
           >
-            {isSignUp ? 'Fazer Login' : 'Criar Conta Agora'}
-          </button>
+            {modo === ENTRAR ? 'Criar conta' : 'Fazer login'}
+          </Botao>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

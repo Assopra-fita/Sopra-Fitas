@@ -397,7 +397,7 @@ Decisões que parecem erro mas foram deliberadas, com a razão registrada no pr�
 | Rolagem própria de 260 px no card de desafios | [`Home.jsx:428-431`](../src/pages/Home.jsx#L428-L431) | sem o teto, cada desafio novo estica a coluna lateral e aumenta o vão da grade | o layout da Home degrada a cada desafio cadastrado |
 | Par `100vh` / `100dvh` duplicado no CSS | [`index.css:27-38`](../src/index.css#L27-L38) | fallback para navegadores sem `dvh` | barra do navegador móvel corta a tela do jogo |
 | Detectar layout pela **altura** também | [`GameRoom.jsx:21-30`](../src/pages/GameRoom.jsx#L21-L30) | celular deitado tem largura de desktop | o layout de três colunas aparece por cima do jogo |
-| `gamesDb` indexado por id, separado de `games[]` | [`games.js:235`](../src/constants/games.js#L235) | resolver a ROM em acesso direto na GameRoom | busca linear a cada abertura de jogo |
+| Índice por id ao lado do array do acervo | [`games.js`](../src/constants/games.js) | a sala de jogo resolve a ROM por id a cada abertura; sem índice seriam 24 comparações por jogo | busca linear a cada abertura de jogo |
 
 ## 7. Contratos frágeis
 

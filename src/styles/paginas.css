@@ -1,0 +1,1418 @@
+/* Estilos que pertencem a uma tela só. O prefixo indica de qual tela é, para
+   nomes iguais em telas diferentes nunca colidirem. */
+
+/* ---------- Perfil ---------- */
+.perfil__avatar {
+  width: 80px;
+  height: 80px;
+  background: var(--primaria);
+  color: var(--primaria-texto);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--esp-md);
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.perfil__nome {
+  font-size: 1.8rem;
+}
+
+.perfil__papel {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.perfil__numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-md);
+  justify-content: center;
+  margin: var(--esp-xl) 0;
+}
+
+/* O `min-width` é o que decide entre três colunas apertadas e duas mais uma
+   embaixo: abaixo dele o terceiro atalho passa para a linha de baixo em vez de
+   espremer "Ranking" e "Missões" em duas linhas de texto cada. */
+.perfil__numero {
+  background: var(--superficie-alta);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-md);
+  flex: 1;
+  min-width: 92px;
+  color: var(--texto);
+  display: block;
+}
+
+.perfil__numero-valor {
+  font-size: 1.2rem;
+}
+
+.perfil__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+  margin-top: var(--esp-lg);
+}
+
+/* ---------- Missões enviadas pelo jogador ---------- */
+.envios {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+  padding: 0;
+  margin: var(--esp-lg) 0 0;
+}
+
+.envio {
+  display: flex;
+  gap: var(--esp-md);
+  align-items: flex-start;
+  /* A borda esquerda é o que separa as três situações à distância de um
+     relance, sem depender do ícone nem da leitura do rótulo. */
+  border-left: 4px solid var(--borda-clara);
+}
+
+.envio--pendente {
+  border-left-color: var(--primaria);
+}
+
+.envio--aprovada {
+  border-left-color: var(--sucesso-texto);
+}
+
+.envio--rejeitada {
+  border-left-color: var(--perigo-borda);
+}
+
+/* Miniatura de tamanho fixo: o print vem do aparelho de quem enviou, em
+   qualquer proporção, e `contain` mostra a imagem inteira em vez de recortar
+   justamente o canto onde costuma estar a pontuação. */
+.envio__print {
+  flex: 0 0 96px;
+  height: 96px;
+  background: var(--superficie-alta);
+  border-radius: var(--raio-m);
+  overflow: hidden;
+}
+
+.envio__print img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.envio__dados {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-xs);
+}
+
+.envio__jogo {
+  font-size: 1.05rem;
+}
+
+.envio__jogo a {
+  color: var(--texto);
+}
+
+.envio__jogo a:hover {
+  color: var(--primaria);
+}
+
+.envio__situacao {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-xs);
+  font-weight: bold;
+}
+
+.envio--pendente .envio__situacao {
+  color: var(--primaria);
+}
+
+.envio--aprovada .envio__situacao {
+  color: var(--sucesso-texto);
+}
+
+.envio--rejeitada .envio__situacao {
+  color: var(--perigo-texto);
+}
+
+.envio__explicacao {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.envio__data {
+  color: var(--texto-fraco);
+  font-size: 0.8rem;
+}
+
+/* Abaixo disto a miniatura e o texto não convivem na mesma linha sem o nome do
+   jogo quebrar letra a letra. */
+@media (max-width: 420px) {
+  .envio {
+    flex-direction: column;
+  }
+
+  .envio__print {
+    flex: none;
+    width: 100%;
+    height: 160px;
+  }
+}
+
+/* ---------- Estados compartilhados entre telas ---------- */
+.estado-carregando {
+  color: var(--texto-suave);
+  text-align: center;
+  padding: 50px var(--esp-lg);
+}
+
+.estado-vazio {
+  color: var(--texto-fraco);
+  text-align: center;
+  padding: 50px var(--esp-lg);
+}
+
+.estado-erro {
+  color: var(--perigo-texto);
+  text-align: center;
+  padding: 50px var(--esp-lg);
+}
+
+/* ---------- Página não encontrada ---------- */
+.nao-encontrada {
+  min-height: 100vh;
+  background: var(--fundo-degrade);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px var(--esp-lg);
+  gap: var(--esp-lg);
+}
+
+.nao-encontrada__titulo {
+  font-size: 2rem;
+}
+
+.nao-encontrada__texto {
+  color: var(--texto-suave);
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+/* ---------- Ranking ---------- */
+.ranking__cabecalho {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.ranking__titulo {
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 900;
+}
+
+.ranking__subtitulo {
+  color: var(--texto-suave);
+  margin-top: var(--esp-sm);
+}
+
+.ranking__trofeu {
+  margin-bottom: var(--esp-md);
+  filter: drop-shadow(0 0 15px rgba(252, 163, 17, 0.4));
+}
+
+.ranking__tabela {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  overflow: hidden;
+}
+
+/* Uma linha da tabela. As colunas encolhem no celular para o nome não espremer. */
+.ranking__linha {
+  display: grid;
+  grid-template-columns: 0.8fr 3fr 1fr;
+  align-items: center;
+  padding: var(--esp-lg) 25px;
+  border-bottom: 1px solid var(--borda);
+}
+
+.ranking__linha:last-child {
+  border-bottom: none;
+}
+
+.ranking__linha--cabecalho {
+  background: var(--superficie-alta);
+  font-weight: bold;
+  color: var(--texto-fraco);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding: 18px 25px;
+}
+
+.ranking__linha--lider {
+  background: linear-gradient(90deg, rgba(252, 163, 17, 0.08), transparent);
+}
+
+.ranking__posicao {
+  display: flex;
+  align-items: center;
+}
+
+.ranking__numero {
+  font-weight: bold;
+  color: var(--texto-fraco);
+  width: 24px;
+  text-align: center;
+}
+
+.ranking__jogador {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.ranking__jogador--lider {
+  color: var(--primaria);
+}
+
+.ranking__pontos {
+  text-align: right;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--primaria);
+}
+
+.ranking__coluna-direita {
+  text-align: right;
+}
+
+.ranking__unidade {
+  font-size: 0.7rem;
+  color: var(--texto-fraco);
+}
+
+@media (max-width: 600px) {
+  .ranking__linha,
+  .ranking__linha--cabecalho {
+    grid-template-columns: 0.6fr 2.4fr 1fr;
+    padding: var(--esp-md);
+  }
+
+  .ranking__titulo {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+  }
+}
+
+/* ---------- Login ---------- */
+.login {
+  min-height: 100vh;
+  background: var(--fundo-degrade);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--esp-lg);
+}
+
+.login__caixa {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-xl);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+}
+
+.login__voltar {
+  position: absolute;
+  top: var(--esp-md);
+  left: var(--esp-md);
+  color: var(--texto-suave);
+  display: inline-flex;
+  padding: var(--esp-sm);
+}
+
+.login__voltar:hover {
+  color: var(--texto);
+}
+
+.login__marca {
+  background: var(--primaria);
+  color: var(--primaria-texto);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--esp-sm) auto 0;
+}
+
+.login__titulo {
+  font-size: 1.5rem;
+}
+
+.login__chamada {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.login__instrucoes {
+  background: rgba(252, 163, 17, 0.1);
+  border: 1px solid var(--primaria);
+  border-radius: var(--raio-m);
+  padding: var(--esp-md);
+  text-align: left;
+}
+
+.login__instrucoes-titulo {
+  color: var(--primaria);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.login__instrucoes ul {
+  margin: 0;
+  padding-left: var(--esp-lg);
+  color: var(--texto-suave);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.login__aviso {
+  color: var(--texto);
+  margin-top: 4px;
+}
+
+.login__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+}
+
+/* Fica entre o formulário e a divisória do "criar conta", com margem negativa
+   para colar no botão de entrar: é ali que a pessoa acabou de errar a senha e
+   é ali que ela procura a saída. */
+.login__esqueci {
+  align-self: center;
+  margin-top: calc(var(--esp-sm) * -1);
+}
+
+.login__alternar {
+  border-top: 1px solid var(--borda);
+  padding-top: var(--esp-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-sm);
+  align-items: center;
+}
+
+.login__alternar p {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+/* ---------- Painel do GM ---------- */
+.painel__numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--esp-lg);
+}
+
+.painel__numero {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-xl);
+  text-align: center;
+}
+
+.painel__numero-valor {
+  font-size: 2.5rem;
+  color: var(--cor-destaque, var(--primaria));
+}
+
+.painel__numero-rotulo {
+  color: var(--texto-suave);
+}
+
+.painel__secao {
+  font-size: 1.1rem;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Cores de destaque do painel. Cada tela tem a sua, declarada aqui e não no
+   JSX: cor é decisão de design. O hover também é CSS puro — antes eram dois
+   handlers de JavaScript por cartão. */
+.painel__numero--acervo,
+.painel__atalho--upar {
+  --cor-destaque: #fca311;
+}
+
+.painel__numero--jogadores,
+.painel__atalho--ranking {
+  --cor-destaque: #00d4ff;
+}
+
+.painel__numero--missoes {
+  --cor-destaque: #ff8a8a;
+}
+
+.painel__atalho--acervo {
+  --cor-destaque: #3498db;
+}
+
+.painel__atalho--desafios {
+  --cor-destaque: #a855f7;
+}
+
+.painel__atalho--missoes {
+  --cor-destaque: #2ecc71;
+}
+
+.painel__atalho--usuarios {
+  --cor-destaque: #e879f9;
+}
+
+.painel__atalho {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-xl);
+  height: 100%;
+  display: block;
+  color: var(--texto);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.painel__atalho:hover {
+  border-color: var(--cor-destaque, var(--primaria));
+  transform: translateY(-4px);
+}
+
+.painel__atalho-icone {
+  color: var(--cor-destaque, var(--primaria));
+  margin-bottom: var(--esp-lg);
+}
+
+.painel__atalho-titulo {
+  font-size: 1.2rem;
+  margin-bottom: var(--esp-sm);
+}
+
+.painel__atalho-texto {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painel__atalho:hover {
+    transform: none;
+  }
+}
+
+/* ---------- Cards da barra lateral da Home ---------- */
+.lateral {
+  background: rgba(20, 20, 20, 0.92);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: var(--esp-md);
+  text-align: left;
+}
+
+.lateral--desafios {
+  border-color: #b77a09;
+}
+
+.lateral__titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid var(--borda);
+  padding-bottom: var(--esp-xs);
+  margin-bottom: var(--esp-sm);
+  color: var(--texto);
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.lateral__titulo-texto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lateral__contagem {
+  flex-shrink: 0;
+  min-width: 22px;
+  padding: 2px 7px;
+  border-radius: var(--raio-pilula);
+  background: var(--superficie-alta);
+  color: var(--texto-suave);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.lateral__ver-tudo {
+  font-size: 0.7rem;
+  color: var(--texto-suave);
+  font-weight: normal;
+}
+
+/* Rolagem própria: sem o teto, cada desafio novo alonga esta coluna e aumenta
+   o vão embaixo dos filtros, porque a grade só começa depois da coluna mais
+   alta da seção.
+   
+   O teto vale só no layout de três colunas. Em coluna única a lista pode
+   crescer no fluxo da página: rolagem dentro de rolagem não ajuda ninguém, e
+   ali não há coluna vizinha para desalinhar. */
+.lateral__lista {
+  overflow-y: auto;
+}
+
+@media (min-width: 1101px) {
+  .lateral__lista {
+    /* Proporcional à janela, não 260px fixos: em 1440px de altura a lista
+       parava em 260px com 368px de conteúdo, escondendo 108px com espaço
+       de sobra na tela. */
+    max-height: min(420px, calc(100vh - 260px));
+  }
+}
+
+.lateral__vazio {
+  color: var(--texto-fraco);
+  font-size: 0.8rem;
+}
+
+/* Um desafio */
+.desafio {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px;
+  border-radius: var(--raio-p);
+  margin-bottom: 8px;
+  border-left: 3px solid #b78009;
+}
+
+.desafio__titulo {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #c084fc;
+  margin-bottom: 2px;
+}
+
+.desafio__objetivo {
+  font-size: 0.72rem;
+  color: var(--texto-suave);
+  line-height: 1.3;
+}
+
+.desafio__recompensa {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  color: var(--primaria);
+  font-weight: bold;
+}
+
+/* Uma linha do TOP 5 */
+.top5__linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  padding: 6px 0;
+}
+
+.top5__jogador {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.top5__nome {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top5__pontos {
+  color: var(--primaria);
+  font-weight: bold;
+}
+
+.top5__posicao {
+  color: var(--texto-fraco);
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+/* ---------- Cabeçalho fixo da Home ----------
+   `sticky` e não `fixed`: assim o cabeçalho ocupa o próprio espaço no fluxo e
+   o conteúdo não precisa reservar um respiro do tamanho dele. Com `fixed`, a
+   altura do cabeçalho varia — 65px no celular, 75px acima disso, 78px quando o
+   jogador logado tem nickname longo — contra um respiro escrito à mão, e a
+   conta só fechava por sorte: com nickname longo a folga caía para 7px. */
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--esp-sm);
+  padding: var(--esp-md) var(--esp-xl);
+  background: rgba(18, 18, 18, 0.95);
+  border-bottom: 1px solid var(--borda);
+}
+
+.topo__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-lg);
+  min-width: 0;
+}
+
+.topo__logo {
+  display: flex;
+  align-items: center;
+}
+
+.topo__logo img {
+  height: 40px;
+  width: auto;
+}
+
+.topo__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--alvo-toque);
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.topo__link:hover {
+  color: var(--texto);
+}
+
+.topo__acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  /* Sem isto o lado das ações não encolhe, e um apelido longo empurrava o
+     cabeçalho para fora da janela — 203px de excesso medidos em 320px, que o
+     overflow-x escondia em vez de resolver. */
+  min-width: 0;
+}
+
+.topo__perfil {
+  min-width: 0;
+}
+
+.topo__apelido {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topo__moedas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #000;
+  padding: 6px var(--esp-md);
+  border-radius: var(--raio-pilula);
+  border: 1px solid var(--primaria);
+  color: var(--primaria);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .topo {
+    padding: var(--esp-sm) var(--esp-md);
+    gap: var(--esp-sm);
+  }
+
+  /* No celular a barra continua numa linha só: o texto do link some e fica o
+     ícone, para não empurrar o conteúdo para baixo com uma segunda linha. */
+  .topo__logo img {
+    height: 28px;
+  }
+
+  .topo__link span {
+    display: none;
+  }
+
+  .topo__acoes {
+    gap: 6px;
+  }
+
+  /* No celular o apelido cede espaço primeiro: o ícone e o botão de sair
+     precisam continuar alcançáveis. */
+  .topo__apelido {
+    max-width: 8ch;
+  }
+}
+
+/* O aviso da Home fica na largura do conteúdo, acima das três colunas. */
+.home__aviso {
+  margin-bottom: var(--esp-lg);
+}
+
+/* ---------- Card de jogo ---------- */
+.card-jogo {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  padding: 12px;
+  text-align: center;
+  position: relative;
+  min-width: 0;
+}
+
+.card-jogo__favorito {
+  position: absolute;
+  top: var(--esp-sm);
+  right: var(--esp-sm);
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  /* `button` não herda `color`: o navegador aplica `buttontext`, que é preto.
+     Sem esta linha o coração vazio ficava preto sobre o círculo preto do
+     próprio botão, com contraste de 1,00:1 — ou seja, invisível. */
+  color: var(--texto);
+  /* 13px de recuo leva o alvo de toque a 44x44 */
+  padding: 13px;
+  line-height: 0;
+}
+
+.card-jogo__nome {
+  font-size: 0.85rem;
+  color: var(--texto);
+  margin-bottom: var(--esp-xs);
+  /* Duas linhas com reticências: cortar no overflow partia a letra ao meio */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.4em;
+  line-height: 1.2;
+}
+
+.card-jogo__console {
+  font-size: 0.7rem;
+  color: var(--texto-suave);
+  display: block;
+  margin-bottom: var(--esp-sm);
+}
+
+@media (max-width: 768px) {
+  .card-jogo {
+    padding: var(--esp-sm);
+  }
+
+  .card-jogo__nome {
+    font-size: 0.78rem;
+  }
+}
+
+/* ---------- Paginação ---------- */
+.paginacao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--esp-xl);
+  flex-wrap: wrap;
+}
+
+.paginacao__botao {
+  min-width: 38px;
+  min-height: 38px;
+  padding: 8px 14px;
+  background: #242424;
+  color: var(--texto-suave);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-m);
+  font: inherit;
+  font-weight: bold;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.paginacao__botao:hover:not(:disabled) {
+  border-color: var(--primaria);
+  color: var(--texto);
+}
+
+.paginacao__botao[aria-current='page'] {
+  background: var(--primaria);
+  color: var(--primaria-texto);
+  border-color: transparent;
+}
+
+.paginacao__botao:disabled {
+  color: #444;
+  background: #1a1a1a;
+  cursor: default;
+}
+
+.paginacao__reticencias {
+  color: var(--texto-fraco);
+  padding: 0 4px;
+}
+
+/* ---------- Home ---------- */
+/* Sem `overflow-x: hidden` aqui, e é de propósito: qualquer ancestral com
+   overflow diferente de `visible` desliga o `position: sticky` do cabeçalho.
+   Ele também escondia transbordo horizontal em vez de deixar aparecer, o que
+   transforma um defeito de layout em algo que ninguém vê e ninguém conserta. */
+.home {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--fundo-degrade);
+}
+
+.home__conteudo {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+  padding: var(--esp-xl) var(--esp-lg) 40px;
+}
+
+/* Três colunas no desktop: desafios, jogos, ranking.
+   Abaixo de 1100px vira coluna única e a grade volta para baixo, para não
+   deslocar os blocos de anúncio das laterais. */
+.home__secao {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 240px;
+  column-gap: var(--esp-lg);
+  row-gap: var(--esp-xl);
+  align-items: start;
+  margin-bottom: 40px;
+}
+
+.home__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-lg);
+}
+
+/* No desktop as laterais ocupam as duas linhas e a grade entra sob a coluna
+   do meio. Antes essa posição era escolhida em JavaScript, montando uma de
+   duas árvores conforme a largura da janela. */
+.home__coluna--esquerda {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.home__coluna--centro {
+  grid-column: 2;
+  grid-row: 1;
+  text-align: center;
+  min-width: 0;
+}
+
+.home__coluna--direita {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+
+.home__grade-area {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+}
+
+/* O h1 existe pela semântica e não deve introduzir espaçamento próprio. */
+.home__titulo {
+  margin: 0;
+  line-height: 0;
+}
+
+/* Acompanha a largura da busca, para os dois ficarem no mesmo eixo visual. */
+.home__logo {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  /* A coluna é flex, então text-align não centraliza um item que não estica */
+  margin-inline: auto;
+}
+
+/* O `width: 100%` é obrigatório aqui: num container flex, um item com margem
+   automática encolhe até o conteúdo em vez de esticar, e a busca saía com
+   353px no lugar dos 600px. */
+.home__busca {
+  display: flex;
+  justify-content: center;
+  gap: var(--esp-sm);
+  width: 100%;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+.home__busca-campo {
+  position: relative;
+  flex: 1;
+}
+
+.home__busca-icone {
+  position: absolute;
+  left: var(--esp-md);
+  top: 12px;
+  color: var(--texto-fraco);
+}
+
+.home__busca-entrada {
+  width: 100%;
+  min-height: var(--alvo-toque);
+  padding: 0 var(--esp-md) 0 45px;
+  border-radius: var(--raio-pilula);
+  border: 1px solid var(--borda);
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+}
+
+.home__busca-entrada::placeholder {
+  color: var(--texto-fraco);
+}
+
+.home__sorteio {
+  background: linear-gradient(45deg, #ff00cc, #333399);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--texto);
+  flex-shrink: 0;
+}
+
+.home__filtros {
+  display: flex;
+  gap: var(--esp-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.home__filtro {
+  padding: 8px 16px;
+  min-height: 34px;
+  border-radius: var(--raio-pilula);
+  border: none;
+  cursor: pointer;
+  background: #242424;
+  color: var(--texto-suave);
+  font: inherit;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.home__filtro:hover {
+  color: var(--texto);
+}
+
+.home__filtro[aria-pressed='true'] {
+  background: var(--primaria);
+  color: var(--primaria-texto);
+}
+
+/* A grade se adapta sozinha: cabem quantas colunas couberem, com no mínimo
+   150px cada. Antes eram contagens fixas — 2 no celular e 4 no desktop — e o
+   mesmo card ia de 159px a 363px conforme a largura da tela. */
+.home__grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+/* Abaixo de 344px a largura útil não chega aos 316px que o auto-fill exige
+   para abrir a segunda coluna, e a grade caía para uma coluna só, com card de
+   300px e a página em 12 linhas. Duas colunas de 141px cabem. */
+@media (max-width: 343px) {
+  .home__grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+/* Entre 854 e 1019px o auto-fill resolve para 5 colunas, e 5 não divide os 12
+   jogos da página: a última linha ficava com 2 cards. Quatro divide. */
+@media (min-width: 854px) and (max-width: 1019px) {
+  .home__grade {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Quatro colunas fixas só quando cabem: os 12 jogos da página fecham 3 linhas
+   cheias, sem órfão na última. O piso é 1188px, porque abaixo disso a coluna
+   do meio não tem os 608px que quatro cards de 140px exigem — em 1101px a
+   conta dava cards de 118px, contra 163px em 1100px. Entre 1101 e 1187 a
+   grade se vira sozinha e faz 3 colunas de 163px. */
+@media (min-width: 1188px) {
+  .home__grade-area .home__grade {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.home__rodape {
+  text-align: center;
+  padding: var(--esp-lg);
+  border-top: 1px solid var(--borda);
+  color: var(--texto-fraco);
+}
+
+/* Coluna única. A ordem visual é a mesma de antes — meio, desafios, top 5 e a
+   grade por último — porque subir a grade mexeria na posição dos anúncios. */
+@media (max-width: 1100px) {
+  .home__secao {
+    grid-template-columns: 1fr;
+  }
+
+  .home__coluna--esquerda,
+  .home__coluna--centro,
+  .home__coluna--direita,
+  .home__grade-area {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .home__coluna--centro {
+    order: 1;
+  }
+
+  .home__coluna--esquerda {
+    order: 2;
+  }
+
+  .home__coluna--direita {
+    order: 3;
+  }
+
+  .home__grade-area {
+    order: 4;
+  }
+}
+
+@media (max-width: 768px) {
+  .home__conteudo {
+    padding: var(--esp-lg) 14px 40px;
+  }
+
+  /* Capa mais baixa no celular, onde o card é estreito. Era uma prop calculada
+     em JavaScript e passada por dois componentes. */
+  .card-jogo .capa {
+    height: 130px;
+  }
+
+  /* Menor no celular: em 420px ela empurraria os jogos 224px para baixo, numa
+     tela onde a rolagem até o primeiro jogo já é o problema. */
+  .home__logo {
+    max-width: 220px;
+  }
+
+  .home__busca {
+    flex-direction: column;
+  }
+
+  .home__sorteio {
+    width: 100%;
+    border-radius: 14px;
+  }
+
+  /* Os 10 filtros quebravam em 4 linhas e 170,8px de altura numa tela de
+     320px, tudo isso acima do primeiro jogo. Em faixa rolável ficam numa
+     linha só. O recuo lateral negativo faz a faixa sangrar até a borda da
+     tela, para ficar claro que ela continua além do que se vê. */
+  .home__filtros {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    margin-inline: -14px;
+    padding-inline: 14px;
+    padding-block: 4px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .home__filtros::-webkit-scrollbar {
+    display: none;
+  }
+
+  .home__filtro {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    font-size: 0.8rem;
+  }
+
+  .home__rodape {
+    font-size: 0.8rem;
+  }
+}
+
+/* ---------- Telas de admin: layout de duas colunas ---------- */
+.admin__duas-colunas {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--esp-xl);
+  align-items: start;
+}
+
+.admin__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+}
+
+.admin__subtitulo {
+  color: var(--texto-suave);
+  font-size: 1rem;
+  margin-bottom: var(--esp-sm);
+}
+
+/* Uma linha de lista dentro de card de admin */
+.admin__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--esp-sm);
+  padding: var(--esp-md);
+  background: var(--superficie-alta);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-m);
+  margin-bottom: 12px;
+}
+
+.admin__item-titulo {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--texto);
+}
+
+.admin__item-detalhe {
+  font-size: 0.75rem;
+  color: var(--primaria);
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .admin__duas-colunas {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Gestão de jogadores ---------- */
+.usuarios__nome {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.usuarios__email {
+  font-size: 0.75rem;
+  color: var(--texto-fraco);
+}
+
+.usuarios__pontos {
+  color: var(--primaria);
+  font-weight: bold;
+}
+
+.usuarios__editar {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+}
+
+/* Um campo de pontos não precisa da largura da coluna, mas também não pode
+   encolher a ponto de esconder o número. */
+.usuarios__campo-pontos {
+  width: 90px;
+}
+
+.usuarios__papel {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--raio-pilula);
+  font-size: 0.75rem;
+  background: var(--superficie-alta);
+  color: var(--texto-suave);
+}
+
+.usuarios__papel--admin {
+  background: var(--superficie-alta);
+  color: var(--primaria);
+}
+
+/* ---------- Validação de missões ---------- */
+.missao__topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Sem o wrap, a pílula com o nome do jogo empurrava o cartão 62px para
+     fora da janela em telas de 320px. */
+  flex-wrap: wrap;
+  gap: var(--esp-sm);
+  margin-bottom: var(--esp-md);
+}
+
+.missao__jogador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  /* min-width deixa a caixa encolher; overflow-wrap dá ao texto onde quebrar.
+     Sem os dois, um apelido longo sem espaço empurra o cartão para fora da
+     janela — medido em 61px de excesso numa tela de 320px. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.missao__jogador svg {
+  flex-shrink: 0;
+}
+
+.missao__jogo {
+  padding: var(--esp-xs) 12px;
+  border: 1px solid var(--borda-clara);
+  border-radius: var(--raio-pilula);
+  background: var(--superficie-alta);
+  color: var(--primaria);
+  font-size: 0.85rem;
+  /* Nome de jogo é texto de terceiro: pode vir longo e sem espaço */
+  overflow-wrap: anywhere;
+}
+
+.missao__print {
+  overflow: hidden;
+  border: 2px solid var(--borda);
+  border-radius: var(--raio-m);
+  margin-bottom: var(--esp-lg);
+}
+
+.missao__print img {
+  width: 100%;
+  display: block;
+}
+
+.missao__recompensa {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--esp-md);
+  flex-wrap: wrap;
+  padding: var(--esp-md);
+  border-radius: var(--raio-m);
+  background: var(--fundo);
+  margin-bottom: var(--esp-lg);
+}
+
+.missao__campo {
+  width: 160px;
+}
+
+.missao__acoes {
+  display: grid;
+  gap: var(--esp-md);
+}
+
+/* Lado a lado só quando os dois rótulos cabem numa linha cada */
+@media (min-width: 480px) {
+  .missao__acoes {
+    grid-template-columns: 1fr 1.5fr;
+  }
+}
+
+/* ---------- Cadastro de jogo ---------- */
+.jogos__aviso {
+  margin-top: var(--esp-lg);
+  padding: var(--esp-sm) var(--esp-md);
+  border-radius: var(--raio-m);
+  text-align: center;
+  background: var(--sucesso-fundo);
+  color: var(--sucesso-texto);
+}
+
+.jogos__aviso--erro {
+  background: var(--erro-fundo);
+  color: var(--perigo-texto);
+}
+
+/* ---------- Gerenciar acervo ---------- */
+.acervo__capa {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: var(--raio-p);
+  background: #000;
+  display: block;
+}
+
+.acervo__id {
+  font-size: 0.8rem;
+  color: var(--texto-fraco);
+}
+
+.acervo__acoes {
+  display: flex;
+  gap: 8px;
+}
+
+/* Sete colunas somam 825px de largura mínima: no celular só a capa cabia, e
+   era preciso arrastar 587px para descobrir de que jogo era a linha. Ano,
+   fabricante e identificador não são o que se procura numa tela pequena. */
+@media (max-width: 767px) {
+  .acervo__secundaria {
+    display: none;
+  }
+
+  /* Com quatro colunas o piso de 560px do componente sobra, e era ele que
+     mantinha o nome do jogo fora da tela mesmo depois de esconder as colunas
+     secundárias. */
+  .acervo .tabela {
+    min-width: 0;
+  }
+
+  .acervo .tabela th,
+  .acervo .tabela td {
+    padding: var(--esp-sm);
+  }
+}
