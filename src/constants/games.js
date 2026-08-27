@@ -179,17 +179,6 @@ export const games = [
     descricao: 'Acelere ao som de rock em corridas intergalácticas!',
   },
   {
-    id: 'snes-supermarioworld',
-    nome: 'Super Mario World',
-    console: 'SNES',
-    core: 'snes9x',
-    rom_url: '/supermarioworld.sfc',
-    capa_url: 'https://upload.wikimedia.org/wikipedia/en/3/32/Super_Mario_World_Coverart.png',
-    ano: '1990',
-    fabricante: 'Nintendo',
-    descricao: 'O clássico absoluto que definiu o SNES!',
-  },
-  {
     id: 'snes-topgear',
     nome: 'Top Gear',
     console: 'SNES',

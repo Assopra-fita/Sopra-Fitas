@@ -17,7 +17,7 @@ Guia operacional do acervo. Cadastrar um jogo é a tarefa mais frequente do proj
 
 ```mermaid
 flowchart LR
-    EST["src/constants/games.js<br/>acervo estático · 24 jogos · 9 campos<br/>ROMs em public/, versionadas no git"]
+    EST["src/constants/games.js<br/>acervo estático · 23 jogos · 9 campos<br/>ROMs em public/, versionadas no git"]
     SUP[("tabela jogos<br/>Supabase · cadastrada pelo painel")]
 
     EST -->|"games[]"| HOME["Home<br/>grade, busca, filtros"]
@@ -244,8 +244,14 @@ Distribuição por console:
 | Atari 2600 | 1 | `stella2014` |
 | Mega Drive | **0** | `genesis_plus_gx` |
 
-Duas capas ainda são carregadas de fora do domínio, da Wikipédia:
-`sms-sonic` e `snes-supermarioworld`.
+Uma capa ainda é carregada de fora do domínio, da Wikipédia: `sms-sonic`.
+
+O `snes-supermarioworld` saiu do código: era o mesmo Super Mario World que já
+existia no banco como `snes-mario-world`, com id diferente, e por isso a
+deduplicação por id de `useCatalogo.js` não o pegava — o jogo aparecia duas
+vezes na vitrine. Ficou o do banco, que tem a capa no Storage do projeto em vez
+de hotlink da Wikipédia, e descrição completa. A ROM local, de 512 KB, saiu
+junto por não ter mais quem a referenciasse.
 
 ### Acervo do banco — tabela `jogos`
 
