@@ -17,7 +17,7 @@
 //   o cache HTTP do navegador cuidar dele é mais simples e mais correto.
 
 // Suba a versão para invalidar tudo que ficou para trás.
-const VERSAO = 'assopra-fita-v2';
+const VERSAO = 'sopra-fitas-v3';
 const CASCA = `${VERSAO}-casca`;
 const ESTATICOS = `${VERSAO}-estaticos`;
 
