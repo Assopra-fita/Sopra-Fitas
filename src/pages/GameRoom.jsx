@@ -18,6 +18,7 @@ import { useAviso } from '../hooks/useAviso';
 import { useJogo } from '../hooks/useJogo';
 import { useRelacionados } from '../hooks/useRelacionados';
 import { useEmulador } from '../hooks/useEmulador';
+import { prepararPremiado } from '../lib/anuncioPremiado';
 
 const GameRoom = () => {
   const { gameId } = useParams();
@@ -53,6 +54,12 @@ const GameRoom = () => {
   useEffect(() => {
     setFalhaDoEmulador(null);
     window.scrollTo(0, 0);
+
+    // Pede o anúncio premiado do botão JOGAR aqui, e não lá no componente
+    // Emulator: este efeito roda assim que a sala abre, enquanto o Emulator só
+    // monta depois de o Supabase devolver a ficha do jogo. Essa ida ao banco é
+    // meio segundo que o anúncio ganha para carregar antes do clique.
+    prepararPremiado();
 
     let ativo = true;
     obterSessao()

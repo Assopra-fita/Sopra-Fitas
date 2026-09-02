@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { ligarPremiadoAoBotaoJogar } from '../lib/premiadoAoJogar';
 
 // Versão fixa do EmulatorJS. Apontar para uma branch faz um commit de terceiro
 // quebrar todos os jogos sem aviso.
@@ -202,6 +203,11 @@ const Emulator = ({ gameUrl, core, onPronto, aoFalhar }) => {
       if (typeof prontoRef.current === 'function') {
         prontoRef.current(window.EJS_emulator);
       }
+
+      // O "ready" do EmulatorJS 4.2.3 é disparado 20 ms depois de o botão
+      // JOGAR entrar na página — antes do clique, e antes do download do core,
+      // que só começa no clique. É a primeira hora possível de alcançar o botão.
+      ligarPremiadoAoBotaoJogar(window.EJS_emulator);
 
       // Solta a fila de anúncios e medição do index.html. Até aqui eles ficam
       // parados de propósito: medido, com eles no caminho crítico o botão
