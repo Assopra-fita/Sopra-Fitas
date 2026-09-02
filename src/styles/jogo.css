@@ -10,6 +10,10 @@
    Safari < 15.4): a primeira declaração de cada par é a de reserva. */
 
 .sala {
+  /* Largura de um trilho de anúncio, num lugar só: a conta aparece aqui e no
+     alinhamento da ficha, e as duas não podem divergir. */
+  --largura-do-trilho: calc(336px + var(--esp-lg) * 2 + 1px);
+
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -38,7 +42,7 @@
    377 + 377 + 320 da coluna central = 1074, que é de onde vem o ponto de
    quebra da coluna única lá embaixo. */
 .sala__lateral {
-  width: calc(336px + var(--esp-lg) * 2 + 1px);
+  width: var(--largura-do-trilho);
   padding: var(--esp-lg);
   background: var(--superficie);
   display: flex;
@@ -90,11 +94,24 @@
 .sala__abaixo {
   order: 5;
   flex: 0 0 100%;
-  padding: 0 var(--esp-lg) var(--esp-lg);
+  /* Sem padding lateral de propósito: o recuo dos lados quem dá é o max-width
+     dos filhos, logo abaixo. Com padding aqui, o `100%` daquela conta passaria
+     a valer a caixa de conteúdo já encolhida e a ficha sairia 40px estreita. */
+  padding-bottom: var(--esp-lg);
 }
 
+/* A ficha tem que nascer com a MESMA largura útil da coluna do meio, senão a
+   borda dela não bate com a moldura do jogo logo acima. A coluna do meio é
+   `flex: 1` com teto de 1000px, ou seja: o menor entre 1000 e o que sobra da
+   linha depois dos dois trilhos. Os dois termos descontam o padding dela.
+   `100%` aqui é a largura da linha, porque .sala__abaixo ocupa a linha inteira
+   — daí sair sem depender de `vw`, que conta a barra de rolagem e erraria por
+   uns 15px. */
 .sala__abaixo > * {
-  max-width: 1000px;
+  max-width: min(
+    calc(1000px - var(--esp-lg) * 2),
+    calc(100% - var(--largura-do-trilho) * 2 - var(--esp-lg) * 2)
+  );
   margin-inline: auto;
 }
 
@@ -486,6 +503,12 @@
   .sala__abaixo {
     order: 3;
     padding: var(--esp-md);
+  }
+
+  /* Aqui não há trilho ao lado para descontar: a conta lá de cima daria
+     negativo numa tela de celular e sumiria com a ficha. */
+  .sala__abaixo > * {
+    max-width: none;
   }
 
   .sala__lateral--direita {
