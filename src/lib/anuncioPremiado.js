@@ -183,12 +183,13 @@ export const aoResolverPremiado = (fn) => {
 
 // Abre o premiado e resolve quando ele fechar, com o desfecho:
 //
-//   { exibido: false }                  não havia anúncio, ou ele nem abriu
-//   { exibido: true, recompensado: false }  fechou antes do fim do vídeo
-//   { exibido: true, recompensado: true }   assistiu até o fim
+//   exibido          o anúncio chegou a aparecer na tela
+//   recompensado     o vídeo foi até o fim (evento do próprio Ad Manager)
+//   segundosNaTela   quanto tempo ele ficou aberto
 //
 // Nunca rejeita. Quem decide o que fazer com o desfecho é premiadoAoJogar.js —
-// aqui só se relata o que aconteceu.
+// aqui só se relata o que aconteceu. O tempo é medido e não julgado de
+// propósito: quantos segundos bastam é regra de negócio, e ela mora lá.
 //
 // PRECISA ser chamada de dentro do gesto do jogador. `makeRewardedVisible` fora
 // de um clique real abre um anúncio que o navegador é livre para deixar mudo, e
@@ -200,18 +201,24 @@ export const exibirPremiado = () =>
     // abrir o mesmo premiado de novo.
     anuncioPronto = null;
 
-    if (!evento) return resolve({ exibido: false, recompensado: false });
+    if (!evento) {
+      return resolve({ exibido: false, recompensado: false, segundosNaTela: 0 });
+    }
 
     recompensaConcedida = false;
     let jaFechou = false;
     let teto = null;
+    let abertoEm = 0;
 
     const fechar = (desfecho) => {
       if (jaFechou) return;
       jaFechou = true;
       clearTimeout(teto);
       aoFechar = null;
-      resolve(desfecho);
+      resolve({
+        segundosNaTela: abertoEm ? (Date.now() - abertoEm) / 1000 : 0,
+        ...desfecho,
+      });
     };
 
     // Teto estourado é anúncio travado, e travamento nosso não pode virar
@@ -224,9 +231,11 @@ export const exibirPremiado = () =>
     aoFechar = () => fechar({ exibido: true, recompensado: recompensaConcedida });
 
     try {
+      abertoEm = Date.now();
       evento.makeRewardedVisible();
     } catch (falha) {
       console.error('Não deu para abrir o anúncio premiado:', falha);
+      abertoEm = 0;
       fechar({ exibido: false, recompensado: false });
     }
   });

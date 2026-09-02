@@ -201,7 +201,11 @@ const GameRoom = () => {
       </aside>
 
       {anuncioExigido && (
-        <ModalDeRecompensa aoAssistir={anuncioExigido.assistir} aoSair={sair} />
+        <ModalDeRecompensa
+          aoAssistir={anuncioExigido.assistir}
+          aoSair={sair}
+          segundos={anuncioExigido.segundos}
+        />
       )}
 
       {modalAberto && (

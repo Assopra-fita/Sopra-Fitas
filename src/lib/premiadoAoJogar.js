@@ -41,9 +41,16 @@ import {
 // entre 0,9 s e 2,2 s conforme a rede — ou seja, o clique cai bem no meio dessa
 // disputa, e desistir ali era jogar fora boa parte das exibições.
 //
-// QUEM FECHA O ANÚNCIO ANTES DO FIM NÃO JOGA. O jogo continua pausado e o
+// QUEM FECHA O ANÚNCIO CEDO DEMAIS NÃO JOGA. O jogo continua pausado e o
 // chamador recebe o aviso para abrir a modal que explica isso — jogo congelado
 // sem explicação seria indistinguível de site quebrado.
+//
+// "Cedo demais" são os SEGUNDOS_MINIMOS abaixo, e não o fim do vídeo. O Ad
+// Manager avisa quando o vídeo termina, e é ele quem desenha o "Pular vídeo?
+// Você perderá sua recompensa" — mas o quanto vale a recompensa é decisão
+// nossa. Exigir o vídeo inteiro segurava o jogador por 15 a 30 s num site em
+// que ele veio jogar; alguns segundos entregam a impressão ao anunciante sem
+// transformar a espera em pedágio.
 //
 // O bloqueio só existe quando um anúncio realmente apareceu. Sem anúncio na
 // tela não há o que assistir, e prender o jogador ali deixaria o site
@@ -66,6 +73,11 @@ const JANELA_DE_ESPERA = 10 * 1000;
 // quando a unidade não tem demanda NENHUMA — que é o que dá para medir hoje —
 // insistir é só gastar rede do jogador para receber o mesmo vazio.
 const MAX_TENTATIVAS = 2;
+
+// Quantos segundos de anúncio liberam o jogo. Assistir até o fim também libera,
+// naturalmente. É o botão de volume do pedágio: subir rende mais por impressão
+// e afasta mais gente.
+export const SEGUNDOS_MINIMOS = 5;
 
 // `aoExigirAnuncio` recebe `{ assistir }` quando o jogo trava por anúncio não
 // assistido, e `null` quando ele é liberado. Quem desenha a modal é o React.
@@ -93,7 +105,7 @@ export const ligarPremiadoAoBotaoJogar = (emulador, aoExigirAnuncio = () => {}) 
   const travar = () => {
     bloqueado = true;
     emulador.pause?.(true);
-    aoExigirAnuncio({ assistir: assistirDeNovo });
+    aoExigirAnuncio({ assistir: assistirDeNovo, segundos: SEGUNDOS_MINIMOS });
   };
 
   const mostrar = () => {
@@ -113,15 +125,21 @@ export const ligarPremiadoAoBotaoJogar = (emulador, aoExigirAnuncio = () => {}) 
       emulador.pause?.(true);
     }
 
-    exibirPremiado().then(({ exibido, recompensado }) => {
+    exibirPremiado().then(({ exibido, recompensado, segundosNaTela }) => {
       anuncioNaTela = false;
 
-      if (!exibido || recompensado) {
-        registrar(exibido ? 'assistiu até o fim: liberando o jogo' : 'o anúncio não chegou a abrir: liberando o jogo');
+      if (!exibido) {
+        registrar('o anúncio não chegou a abrir: liberando o jogo');
         return liberar();
       }
 
-      registrar('fechou o anúncio antes do fim: jogo travado');
+      const tempo = segundosNaTela.toFixed(1);
+      if (recompensado || segundosNaTela >= SEGUNDOS_MINIMOS) {
+        registrar(`${tempo}s de anúncio: liberando o jogo`);
+        return liberar();
+      }
+
+      registrar(`só ${tempo}s de anúncio, mínimo ${SEGUNDOS_MINIMOS}s: jogo travado`);
       travar();
     });
 

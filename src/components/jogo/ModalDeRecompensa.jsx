@@ -8,7 +8,7 @@ import { Botao } from '../ui';
 //
 // Não tem botão de fechar de propósito. As duas saídas são explícitas —
 // assistir, ou voltar para o acervo.
-const ModalDeRecompensa = ({ aoAssistir, aoSair }) => {
+const ModalDeRecompensa = ({ aoAssistir, aoSair, segundos }) => {
   const [carregando, setCarregando] = useState(false);
 
   const assistir = () => {
@@ -26,12 +26,14 @@ const ModalDeRecompensa = ({ aoAssistir, aoSair }) => {
         aria-describedby="texto-recompensa"
       >
         <h2 className="modal__titulo" id="titulo-recompensa">
-          <PlayCircle size={22} aria-hidden="true" /> Falta assistir ao anúncio
+          <PlayCircle size={22} aria-hidden="true" /> Só mais um pouquinho
         </h2>
 
         <p className="modal__texto" id="texto-recompensa">
-          O anúncio foi fechado antes do fim. Assista até o final para liberar o
-          jogo — é ele que paga o servidor e mantém tudo aqui de graça.
+          O anúncio foi fechado cedo demais. Bastam{' '}
+          <strong>{segundos} segundos</strong> assistindo para liberar o jogo —
+          depois disso é só pular. É o anúncio que paga o servidor e mantém tudo
+          aqui de graça.
         </p>
 
         <div className="modal__acoes">
