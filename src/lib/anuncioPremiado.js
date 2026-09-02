@@ -7,12 +7,18 @@
 // fechamento, e é isso que libera o caminho para pedir o próximo — sem o
 // destroySlots o slot fica gasto e nenhum outro anúncio chega.
 
-// Unidade de anúncio no Ad Manager. Precisa existir no painel, com o formato
-// "Premiado" e com o texto da recompensa configurado LÁ: quem desenha a oferta
-// ("assista a um anúncio para jogar") é o Google, não este arquivo. Enquanto
-// ela não existir, o slot volta vazio e o jogo abre sem anúncio nenhum — o
-// site não quebra, só não monetiza.
-const ID_DO_SLOT = '/23340104016/assoprafitas.com/premiado';
+// Unidade de anúncio no Ad Manager.
+//
+// ATENÇÃO AO CAMINHO: esta unidade fica na RAIZ da rede, e não debaixo de
+// `assoprafitas.com` como os banners (`.../assoprafitas.com/content1`) e o
+// interstitial. Não é descuido, é onde ela foi criada no painel — e o Ad
+// Manager responde a um caminho errado exatamente como responde a uma unidade
+// que não existe: HTTP 200 com resposta vazia, sem erro nenhum. Alinhar este
+// caminho com o dos banners "por coerência" desliga o anúncio em silêncio.
+//
+// O texto da recompensa ("assista a um anúncio para jogar") é configurado no
+// painel: quem desenha a oferta é o Google, não este arquivo.
+const ID_DO_SLOT = '/23340104016/premiado';
 
 // Unidade de demonstração do Google, que sempre devolve um anúncio de teste.
 // É a do exemplo oficial do GPT, e existe justamente para dar pra ver o fluxo
