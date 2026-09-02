@@ -183,16 +183,23 @@ const GameRoom = () => {
             />
 
             <Aviso aviso={aviso} aoFechar={limparAviso} className="sala__aviso" />
-
-            {/* Escondido por CSS no celular deitado, onde a tela inteira é do
-                jogo. Antes era desmontado por um ternário de JavaScript. */}
-            <div className="sala__abaixo">
-              <FichaDoJogo jogo={jogo} aoEnviarPrint={abrirEnvioDePrint} />
-              <JogosRelacionados jogos={relacionados} />
-            </div>
           </div>
         )}
       </main>
+
+      {/* Ficha e relacionados são irmãos dos trilhos de anúncio, e não filhos
+          da coluna do meio. É o que permite ao CSS colocar UM anúncio entre o
+          jogo e a ficha no celular: flex só reordena irmãos, então enquanto
+          este bloco vivia dentro do <main> os dois trilhos só podiam ficar os
+          dois antes ou os dois depois dele — e caíam colados no fim da página.
+
+          Escondido por CSS no celular deitado, onde a tela inteira é do jogo. */}
+      {jogo && !erro && (
+        <div className="sala__abaixo">
+          <FichaDoJogo jogo={jogo} aoEnviarPrint={abrirEnvioDePrint} />
+          <JogosRelacionados jogos={relacionados} />
+        </div>
+      )}
 
       {/* Idem: escondido, nunca desmontado */}
       <aside className="sala__lateral sala__lateral--direita">

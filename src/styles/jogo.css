@@ -83,8 +83,19 @@
   align-items: center;
 }
 
+/* Faixa própria embaixo da linha do jogo, e não mais um bloco dentro da coluna
+   do meio. `flex: 0 0 100%` é o que a força a quebrar para a própria linha; o
+   teto de largura vai nos filhos, porque um teto aqui deixaria a faixa caber ao
+   lado dos trilhos e ela subiria para a linha de cima. */
 .sala__abaixo {
-  width: 100%;
+  order: 5;
+  flex: 0 0 100%;
+  padding: 0 var(--esp-lg) var(--esp-lg);
+}
+
+.sala__abaixo > * {
+  max-width: 1000px;
+  margin-inline: auto;
 }
 
 .sala__falha {
@@ -439,14 +450,15 @@
 }
 
 /* ---------- Coluna única ----------
-   O corte em 1073px é aritmética, não gosto: as três colunas só cabem a partir
-   de 1074 (377 + 377 + 320). Abaixo disso elas estouravam a janela e apareciam
-   barra de rolagem horizontal. E não é perda: a 1074px a coluna do jogo fica
-   nos 320px mínimos, então empilhar entrega um jogo maior do que espremer.
+   As três colunas só cabem a partir de 1074px (377 + 377 + 320), mas caber não
+   basta: nessa largura o jogo fica com 296px espremidos entre dois trilhos de
+   377, o que é pior do que não ter três colunas. O corte em 1199 é onde a
+   coluna do meio ainda entrega uns 400px de jogo. Abaixo disso o layout empilha
+   e o jogo ocupa a tela inteira.
 
    A condição de altura continua valendo: um celular deitado tem largura de
    desktop e altura de nada. */
-@media (max-width: 1073px), (max-height: 599px) {
+@media (max-width: 1199px), (max-height: 599px) {
   .sala__lateral {
     width: 100%;
     /* Sem padding lateral: aqui a coluna vale a largura da tela inteira, e os
@@ -455,10 +467,25 @@
     padding-right: 0;
   }
 
+  /* Jogo, anúncio, ficha, anúncio. Empilhados, os dois trilhos caíam colados no
+     fim da página e o segundo ficava a uma rolagem de distância de qualquer
+     olho — impressão servida e não vista. A ficha entre eles separa os dois sem
+     empurrar o jogo para baixo da dobra, que era o custo de subir um deles para
+     antes do jogo. */
+  .sala__principal {
+    order: 1;
+  }
+
   .sala__lateral--esquerda {
-    order: 3;
+    order: 2;
     border-right: none;
+    border-top: 1px solid var(--borda);
     border-bottom: 1px solid var(--borda);
+  }
+
+  .sala__abaixo {
+    order: 3;
+    padding: var(--esp-md);
   }
 
   .sala__lateral--direita {
