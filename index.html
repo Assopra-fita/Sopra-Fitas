@@ -213,31 +213,37 @@
       var interstitialSlot = null;
 
       googletag.cmd.push(function () {
-        // 336x280 é o ÚNICO tamanho que preenche nestas unidades. Medido: com
-        // ele na lista, 4 de 12 slots voltaram cheios e os quatro eram 336x280;
-        // sem ele, 0 de 8. Tirar esse tamanho não encolhe o anúncio, apaga o
-        // anúncio. Se um dia parecer boa ideia removê-lo de novo, refaça a
-        // medição antes.
+        // A lista aqui é o PEDIDO, não a permissão: quem decide o que pode
+        // servir é a configuração do bloco no painel do Ad Manager, mais os
+        // itens de linha ligados a ele. Medido pedindo cada tamanho sozinho
+        // nestas duas unidades: 336x280 preencheu 4 de 12; 300x250, 0 de 8;
+        // 160x600, 0 de 8; e pedindo SÓ 300x600 o painel devolveu um 336x280,
+        // que é a prova de que o limite não está deste lado.
         //
-        // Quem garante que ele cabe é o CSS: a coluna lateral de jogo.css é
-        // calculada a partir dos 336. O mapa abaixo é a rede de proteção para
-        // telas menores que o próprio criativo, onde nem a coluna de largura
-        // total comporta 336 — aí só os tamanhos menores ficam elegíveis.
+        // Então acrescentar tamanho aqui é de graça e não muda nada sozinho —
+        // mas TIRAR tamanho apaga anúncio, e já apagou uma vez. Regra: só mexer
+        // nesta lista com medição na mão.
+        //
+        // 300x600 (meia página) fica só no desktop de três colunas. É o formato
+        // vertical de maior valor e a coluna lateral tem altura para ele; no
+        // layout empilhado ele ficaria entre o jogo e o rodapé, empurrando a
+        // página inteira para baixo quando carregasse.
         var mapaDaLateral = googletag
           .sizeMapping()
+          .addSize([1200, 0], [[336, 280], [300, 600], [300, 250], [250, 250]])
           .addSize([336, 0], [[336, 280], [300, 250], [250, 250]])
           .addSize([0, 0], [[300, 250], [250, 250]])
           .build();
 
         googletag.defineSlot(
           '/23340104016/assoprafitas.com/content1',
-          [[250, 250], [300, 250], [336, 280]],
+          [[250, 250], [300, 250], [336, 280], [300, 600]],
           'div-gpt-ad-1775680124469-0'
         ).defineSizeMapping(mapaDaLateral).addService(googletag.pubads());
 
         googletag.defineSlot(
           '/23340104016/assoprafitas.com/content2',
-          [[250, 250], [300, 250], [336, 280]],
+          [[250, 250], [300, 250], [336, 280], [300, 600]],
           'div-gpt-ad-1775680168607-0'
         ).defineSizeMapping(mapaDaLateral).addService(googletag.pubads());
 
