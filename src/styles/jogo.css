@@ -23,18 +23,22 @@
    Ficam escondidos, nunca desmontados: o googletag.display só roda uma vez por
    slot, então remontar mata o anúncio.
 
-   A largura é ditada pela conta do criativo: 300px de anúncio, mais o padding
+   A largura é ditada pela conta do criativo: 336px de anúncio, mais o padding
    dos dois lados, mais a borda de 1px que separa esta coluna da do jogo. Com o
    `box-sizing: border-box` de base.css, padding e borda saem de DENTRO da
    largura declarada — é por isso que a conta soma o 1px em vez de arredondar.
 
-   Antes eram 300px cravados, que davam 259 de conteúdo. O criativo de 336
-   vazava 77px por baixo da coluna central, que é `position: relative` e pinta
-   por cima: o anúncio aparecia cortado ao meio.
+   O 336 não é escolha de gosto: medido, é o único tamanho que preenche nestas
+   unidades. Antes a coluna tinha 300px cravados, que davam 259 de conteúdo, e
+   o criativo vazava 77px por baixo da coluna central — que é
+   `position: relative` e pinta por cima. Era o anúncio aparecendo cortado ao
+   meio. Encolher o anúncio para caber, em vez de alargar a coluna, apagou o
+   banner por completo.
 
-   A 1024px de tela ainda fecha: 341 + 341 + 320 da coluna central = 1002. */
+   377 + 377 + 320 da coluna central = 1074, que é de onde vem o ponto de
+   quebra da coluna única lá embaixo. */
 .sala__lateral {
-  width: calc(300px + var(--esp-lg) * 2 + 1px);
+  width: calc(336px + var(--esp-lg) * 2 + 1px);
   padding: var(--esp-lg);
   background: var(--superficie);
   display: flex;
@@ -434,14 +438,19 @@
   gap: var(--esp-sm);
 }
 
-/* ---------- Celular: coluna única ----------
-   Mesma condição que o JavaScript avaliava: largura pequena OU altura
-   pequena, porque um celular deitado tem largura de desktop. */
-@media (max-width: 767px), (max-height: 599px) {
+/* ---------- Coluna única ----------
+   O corte em 1073px é aritmética, não gosto: as três colunas só cabem a partir
+   de 1074 (377 + 377 + 320). Abaixo disso elas estouravam a janela e apareciam
+   barra de rolagem horizontal. E não é perda: a 1074px a coluna do jogo fica
+   nos 320px mínimos, então empilhar entrega um jogo maior do que espremer.
+
+   A condição de altura continua valendo: um celular deitado tem largura de
+   desktop e altura de nada. */
+@media (max-width: 1073px), (max-height: 599px) {
   .sala__lateral {
     width: 100%;
-    /* Sem padding lateral: num celular de 320px, os 20px de cada lado
-       deixariam 280 de conteúdo e cortariam o anúncio de 300 do mesmo jeito. */
+    /* Sem padding lateral: aqui a coluna vale a largura da tela inteira, e os
+       20px de cada lado cortariam o anúncio de 336 num celular de 360. */
     padding-left: 0;
     padding-right: 0;
   }
