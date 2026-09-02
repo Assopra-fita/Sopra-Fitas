@@ -20,11 +20,21 @@
 }
 
 /* ---------- Trilhos de publicidade ----------
-   Medidas preservadas exatamente como estavam no JSX: 300px de largura, 20px
-   de respiro e a mesma superfície. Ficam escondidos, nunca desmontados: o
-   googletag.display só roda uma vez por slot, então remontar mata o anúncio. */
+   Ficam escondidos, nunca desmontados: o googletag.display só roda uma vez por
+   slot, então remontar mata o anúncio.
+
+   A largura é ditada pela conta do criativo: 300px de anúncio, mais o padding
+   dos dois lados, mais a borda de 1px que separa esta coluna da do jogo. Com o
+   `box-sizing: border-box` de base.css, padding e borda saem de DENTRO da
+   largura declarada — é por isso que a conta soma o 1px em vez de arredondar.
+
+   Antes eram 300px cravados, que davam 259 de conteúdo. O criativo de 336
+   vazava 77px por baixo da coluna central, que é `position: relative` e pinta
+   por cima: o anúncio aparecia cortado ao meio.
+
+   A 1024px de tela ainda fecha: 341 + 341 + 320 da coluna central = 1002. */
 .sala__lateral {
-  width: 300px;
+  width: calc(300px + var(--esp-lg) * 2 + 1px);
   padding: var(--esp-lg);
   background: var(--superficie);
   display: flex;
@@ -430,6 +440,10 @@
 @media (max-width: 767px), (max-height: 599px) {
   .sala__lateral {
     width: 100%;
+    /* Sem padding lateral: num celular de 320px, os 20px de cada lado
+       deixariam 280 de conteúdo e cortariam o anúncio de 300 do mesmo jeito. */
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .sala__lateral--esquerda {
