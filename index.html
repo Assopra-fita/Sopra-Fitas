@@ -18,50 +18,98 @@
          é 1,15 MB de 7z extraído em JavaScript. A impressão continua
          acontecendo — o visitante segue na página, jogando.
 
-         Toda tag abaixo se inscreve por `aoLiberarAnuncios`. Há teto de
-         tempo: se nada disparar, carrega assim mesmo. Falha aqui é receita
-         perdida, então o caminho de segurança é obrigatório. -->
+         São DUAS filas, e a divisão importa:
+
+           `aoCarregarGPT`      — só o gpt.js e a definição dos slots. Na sala
+                                  de jogo ela abre no DOMContentLoaded, cedo.
+           `aoLiberarAnuncios`  — o peso de verdade: GTM, Pixel, os banners de
+                                  300x250 e o interstitial. Continua esperando
+                                  o emulador montar.
+
+         Por que o gpt.js saiu da fila pesada na sala de jogo: o anúncio
+         premiado do botão JOGAR precisa estar CARREGADO no instante do clique,
+         e quem chega pelo Google direto numa página de jogo não passou pela
+         Home para aquecer nada. Esperando o emulador montar, o pedido do
+         premiado saía junto com o botão aparecendo — tarde demais.
+
+         O que entra cedo é o script e um pedido de anúncio out-of-page. Nenhum
+         criativo é desenhado aqui: banner e interstitial continuam na fila
+         pesada. Se o tempo até o botão JOGAR regredir no aparelho, a volta é
+         uma linha — mover `filaGPT.abrir` para junto do `filaPesada.abrir`.
+
+         Há teto de tempo nas duas: se nada disparar, carrega assim mesmo.
+         Falha aqui é receita perdida, então o caminho de segurança é
+         obrigatório. -->
     <script>
       (function () {
-        var jaLiberou = false;
-        var fila = [];
+        function criarFila() {
+          var aberta = false;
+          var espera = [];
 
-        window.aoLiberarAnuncios = function (fn) {
-          if (jaLiberou) fn();
-          else fila.push(fn);
-        };
-
-        function liberar() {
-          if (jaLiberou) return;
-          jaLiberou = true;
-          for (var i = 0; i < fila.length; i++) {
-            try {
-              fila[i]();
-            } catch (e) {
-              /* uma tag que quebra não pode derrubar as outras */
-            }
-          }
-          fila.length = 0;
+          return {
+            entrar: function (fn) {
+              if (aberta) fn();
+              else espera.push(fn);
+            },
+            abrir: function () {
+              if (aberta) return;
+              aberta = true;
+              for (var i = 0; i < espera.length; i++) {
+                try {
+                  espera[i]();
+                } catch (e) {
+                  /* uma tag que quebra não pode derrubar as outras */
+                }
+              }
+              espera.length = 0;
+            },
+          };
         }
-        window.liberarAnuncios = liberar;
+
+        var filaGPT = criarFila();
+        var filaPesada = criarFila();
+
+        window.aoCarregarGPT = filaGPT.entrar;
+        window.aoLiberarAnuncios = filaPesada.entrar;
+        window.liberarAnuncios = function () {
+          filaGPT.abrir();
+          filaPesada.abrir();
+        };
 
         var naSalaDeJogo = /^\/jogar\//.test(location.pathname);
 
         if (naSalaDeJogo) {
+          // Os bundles do app já executaram (script de módulo roda antes do
+          // DOMContentLoaded), então o gpt.js não disputa com eles. Daqui até o
+          // clique no JOGAR são os segundos que o premiado tem para carregar.
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', filaGPT.abrir, {
+              once: true,
+            });
+          } else {
+            filaGPT.abrir();
+          }
+
           // O app avisa quando o emulador terminou de montar.
-          window.addEventListener('assopra:emulador-pronto', liberar, { once: true });
+          window.addEventListener('assopra:emulador-pronto', filaPesada.abrir, {
+            once: true,
+          });
         } else {
           window.addEventListener(
             'load',
             function () {
-              setTimeout(liberar, 800);
+              setTimeout(function () {
+                filaGPT.abrir();
+                filaPesada.abrir();
+              }, 800);
             },
             { once: true }
           );
         }
 
         // Teto: rede ruim, erro no app, rota inesperada — carrega do mesmo jeito.
-        setTimeout(liberar, naSalaDeJogo ? 12000 : 4000);
+        setTimeout(filaGPT.abrir, 4000);
+        setTimeout(filaPesada.abrir, naSalaDeJogo ? 12000 : 4000);
       })();
     </script>
 
@@ -146,17 +194,23 @@
 
     <!-- O gpt.js passa a ser injetado pela fila, e não por uma tag no HTML:
          `async` só promete não bloquear o parser, e ele continuava competindo
-         pela rede e pela CPU junto com o core do emulador. -->
+         pela rede e pela CPU junto com o core do emulador.
+
+         Definir slot não pede anúncio nenhum — quem pede é o `display`. Por
+         isso as definições e o `enableServices` ficam na fila leve, e os
+         `display` de banner e interstitial continuam na pesada. -->
     <script>
       window.googletag = window.googletag || { cmd: [] };
 
-      aoLiberarAnuncios(function () {
+      aoCarregarGPT(function () {
         var g = document.createElement('script');
         g.async = true;
         g.crossOrigin = 'anonymous';
         g.src = 'https://securepubads.g.doubleclick.net/tag/js/gpt.js';
         document.head.appendChild(g);
       });
+
+      var interstitialSlot = null;
 
       googletag.cmd.push(function () {
         googletag.defineSlot(
@@ -171,7 +225,7 @@
           'div-gpt-ad-1775680168607-0'
         ).addService(googletag.pubads());
 
-        var interstitialSlot = googletag.defineOutOfPageSlot(
+        interstitialSlot = googletag.defineOutOfPageSlot(
           '/23340104016/assoprafitas.com/interstitial',
           googletag.enums.OutOfPageFormat.INTERSTITIAL
         );
@@ -182,10 +236,14 @@
 
         googletag.pubads().enableSingleRequest();
         googletag.enableServices();
+      });
 
-        if (interstitialSlot) {
-          googletag.display(interstitialSlot);
-        }
+      aoLiberarAnuncios(function () {
+        googletag.cmd.push(function () {
+          if (interstitialSlot) {
+            googletag.display(interstitialSlot);
+          }
+        });
       });
     </script>
 
