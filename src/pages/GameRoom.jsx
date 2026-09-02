@@ -7,6 +7,7 @@ import BarraDeControles from '../components/jogo/BarraDeControles';
 import FichaDoJogo from '../components/jogo/FichaDoJogo';
 import JogosRelacionados from '../components/jogo/JogosRelacionados';
 import ModalDeMissao from '../components/jogo/ModalDeMissao';
+import ModalDeRecompensa from '../components/jogo/ModalDeRecompensa';
 import { Aviso, Botao, Carregando, EstadoErro } from '../components/ui';
 import { obterSessao } from '../services/sessao';
 import { enviarPrint as enviarPrintDaMissao } from '../services/missoes';
@@ -46,6 +47,10 @@ const GameRoom = () => {
   // aqui o jogo existe, o que faltou foi memória no navegador.
   const [falhaDoEmulador, setFalhaDoEmulador] = useState(null);
 
+  // `{ assistir }` enquanto o jogo está travado por anúncio não assistido, e
+  // null quando está liberado. Quem decide isso é src/lib/premiadoAoJogar.js.
+  const [anuncioExigido, setAnuncioExigido] = useState(null);
+
   const [sessao, setSessao] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [arquivo, setArquivo] = useState(null);
@@ -53,6 +58,7 @@ const GameRoom = () => {
 
   useEffect(() => {
     setFalhaDoEmulador(null);
+    setAnuncioExigido(null);
     window.scrollTo(0, 0);
 
     // Pede o anúncio premiado do botão JOGAR aqui, e não lá no componente
@@ -163,6 +169,7 @@ const GameRoom = () => {
                   core={jogo.core}
                   onPronto={emulador.aoPronto}
                   aoFalhar={setFalhaDoEmulador}
+                  aoExigirAnuncio={setAnuncioExigido}
                 />
               )}
             </div>
@@ -192,6 +199,10 @@ const GameRoom = () => {
         <h2 className="sala__rotulo-anuncio">Publicidade</h2>
         <AnuncioGPT adId="div-gpt-ad-1775680168607-0" />
       </aside>
+
+      {anuncioExigido && (
+        <ModalDeRecompensa aoAssistir={anuncioExigido.assistir} aoSair={sair} />
+      )}
 
       {modalAberto && (
         <ModalDeMissao

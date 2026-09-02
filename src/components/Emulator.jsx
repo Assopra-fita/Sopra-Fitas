@@ -62,16 +62,18 @@ const emulatorJsJaExecutou = () => {
 // O EmulatorJS é configurado por variáveis globais e cria a instância real em
 // window.EJS_emulator. Atenção: window.EJS_player é só o SELETOR CSS de onde
 // montar — chamar métodos nele não funciona, é uma string.
-const Emulator = ({ gameUrl, core, onPronto, aoFalhar }) => {
+const Emulator = ({ gameUrl, core, onPronto, aoFalhar, aoExigirAnuncio }) => {
   const containerRef = useRef(null);
 
   // Guardado em ref para o efeito abaixo não remontar o emulador toda vez que
   // o pai recriar a função.
   const prontoRef = useRef(onPronto);
   const falhaRef = useRef(aoFalhar);
+  const anuncioRef = useRef(aoExigirAnuncio);
   useEffect(() => {
     prontoRef.current = onPronto;
     falhaRef.current = aoFalhar;
+    anuncioRef.current = aoExigirAnuncio;
   });
 
   useEffect(() => {
@@ -207,7 +209,9 @@ const Emulator = ({ gameUrl, core, onPronto, aoFalhar }) => {
       // O "ready" do EmulatorJS 4.2.3 é disparado 20 ms depois de o botão
       // JOGAR entrar na página — antes do clique, e antes do download do core,
       // que só começa no clique. É a primeira hora possível de alcançar o botão.
-      ligarPremiadoAoBotaoJogar(window.EJS_emulator);
+      ligarPremiadoAoBotaoJogar(window.EJS_emulator, (exigencia) =>
+        anuncioRef.current?.(exigencia)
+      );
 
       // Solta a fila de anúncios e medição do index.html. Até aqui eles ficam
       // parados de propósito: medido, com eles no caminho crítico o botão

@@ -63,6 +63,9 @@ let anuncioPronto = null;
 // `resolve` de quem está esperando o anúncio fechar para despausar o jogo.
 let aoFechar = null;
 let ouvintesLigados = false;
+// O vídeo foi até o fim no anúncio que está na tela agora. Zerado a cada
+// exibição: é uma resposta sobre ESTE anúncio, não sobre a visita.
+let recompensaConcedida = false;
 // Quem quer ser avisado no desfecho do pedido em pé — `true` se um anúncio
 // chegou, `false` se o Ad Manager respondeu vazio. É o que permite ao botão
 // JOGAR esperar em vez de desistir, e tentar de novo em vez de ficar preso
@@ -93,6 +96,14 @@ const ligarOuvintes = () => {
     anuncioPronto = evento;
     registrar('anúncio carregado e pronto');
     avisarDesfecho(true);
+  });
+
+  // Chega ANTES do `rewardedSlotClosed` quando o jogador assiste até o fim. É
+  // a única diferença entre "assistiu" e "fechou no meio".
+  pubads.addEventListener('rewardedSlotGranted', (evento) => {
+    if (evento.slot !== slot) return;
+    recompensaConcedida = true;
+    registrar('recompensa concedida — o vídeo foi até o fim');
   });
 
   pubads.addEventListener('rewardedSlotClosed', (evento) => {
@@ -170,8 +181,14 @@ export const aoResolverPremiado = (fn) => {
   aoResolver = fn;
 };
 
-// Abre o premiado e resolve quando ele fechar. Nunca rejeita: falhar aqui é
-// falhar em mostrar publicidade, e isso jamais pode deixar um jogo pausado.
+// Abre o premiado e resolve quando ele fechar, com o desfecho:
+//
+//   { exibido: false }                  não havia anúncio, ou ele nem abriu
+//   { exibido: true, recompensado: false }  fechou antes do fim do vídeo
+//   { exibido: true, recompensado: true }   assistiu até o fim
+//
+// Nunca rejeita. Quem decide o que fazer com o desfecho é premiadoAoJogar.js —
+// aqui só se relata o que aconteceu.
 //
 // PRECISA ser chamada de dentro do gesto do jogador. `makeRewardedVisible` fora
 // de um clique real abre um anúncio que o navegador é livre para deixar mudo, e
@@ -183,26 +200,33 @@ export const exibirPremiado = () =>
     // abrir o mesmo premiado de novo.
     anuncioPronto = null;
 
-    if (!evento) return resolve();
+    if (!evento) return resolve({ exibido: false, recompensado: false });
 
+    recompensaConcedida = false;
     let jaFechou = false;
     let teto = null;
 
-    const fechar = () => {
+    const fechar = (desfecho) => {
       if (jaFechou) return;
       jaFechou = true;
       clearTimeout(teto);
       aoFechar = null;
-      resolve();
+      resolve(desfecho);
     };
 
-    teto = setTimeout(fechar, TETO_DE_EXIBICAO);
-    aoFechar = fechar;
+    // Teto estourado é anúncio travado, e travamento nosso não pode virar
+    // castigo: conta como assistido.
+    teto = setTimeout(() => {
+      registrar('teto estourado — o anúncio não fechou sozinho');
+      fechar({ exibido: true, recompensado: true });
+    }, TETO_DE_EXIBICAO);
+
+    aoFechar = () => fechar({ exibido: true, recompensado: recompensaConcedida });
 
     try {
       evento.makeRewardedVisible();
     } catch (falha) {
       console.error('Não deu para abrir o anúncio premiado:', falha);
-      fechar();
+      fechar({ exibido: false, recompensado: false });
     }
   });

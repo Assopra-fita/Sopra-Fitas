@@ -40,6 +40,16 @@ import {
 // Medido, o anúncio fica pronto por volta de 1,5 s, e o botão JOGAR aparece
 // entre 0,9 s e 2,2 s conforme a rede — ou seja, o clique cai bem no meio dessa
 // disputa, e desistir ali era jogar fora boa parte das exibições.
+//
+// QUEM FECHA O ANÚNCIO ANTES DO FIM NÃO JOGA. O jogo continua pausado e o
+// chamador recebe o aviso para abrir a modal que explica isso — jogo congelado
+// sem explicação seria indistinguível de site quebrado.
+//
+// O bloqueio só existe quando um anúncio realmente apareceu. Sem anúncio na
+// tela não há o que assistir, e prender o jogador ali deixaria o site
+// inutilizável toda vez que o Ad Manager não tem demanda ou o jogador usa
+// bloqueador. Pela mesma razão, quando não há um segundo anúncio para oferecer
+// a quem quer tentar de novo, o jogo é liberado.
 
 // A classe vem do `createStartButton` do EmulatorJS 4.2.3. Se um dia a versão
 // da CDN mudar em Emulator.jsx, é este seletor que precisa ser conferido: sem o
@@ -57,7 +67,9 @@ const JANELA_DE_ESPERA = 10 * 1000;
 // insistir é só gastar rede do jogador para receber o mesmo vazio.
 const MAX_TENTATIVAS = 2;
 
-export const ligarPremiadoAoBotaoJogar = (emulador) => {
+// `aoExigirAnuncio` recebe `{ assistir }` quando o jogo trava por anúncio não
+// assistido, e `null` quando ele é liberado. Quem desenha a modal é o React.
+export const ligarPremiadoAoBotaoJogar = (emulador, aoExigirAnuncio = () => {}) => {
   const botao = emulador?.elements?.parent?.querySelector(SELETOR_DO_BOTAO);
   if (!botao) {
     registrar('botão JOGAR não encontrado — o jogo abre sem anúncio');
@@ -66,30 +78,71 @@ export const ligarPremiadoAoBotaoJogar = (emulador) => {
 
   let anuncioNaTela = false;
   let aindaQuer = false;
+  let bloqueado = false;
+
+  // `true` no argumento para o botão de pausa da barra do emulador não trocar
+  // de desenho. O opcional cobre o anúncio que se resolve antes de o jogo
+  // existir: até o evento `start`, `play` e `pause` ainda não foram definidos
+  // pela biblioteca, e aí quem segura o jogo é o próprio `start`.
+  const liberar = () => {
+    bloqueado = false;
+    emulador.play?.(true);
+    aoExigirAnuncio(null);
+  };
+
+  const travar = () => {
+    bloqueado = true;
+    emulador.pause?.(true);
+    aoExigirAnuncio({ assistir: assistirDeNovo });
+  };
 
   const mostrar = () => {
-    if (!aindaQuer || !premiadoDisponivel()) return;
+    if (!premiadoDisponivel()) return false;
     aindaQuer = false;
     anuncioNaTela = true;
+
+    // Some com a modal enquanto o anúncio está no ar — ela existe para explicar
+    // a ausência do anúncio, e o anúncio está bem ali. O jogo continua parado:
+    // quem o segura agora é `anuncioNaTela`, e `bloqueado` só muda no desfecho.
+    aoExigirAnuncio(null);
 
     // O jogo pode já ter começado, quando o anúncio chega atrasado. O evento
     // `start` abaixo cobre o caminho contrário.
     if (emulador.started) {
-      registrar('anúncio chegou com o jogo já rodando: pausando');
+      registrar('anúncio na tela com o jogo já rodando: pausando');
       emulador.pause?.(true);
     }
 
-    exibirPremiado().then(() => {
+    exibirPremiado().then(({ exibido, recompensado }) => {
       anuncioNaTela = false;
-      registrar('anúncio saiu da tela: despausando o jogo');
-      // `true` para o botão de pausa da barra do emulador não trocar de
-      // desenho: para o jogador, o jogo nunca esteve pausado.
-      //
-      // O opcional cobre o anúncio que fecha antes de o jogo existir: até o
-      // evento `start`, `play` ainda não foi definido pela biblioteca.
-      emulador.play?.(true);
+
+      if (!exibido || recompensado) {
+        registrar(exibido ? 'assistiu até o fim: liberando o jogo' : 'o anúncio não chegou a abrir: liberando o jogo');
+        return liberar();
+      }
+
+      registrar('fechou o anúncio antes do fim: jogo travado');
+      travar();
     });
+
+    return true;
   };
+
+  // Botão "Assistir anúncio" da modal. O clique é gesto do jogador, então um
+  // anúncio já carregado abre na hora e com som; sem anúncio na mão, pede um e
+  // abre quando chegar. Não vindo nenhum, o jogo é liberado: falta de
+  // inventário não pode virar jogo impossível de abrir.
+  function assistirDeNovo() {
+    if (mostrar()) return;
+
+    registrar('sem anúncio para a segunda chance: pedindo outro');
+    prepararPremiado();
+    aoResolverPremiado((chegou) => {
+      if (chegou) return mostrar();
+      registrar('não veio outro anúncio: liberando o jogo');
+      liberar();
+    });
+  }
 
   let tentativas = 0;
 
@@ -126,8 +179,7 @@ export const ligarPremiadoAoBotaoJogar = (emulador) => {
 
       // Caminho feliz: o anúncio já está carregado e abre aqui dentro, no
       // gesto, que é o que garante o direito de tocar com som.
-      mostrar();
-      if (!aindaQuer) {
+      if (mostrar()) {
         registrar('clique no JOGAR: anúncio abriu na hora');
         return;
       }
@@ -146,9 +198,12 @@ export const ligarPremiadoAoBotaoJogar = (emulador) => {
     { capture: true, once: true }
   );
 
+  // O jogo termina de carregar depois do anúncio, quase sempre. Se o anúncio
+  // ainda está na tela — ou se ficou travado porque não foi assistido — ele
+  // nasce pausado, em vez de começar a tocar por baixo.
   emulador.on('start', () => {
-    if (!anuncioNaTela) return;
-    registrar('jogo ficou pronto com o anúncio na tela: pausando');
+    if (!anuncioNaTela && !bloqueado) return;
+    registrar(`jogo ficou pronto ${anuncioNaTela ? 'com o anúncio na tela' : 'travado'}: pausando`);
     emulador.pause?.(true);
   });
 };

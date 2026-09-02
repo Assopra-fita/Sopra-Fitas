@@ -359,7 +359,11 @@
 .modal {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  /* Acima do EmulatorJS, que carimba 9999 na barra de menu, nos popups e no
+     painel de ajustes. Com 1000, os ícones da barra desenhavam por cima dos
+     botões da caixa. Aqui a disputa é ganha no número porque a caixa é
+     `fixed` na página inteira, e não vizinha da tela do jogo. */
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -405,6 +409,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--esp-md);
+}
+
+/* ---------- Modal de "falta assistir ao anúncio" ---------- */
+.modal__texto {
+  margin-bottom: var(--esp-lg);
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+
+.modal__acoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-sm);
 }
 
 /* ---------- Celular: coluna única ----------
