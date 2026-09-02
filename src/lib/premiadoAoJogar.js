@@ -92,24 +92,38 @@ export const ligarPremiadoAoBotaoJogar = (emulador, aoExigirAnuncio = () => {}) 
   let aindaQuer = false;
   let bloqueado = false;
 
+  // O anúncio pode fechar DEPOIS de o jogador ter trocado de jogo, e aí esta
+  // closure ainda aponta para o emulador antigo — que o componente Emulator já
+  // encerrou. Mexer nele não é inofensivo: `play()` chama `toggleMainLoop(1)` e
+  // RESSUSCITA o loop principal do jogo que saiu da tela. Medido: o emulador
+  // antigo voltava com `paused: false`, tocando som por baixo do jogo novo e
+  // disputando a memória WASM com ele, que num aparelho apertado é a diferença
+  // entre abrir e dar "Falha ao iniciar o jogo".
+  //
+  // `window.EJS_emulator` é reescrito a cada jogo e limpo no encerramento, então
+  // comparar com ele responde "esta instância ainda é a que está na tela?".
+  const vivo = () => window.EJS_emulator === emulador;
+
   // `true` no argumento para o botão de pausa da barra do emulador não trocar
   // de desenho. O opcional cobre o anúncio que se resolve antes de o jogo
   // existir: até o evento `start`, `play` e `pause` ainda não foram definidos
   // pela biblioteca, e aí quem segura o jogo é o próprio `start`.
   const liberar = () => {
     bloqueado = false;
+    if (!vivo()) return registrar('a sala já trocou de jogo: não mexo no emulador antigo');
     emulador.play?.(true);
     aoExigirAnuncio(null);
   };
 
   const travar = () => {
     bloqueado = true;
+    if (!vivo()) return registrar('a sala já trocou de jogo: não travo o emulador antigo');
     emulador.pause?.(true);
     aoExigirAnuncio({ assistir: assistirDeNovo, segundos: SEGUNDOS_MINIMOS });
   };
 
   const mostrar = () => {
-    if (!premiadoDisponivel()) return false;
+    if (!vivo() || !premiadoDisponivel()) return false;
     aindaQuer = false;
     anuncioNaTela = true;
 
@@ -220,7 +234,7 @@ export const ligarPremiadoAoBotaoJogar = (emulador, aoExigirAnuncio = () => {}) 
   // ainda está na tela — ou se ficou travado porque não foi assistido — ele
   // nasce pausado, em vez de começar a tocar por baixo.
   emulador.on('start', () => {
-    if (!anuncioNaTela && !bloqueado) return;
+    if (!vivo() || (!anuncioNaTela && !bloqueado)) return;
     registrar(`jogo ficou pronto ${anuncioNaTela ? 'com o anúncio na tela' : 'travado'}: pausando`);
     emulador.pause?.(true);
   });
