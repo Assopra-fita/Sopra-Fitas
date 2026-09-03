@@ -765,14 +765,31 @@
     gap: var(--esp-sm);
   }
 
-  /* No celular a barra continua numa linha só: o texto do link some e fica o
-     ícone, para não empurrar o conteúdo para baixo com uma segunda linha. */
   .topo__logo img {
     height: 28px;
   }
 
+  /* No celular a barra continua numa linha só: o texto do link sai da tela e
+     fica só o ícone, para não empurrar o conteúdo para baixo com uma segunda
+     linha — com o jogador logado a direita ainda carrega pontos, apelido e o
+     botão de sair, e "Ranking" não cabe junto.
+
+     Some da VISTA, não da árvore de acessibilidade. Com `display: none` o
+     leitor de tela perdia o texto junto, e o link ficava sem nome nenhum: o
+     ícone é `aria-hidden`, então não sobrava o que anunciar. Um link sem nome
+     é falha do critério 2.4.4 do WCAG, e quem navega por leitor de tela ouvia
+     só "link". Estas declarações são as mesmas de `.visualmente-oculto` em
+     base.css. */
   .topo__link span {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .topo__acoes {
