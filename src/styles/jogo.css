@@ -17,6 +17,13 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  /* As linhas ficam no topo em vez de repartirem a altura que sobra.
+     `align-content` só age quando há mais de uma linha, e passou a haver quando
+     o cabeçalho virou item próprio da sala. Com o padrão `stretch`, a sobra do
+     `min-height: 100vh` era dividida entre as duas linhas — e enquanto o jogo
+     carregava, com a página ainda curta, o cabeçalho aparecia com 250px e
+     encolhia para 75 quando o emulador chegava. Medido em rede lenta. */
+  align-content: flex-start;
   min-height: 100vh;
   min-height: 100dvh;
   background: var(--fundo);
