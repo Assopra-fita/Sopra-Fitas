@@ -57,6 +57,17 @@
 
   /* Alvo de toque confortável para o polegar */
   --alvo-toque: 44px;
+
+  /* O criativo mais largo que os slots laterais pedem ao Ad Manager, hoje o
+     336x280 — que é, medido, o único tamanho que preenche nessas unidades.
+     Ver a lista de tamanhos em index.html.
+
+     Mora aqui e não em cada tela porque a Home e a sala de jogo têm grades
+     diferentes e as duas precisam do MESMO número: as duas usam os mesmos dois
+     slots, então não dá para pedir tamanho diferente em cada uma. Quando esse
+     número e a largura da coluna divergem, o anúncio vaza por baixo do
+     conteúdo — já aconteceu nas duas telas. */
+  --largura-do-anuncio: 336px;
 }
 
 /* Foco visível em tudo que recebe teclado. O projeto tinha ZERO regra de

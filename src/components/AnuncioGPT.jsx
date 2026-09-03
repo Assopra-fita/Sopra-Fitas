@@ -27,16 +27,11 @@ const AnuncioGPT = ({ adId }) => {
   }, [adId]);
 
   return (
-    <div
-      style={{
-        margin: '10px 0',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: 250,
-        width: '100%',
-      }}
-    >
+    // A moldura do anúncio saiu do estilo inline para src/styles/componentes.css.
+    // Não é preciosismo: no celular ela precisa sangrar para fora do respiro da
+    // página para caber um criativo de 336px, e estilo inline vence media query
+    // — a regra existia e não pegava.
+    <div className="anuncio">
       <div
         id={adId}
         style={{ minWidth: 250, minHeight: 250 }}

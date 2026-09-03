@@ -919,9 +919,15 @@
 /* Três colunas no desktop: desafios, jogos, ranking.
    Abaixo de 1100px vira coluna única e a grade volta para baixo, para não
    deslocar os blocos de anúncio das laterais. */
+/* As laterais são do tamanho do anúncio, não de um número escolhido a olho.
+   Eram 260px e 240px, e o criativo que o Ad Manager serve tem 336: ele
+   transbordava da coluna e a grade de jogos passava por cima dele.
+
+   `.home__coluna` não tem padding, então a coluna é o próprio criativo. */
 .home__secao {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr) 240px;
+  grid-template-columns:
+    var(--largura-do-anuncio) minmax(0, 1fr) var(--largura-do-anuncio);
   column-gap: var(--esp-lg);
   row-gap: var(--esp-xl);
   align-items: start;
@@ -1137,6 +1143,22 @@
 @media (max-width: 768px) {
   .home__conteudo {
     padding: var(--esp-lg) 14px 40px;
+  }
+
+  /* O bloco de anúncio ignora o respiro lateral DA HOME e vai de borda a borda.
+     Num celular de 360px os 14px de cada lado deixam 332 de conteúdo para um
+     criativo de 336: dava 4px de rolagem horizontal na página inteira. Sangrar
+     o bloco devolve a largura da tela ao anúncio sem tirar o respiro do resto
+     do conteúdo, que continua com os 14px.
+
+     O seletor é preso à Home de propósito. A sala de jogo tem trilho próprio,
+     que no celular já ocupa a largura inteira e tem padding lateral zero — lá
+     este sangramento somaria 28px em cima de uma coluna que já é a tela toda, e
+     devolvia a mesma rolagem horizontal que aqui ele conserta. Aconteceu. */
+  .home__conteudo .anuncio {
+    margin-left: -14px;
+    margin-right: -14px;
+    width: calc(100% + 28px);
   }
 
   /* Capa mais baixa no celular, onde o card é estreito. Era uma prop calculada

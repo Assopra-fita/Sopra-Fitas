@@ -422,3 +422,19 @@
   color: inherit;
   cursor: pointer;
 }
+
+/* ---------- Moldura do bloco de anúncio ----------
+   Estava em estilo inline dentro de AnuncioGPT.jsx, o que impedia qualquer
+   media query de alcançá-la: inline vence folha de estilo, e a regra de
+   celular existia sem nunca pegar.
+
+   `min-height` reserva a altura antes de o criativo chegar, senão o conteúdo
+   abaixo pula quando o anúncio carrega. */
+.anuncio {
+  width: 100%;
+  margin: 10px 0;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

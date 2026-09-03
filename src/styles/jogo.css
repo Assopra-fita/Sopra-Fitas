@@ -12,7 +12,7 @@
 .sala {
   /* Largura de um trilho de anúncio, num lugar só: a conta aparece aqui e no
      alinhamento da ficha, e as duas não podem divergir. */
-  --largura-do-trilho: calc(336px + var(--esp-lg) * 2 + 1px);
+  --largura-do-trilho: calc(var(--largura-do-anuncio) + var(--esp-lg) * 2 + 1px);
 
   display: flex;
   flex-wrap: wrap;
