@@ -1,5 +1,6 @@
 export { default as Aviso } from './Aviso';
 export { default as Botao } from './Botao';
+export { default as Cabecalho } from './Cabecalho';
 export { default as CabecalhoPagina } from './CabecalhoPagina';
 export { default as Campo } from './Campo';
 export { default as CapaDeJogo } from './CapaDeJogo';

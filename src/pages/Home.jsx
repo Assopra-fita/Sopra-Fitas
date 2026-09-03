@@ -21,11 +21,10 @@ import { useFavoritos } from '../hooks/useFavoritos';
 import { useSessao } from '../hooks/useSessao';
 import { useCatalogo } from '../hooks/useCatalogo';
 import AnuncioGPT from '../components/AnuncioGPT';
-import CabecalhoHome from '../components/home/CabecalhoHome';
 import CardDesafios from '../components/home/CardDesafios';
 import CardTop5 from '../components/home/CardTop5';
 import CardDeJogo from '../components/home/CardDeJogo';
-import { Aviso } from '../components/ui';
+import { Aviso, Cabecalho } from '../components/ui';
 import Paginacao from '../components/home/Paginacao';
 import { useSeoDaPagina } from '../hooks/useSeoDaPagina';
 import { seoPadrao, MARCA } from '../lib/seo';
@@ -252,7 +251,7 @@ const Home = () => {
 
   return (
     <div className="home">
-      <CabecalhoHome
+      <Cabecalho
         session={session}
         pontos={pontos}
         nomeUsuario={nomeUsuario}

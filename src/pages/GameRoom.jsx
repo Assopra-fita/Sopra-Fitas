@@ -8,8 +8,7 @@ import FichaDoJogo from '../components/jogo/FichaDoJogo';
 import JogosRelacionados from '../components/jogo/JogosRelacionados';
 import ModalDeMissao from '../components/jogo/ModalDeMissao';
 import ModalDeRecompensa from '../components/jogo/ModalDeRecompensa';
-import { Aviso, Botao, Carregando, EstadoErro } from '../components/ui';
-import { obterSessao } from '../services/sessao';
+import { Aviso, Botao, Cabecalho, Carregando, EstadoErro } from '../components/ui';
 import { enviarPrint as enviarPrintDaMissao } from '../services/missoes';
 import { ArquivoInvalido } from '../services/armazenamento';
 import { useSeoDaPagina } from '../hooks/useSeoDaPagina';
@@ -19,6 +18,7 @@ import { useAviso } from '../hooks/useAviso';
 import { useJogo } from '../hooks/useJogo';
 import { useRelacionados } from '../hooks/useRelacionados';
 import { useEmulador } from '../hooks/useEmulador';
+import { useSessao } from '../hooks/useSessao';
 import { prepararPremiado } from '../lib/anuncioPremiado';
 
 const GameRoom = () => {
@@ -29,6 +29,8 @@ const GameRoom = () => {
   const { jogo, erro } = useJogo(gameId);
   const relacionados = useRelacionados(gameId);
   const emulador = useEmulador(gameId, mostrarAviso);
+  // `sair` do hook é sair da CONTA; o `sair` daqui embaixo é sair do jogo.
+  const { session: sessao, pontos, nome: nomeUsuario, sair: encerrarSessao } = useSessao();
 
   // As mesmas tags que o build escreve no HTML de cada jogo. Aqui elas cobrem
   // o jogo cadastrado depois do último deploy, que ainda não tem página gerada.
@@ -51,7 +53,6 @@ const GameRoom = () => {
   // null quando está liberado. Quem decide isso é src/lib/premiadoAoJogar.js.
   const [anuncioExigido, setAnuncioExigido] = useState(null);
 
-  const [sessao, setSessao] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [arquivo, setArquivo] = useState(null);
   const [enviando, setEnviando] = useState(false);
@@ -66,21 +67,21 @@ const GameRoom = () => {
     // monta depois de o Supabase devolver a ficha do jogo. Essa ida ao banco é
     // meio segundo que o anúncio ganha para carregar antes do clique.
     prepararPremiado();
-
-    let ativo = true;
-    obterSessao()
-      .then((s) => ativo && setSessao(s))
-      .catch((e) => console.error('Erro ao obter a sessão:', e));
-
-    return () => {
-      ativo = false;
-    };
   }, [gameId]);
 
   // O emulador é encerrado no cleanup do componente Emulator, então dá para
   // sair pela navegação normal. Antes era preciso recarregar a página inteira,
   // porque o áudio continuava tocando depois de sair.
   const sair = () => navigate('/');
+
+  const sairDaConta = async () => {
+    try {
+      await encerrarSessao();
+      mostrarAviso('Você saiu da conta. Até mais!');
+    } catch (e) {
+      mostrarAviso('Não foi possível sair: ' + e.message, { erro: true });
+    }
+  };
 
   const abrirEnvioDePrint = () =>
     sessao
@@ -121,6 +122,13 @@ const GameRoom = () => {
 
   return (
     <div className="sala">
+      <Cabecalho
+        session={sessao}
+        pontos={pontos}
+        nomeUsuario={nomeUsuario}
+        aoSair={sairDaConta}
+      />
+
       {/* Escondidos por CSS, nunca desmontados: o iframe do GPT não sobrevive a
           uma remontagem, porque googletag.display só roda uma vez por slot */}
       <aside className="sala__lateral sala__lateral--esquerda">

@@ -23,6 +23,16 @@
   color: var(--texto);
 }
 
+/* ---------- Cabeçalho ----------
+   O mesmo `.topo` da Home, e é essa a intenção: sair do acervo e cair numa
+   tela sem marca, sem ranking e sem perfil fazia a sala parecer outro site.
+   A aparência inteira vem de paginas.css; aqui só o encaixe na grade — linha
+   própria, antes de tudo. */
+.sala > .topo {
+  order: 0;
+  flex: 0 0 100%;
+}
+
 /* ---------- Trilhos de publicidade ----------
    Ficam escondidos, nunca desmontados: o googletag.display só roda uma vez por
    slot, então remontar mata o anúncio.
@@ -563,6 +573,9 @@
     padding-right: env(safe-area-inset-right);
   }
 
+  /* Deitado a tela inteira é do jogo, e altura é o que não sobra: o cabeçalho
+     sai junto com os trilhos e a ficha. */
+  .sala > .topo,
   .sala__lateral,
   .sala__abaixo {
     display: none;

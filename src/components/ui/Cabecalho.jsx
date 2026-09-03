@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { User, LogOut, Coins, Trophy } from 'lucide-react';
-import { Botao } from '../ui';
+import Botao from './Botao';
 import { MARCA } from '../../lib/seo';
 
-const CabecalhoHome = ({ session, pontos, nomeUsuario, aoSair }) => (
+const Cabecalho = ({ session, pontos, nomeUsuario, aoSair }) => (
   <header className="topo">
     {/* Este lado era uma div vazia de 0x0: a barra ficava com o botão de
         entrar solto na ponta direita e nada do outro lado. */}
@@ -57,4 +57,4 @@ const CabecalhoHome = ({ session, pontos, nomeUsuario, aoSair }) => (
   </header>
 );
 
-export default CabecalhoHome;
+export default Cabecalho;
