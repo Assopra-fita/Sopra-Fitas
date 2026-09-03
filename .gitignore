@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 
 .env
+
+# Espelho do Supabase. O acervo de jogos entra no git — é catálogo público e
+# serve de referência. Os arquivos (534 MB) e tudo que tem dado pessoal ficam de
+# fora: backup/privado/ guarda os 186 e-mails da tabela profiles.
+backup/arquivos/
+backup/privado/
