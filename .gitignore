@@ -30,3 +30,6 @@ dist-ssr
 # fora: backup/privado/ guarda os 186 e-mails da tabela profiles.
 backup/arquivos/
 backup/privado/
+
+# Gerado pelo build em dist/, não versionado — ver scripts/gerar-sitemap.mjs
+public/sitemap.xml

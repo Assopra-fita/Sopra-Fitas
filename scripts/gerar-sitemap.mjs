@@ -1,10 +1,17 @@
-// Gera public/sitemap.xml a partir das rotas públicas e do catálogo estático.
-// Rode com: node scripts/gerar-sitemap.mjs
+// Gera dist/sitemap.xml a partir das rotas públicas e do catálogo estático.
+// Rode com: node scripts/gerar-sitemap.mjs, DEPOIS do vite build.
+//
+// Escreve em dist/ e não em public/, como o gerar-paginas.mjs ao lado. Escrever
+// em public/ não funcionava: o `vite build` copia public/ para dist/ ANTES de
+// este script rodar, então o sitemap publicado era sempre o que estava
+// commitado, nunca o recém-gerado. Ficava uma versão atrasada para trás — os
+// jogos adicionados desde o último commit do arquivo não entravam, e nenhum
+// jogo cadastrado pelo painel entrava nunca.
 //
 // Inclui o acervo do código e o cadastrado pelo painel, que vive no Supabase.
 // Sem o segundo, o sitemap listava 27 de 160 endereços: os outros 130 só seriam
 // descobertos pelos links da vitrine, e só até onde a paginação alcança.
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, existsSync } from 'node:fs';
 import { games } from '../src/constants/games.js';
 import {
   SUPABASE_URL,
@@ -65,5 +72,13 @@ ${urls
 </urlset>
 `;
 
-writeFileSync(new URL('../public/sitemap.xml', import.meta.url), xml);
-console.log(`sitemap.xml gerado com ${urls.length} endereços`);
+const destino = new URL('../dist/sitemap.xml', import.meta.url);
+
+// Sem dist/ o script rodou fora de hora, e gravar aqui criaria um arquivo solto
+// que ninguém publica. Falhar alto é melhor que gerar sitemap que não sai.
+if (!existsSync(new URL('../dist/', import.meta.url))) {
+  throw new Error('dist/ não existe: rode o `vite build` antes deste script.');
+}
+
+writeFileSync(destino, xml);
+console.log(`dist/sitemap.xml gerado com ${urls.length} endereços`);
