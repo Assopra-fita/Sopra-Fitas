@@ -276,6 +276,55 @@ export const games = [
     fabricante: 'Atari',
     descricao: 'O clássico arcade que definiu os shoot em up!',
   },
+
+  // HOMEBREW
+  //
+  // Jogos feitos por autores independentes e publicados sob licença que
+  // PERMITE redistribuir. Não é curiosidade jurídica: é a única parte do acervo
+  // que a gente pode afirmar que tem direito de hospedar, e monetizar página
+  // com obra de terceiro sem autorização é violação de política de publisher do
+  // Google — o tipo de coisa que derruba a conta de anúncios inteira.
+  //
+  // O crédito ao autor na descrição não é cortesia, é a condição das licenças
+  // MIT e Zlib, que exigem preservar o aviso de autoria. O Nova the Squirrel é
+  // GPL-3.0: além do crédito, o código-fonte tem que continuar disponível, e é
+  // por isso que a descrição aponta para o repositório.
+  {
+    id: 'nes-nova-squirrel',
+    nome: 'Nova the Squirrel',
+    console: 'NES',
+    core: 'nestopia',
+    rom_url: '/nova-the-squirrel.nes',
+    capa_url: '/nes-nova-squirrel.webp',
+    ano: '2018',
+    fabricante: 'NovaSquirrel',
+    descricao:
+      'Plataforma de NES em que a Nova copia os poderes dos inimigos que derrota. Homebrew de NovaSquirrel, licença GPL-3.0, código em github.com/NovaSquirrel/NovaTheSquirrel.',
+  },
+  {
+    id: 'nes-runner',
+    nome: 'Runner',
+    console: 'NES',
+    core: 'nestopia',
+    rom_url: '/nes-runner.nes',
+    capa_url: '/nes-runner.webp',
+    ano: '2019',
+    fabricante: 'zorchenhimer',
+    descricao:
+      'Corrida infinita de NES: desvie dos obstáculos e veja até onde aguenta. Homebrew de zorchenhimer, licença MIT.',
+  },
+  {
+    id: 'nes-twin-dragons',
+    nome: 'Twin Dragons',
+    console: 'NES',
+    core: 'nestopia',
+    rom_url: '/twin-dragons.nes',
+    capa_url: '/nes-twin-dragons.webp',
+    ano: '2019',
+    fabricante: 'Garydos, Surt e Shiru',
+    descricao:
+      'Plataforma de NES escrito em Millfork. Homebrew com design e música de Garydos, arte de Surt e efeitos de Shiru, licença Zlib.',
+  },
 ];
 
 // Índice por id, montado uma vez no carregamento do módulo. A sala de jogo
