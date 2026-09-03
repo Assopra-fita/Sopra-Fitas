@@ -279,28 +279,19 @@ export const games = [
 
   // HOMEBREW
   //
-  // Jogos feitos por autores independentes e publicados sob licença que
-  // PERMITE redistribuir. Não é curiosidade jurídica: é a única parte do acervo
-  // que a gente pode afirmar que tem direito de hospedar, e monetizar página
-  // com obra de terceiro sem autorização é violação de política de publisher do
-  // Google — o tipo de coisa que derruba a conta de anúncios inteira.
+  // Jogos de autor independente sob licença que PERMITE redistribuir NUMA
+  // PÁGINA MONETIZADA. As duas condições contam: o site serve anúncio em toda
+  // página de jogo, então licença que proíbe uso comercial não serve aqui.
   //
-  // O crédito ao autor na descrição não é cortesia, é a condição das licenças
-  // MIT e Zlib, que exigem preservar o aviso de autoria. O Nova the Squirrel é
-  // GPL-3.0: além do crédito, o código-fonte tem que continuar disponível, e é
-  // por isso que a descrição aponta para o repositório.
-  {
-    id: 'nes-nova-squirrel',
-    nome: 'Nova the Squirrel',
-    console: 'NES',
-    core: 'nestopia',
-    rom_url: '/nova-the-squirrel.nes',
-    capa_url: '/nes-nova-squirrel.webp',
-    ano: '2018',
-    fabricante: 'NovaSquirrel',
-    descricao:
-      'Plataforma de NES em que a Nova copia os poderes dos inimigos que derrota. Homebrew de NovaSquirrel, licença GPL-3.0, código em github.com/NovaSquirrel/NovaTheSquirrel.',
-  },
+  // Antes de acrescentar qualquer jogo nesta lista, leia o README do autor
+  // inteiro — não a etiqueta de licença do GitHub. Dois candidatos já foram
+  // descartados justamente aí: um tinha o repositório em GPL-3.0 mas os ASSETS
+  // em CC BY-NC-SA, e outro tinha o código em Zlib mas empacotava áudio com
+  // todos os direitos reservados. A etiqueta do repositório cobre o código, e
+  // ROM é código mais arte mais som.
+  //
+  // O crédito ao autor na descrição não é cortesia: a licença MIT exige
+  // preservar o aviso de autoria.
   {
     id: 'nes-runner',
     nome: 'Runner',
@@ -312,18 +303,6 @@ export const games = [
     fabricante: 'zorchenhimer',
     descricao:
       'Corrida infinita de NES: desvie dos obstáculos e veja até onde aguenta. Homebrew de zorchenhimer, licença MIT.',
-  },
-  {
-    id: 'nes-twin-dragons',
-    nome: 'Twin Dragons',
-    console: 'NES',
-    core: 'nestopia',
-    rom_url: '/twin-dragons.nes',
-    capa_url: '/nes-twin-dragons.webp',
-    ano: '2019',
-    fabricante: 'Garydos, Surt e Shiru',
-    descricao:
-      'Plataforma de NES escrito em Millfork. Homebrew com design e música de Garydos, arte de Surt e efeitos de Shiru, licença Zlib.',
   },
 ];
 
