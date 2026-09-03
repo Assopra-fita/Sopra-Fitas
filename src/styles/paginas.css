@@ -1091,11 +1091,20 @@
 }
 
 /* Quatro colunas fixas só quando cabem: os 12 jogos da página fecham 3 linhas
-   cheias, sem órfão na última. O piso é 1188px, porque abaixo disso a coluna
-   do meio não tem os 608px que quatro cards de 140px exigem — em 1101px a
-   conta dava cards de 118px, contra 163px em 1100px. Entre 1101 e 1187 a
-   grade se vira sozinha e faz 3 colunas de 163px. */
-@media (min-width: 1188px) {
+   cheias, sem órfão na última. Quatro cards de 140px com três vãos de 16px
+   exigem 608px de coluna do meio.
+
+   O piso é 1360, e não os 1188 de antes. Os 1188 saíam das laterais antigas de
+   260 e 240px: 1188 − 40 de padding − 500 de laterais − 40 de vão = 608. As
+   laterais passaram a ter a largura do criativo (336 cada), somando 172px, e o
+   piso antigo virou mentira — a 1188px o meio tem 436px e esta regra espremia
+   quatro cards de 97px, quando o auto-fill sozinho faria dois de 210px. A
+   1280px o card caía de 163 para 120, abaixo do próprio piso de 150px que o
+   minmax declara.
+
+   A conta nova: 608 + 672 de laterais + 40 de vão + 40 de padding = 1360.
+   Abaixo disso a grade se vira sozinha pelo auto-fill. */
+@media (min-width: 1360px) {
   .home__grade-area .home__grade {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
