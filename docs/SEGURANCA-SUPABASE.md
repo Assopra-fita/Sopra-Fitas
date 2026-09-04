@@ -5,15 +5,20 @@ administrador passou para a organização da Winup. Tudo aqui foi medido contra 
 banco de produção — políticas, privilégios e chamadas reais — e não deduzido da
 leitura do código.
 
-O que aplicou as correções está em [`supabase/01-banco.sql`](../supabase/01-banco.sql)
-e [`supabase/02-storage.sql`](../supabase/02-storage.sql). O que confere se elas
-continuam de pé está em [`supabase/conferir.mjs`](../supabase/conferir.mjs):
+O que aplicou as correções está em [`supabase/01-banco.sql`](../supabase/01-banco.sql),
+[`02-storage.sql`](../supabase/02-storage.sql) e [`03-pontos.sql`](../supabase/03-pontos.sql).
 
-```
-node supabase/conferir.mjs
+Dois scripts conferem se elas continuam de pé:
+
+```bash
+node supabase/conferir.mjs                    # 38 verificações, só leitura
+node supabase/auditar-permissoes.mjs SENHA    # 49, cria e apaga conta de teste
 ```
 
-São 38 verificações. Vale rodar depois de qualquer mexida no banco, e
+O primeiro olha o estado do banco: políticas, privilégios, o que o visitante
+alcança. O segundo faz o oposto — entra com uma sessão de administrador e uma de
+jogador comum e **tenta cada ação de verdade**, para descobrir o que a leitura
+de política não mostra. Vale rodar os dois depois de qualquer mexida no banco, e
 especialmente depois de criar tabela nova.
 
 ## Por que a RLS era a única defesa
@@ -108,6 +113,50 @@ esse cuidado.
 Baixar pelo endereço público não passa por essa política — por isso capa e ROM
 continuam abrindo normalmente. Nenhuma tela do site lista balde.
 
+### 9. O jogador escrevia o próprio placar
+
+Esta não apareceu na leitura das políticas. Apareceu quando as oito acima já
+estavam fechadas e cada ação de administrador passou a ser exercitada com sessão
+de verdade — foi para isso que
+[`auditar-permissoes.mjs`](../supabase/auditar-permissoes.mjs) existe.
+
+Uma conta comum recém-criada fez:
+
+```http
+PATCH /rest/v1/profiles?id=eq.<ela mesma>   {"pontos": 4242}
+→ HTTP 200, 1 linha alterada
+```
+
+A política de auto-edição prendia a coluna `role` — ninguém se promovia a
+administrador — e não prendia mais nada. `pontos` ficou de fora, e é a moeda do
+site: ordena o ranking e é o que o GM credita ao aprovar missão. Era o mesmo
+buraco da função `atualizar_pontos` que a correção 1 apagou, só que pela porta
+da frente.
+
+Hoje a política prende `role` e `pontos`, e o e-mail saiu por privilégio de
+coluna. A separação importa: prender o e-mail dentro da política **quebrou tudo**
+na primeira tentativa — o Postgres confere privilégio de coluna também para as
+colunas citadas na expressão da política, e o e-mail tinha acabado de ser
+fechado. O efeito foi `42501 permission denied for table profiles` em qualquer
+edição, inclusive a de trocar o próprio nome, com uma mensagem que não fala em
+coluna nenhuma.
+
+## A conta de administrador
+
+O único administrador do banco era `mary.hunter177@gmail.com`, do time anterior
+— inclusive depois da transferência do projeto. Todas as políticas de
+administrador estavam presas a esse endereço escrito dentro do SQL, então a
+conta nova da Winup entrava no painel pelo papel `role` e mesmo assim não
+conseguia salvar jogo nenhum.
+
+Agora: as políticas olham a coluna `role`, a conta `dev.team.winup@gmail.com` é
+a administradora, e a conta da Mary é jogador comum. A conta dela foi mantida
+com os pontos — rebaixar é reversível, apagar não seria.
+
+O rebaixamento só foi feito depois de a bateria de 49 verificações passar com a
+conta nova, e o script recusa rodar se isso fosse deixar o site sem nenhum
+administrador.
+
 ## Consertos que não eram de segurança, mas apareceram no caminho
 
 - **Recuperação de senha estava quebrada em produção.** A Site URL do Auth era
@@ -144,9 +193,10 @@ continuam abrindo normalmente. Nenhuma tela do site lista balde.
 
 ## Resultado medido
 
-| | antes | depois |
-|---|---|---|
+| Medida | Antes | Depois |
+| --- | --- | --- |
 | Verificações de `conferir.mjs` | 8 de 38 | **38 de 38** |
+| Verificações de `auditar-permissoes.mjs` | — | **49 de 49** |
 | Avisos do linter do Supabase | 12, com 2 ERROR | **4, nenhum ERROR** |
 
 Os 4 avisos restantes são intencionais: a trava da `loja_shopee`, as duas
