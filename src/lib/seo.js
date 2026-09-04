@@ -1,3 +1,4 @@
+import { romEhImagem } from './rom.js';	// com .js: seo.js também é importado pelos scripts de build, que rodam no Node
 const SITE = 'https://assoprafitas.com';
 
 // O nome da marca mora aqui e em mais nenhum lugar do JavaScript. Ele
@@ -61,6 +62,13 @@ export const seoDoJogo = (jogo, consoleCanonico) => {
     imagem: jogo.capa_url?.startsWith('http')
       ? jogo.capa_url
       : `${SITE}${jogo.capa_url ?? '/og-imagem.jpg'}`,
+
+    // Jogo com imagem no campo da ROM sai do índice. A página existe e explica
+    // o que houve, mas mandar o buscador anunciar "Jogar Axelay Online" para
+    // uma tela que não abre é pior que não ter a página: gasta orçamento de
+    // rastreio e traz gente para uma decepção. Volta ao índice sozinho quando
+    // alguém subir a ROM certa pelo painel.
+    naoIndexar: romEhImagem(jogo.rom_url),
   };
 };
 

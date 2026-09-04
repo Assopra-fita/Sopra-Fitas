@@ -19,6 +19,7 @@ import {
 } from '../src/constants/supabase.js';
 import { normalizarConsole } from '../src/constants/consoles.js';
 import { seoDoJogo, seoDoRanking, seoDoLogin } from '../src/lib/seo.js';
+import { romEhImagem } from '../src/lib/rom.js';
 
 const RAIZ = new URL('../dist/', import.meta.url);
 const TEMPO_LIMITE = 20_000;
@@ -53,7 +54,7 @@ const escapar = (t) =>
 const buscarDoBanco = async () => {
   const cancelar = AbortSignal.timeout(TEMPO_LIMITE);
   const r = await fetch(
-    `${SUPABASE_URL}/rest/v1/jogos?select=id,nome,console,capa_url`,
+    `${SUPABASE_URL}/rest/v1/jogos?select=id,nome,console,capa_url,rom_url`,
     { headers: CABECALHOS_SUPABASE, signal: cancelar }
   );
   if (!r.ok) throw new Error(`Supabase respondeu ${r.status}`);
@@ -169,7 +170,11 @@ for (const jogo of porId.values()) {
 escrever('ranking', { ...seoDoRanking(), imagemPadrao: true });
 escrever('login', { ...seoDoLogin(), imagemPadrao: true });
 
-console.log(`gerado HTML próprio para ${escritas} jogos e 2 rotas`);
+const semRom = [...porId.values()].filter((j) => romEhImagem(j.rom_url)).length;
+console.log(
+  `gerado HTML próprio para ${escritas} jogos e 2 rotas` +
+    (semRom ? ` (${semRom} com noindex: imagem no campo da ROM)` : '')
+);
 
 if (recusados.length) {
   console.warn(

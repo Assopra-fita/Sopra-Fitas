@@ -1,5 +1,6 @@
 import { supabase, desembrulhar, contar } from './consulta';
 import { caminhoNoBalde, enviarArquivo, removerArquivos } from './armazenamento';
+import { romEhImagem } from '../lib/rom';
 
 // Tudo que o site lê ou escreve na tabela `jogos`, que é o acervo inteiro.
 //
@@ -9,10 +10,17 @@ import { caminhoNoBalde, enviarArquivo, removerArquivos } from './armazenamento'
 
 // Vitrine: só as colunas que o card usa. Pedir `*` trazia descrição e ficha
 // técnica de 133 jogos para montar uma grade que não mostra nenhum dos dois.
-export const listarParaVitrine = () =>
-  desembrulhar(
+//
+// Os jogos com imagem no campo da ROM ficam de fora: um card que leva a uma
+// tela preta é pior que card nenhum. Eles continuam aparecendo em
+// `listarAcervo`, que é o que a tela do GM usa — é lá que se conserta.
+export const listarParaVitrine = async () => {
+  const todos = await desembrulhar(
     supabase.from('jogos').select('id, nome, console, core, rom_url, capa_url')
   );
+
+  return todos.filter((jogo) => !romEhImagem(jogo.rom_url));
+};
 
 // Sala de jogo: um jogo, com a ficha técnica completa.
 export const obterJogo = (id) =>

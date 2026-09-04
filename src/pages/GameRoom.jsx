@@ -16,6 +16,7 @@ import { seoDoJogo, seoDeJogoInexistente } from '../lib/seo';
 import { normalizarConsole } from '../constants/consoles';
 import { useAviso } from '../hooks/useAviso';
 import { useJogo } from '../hooks/useJogo';
+import { romEhImagem } from '../lib/rom';
 import { useRelacionados } from '../hooks/useRelacionados';
 import { useEmulador } from '../hooks/useEmulador';
 import { useSessao } from '../hooks/useSessao';
@@ -158,7 +159,25 @@ const GameRoom = () => {
                   menu da biblioteca não funcionou — o botão de ajustes ficava
                   por cima do texto — e desmontar ainda dispara o encerramento,
                   soltando o que a instância morta ainda segurava. */}
-              {falhaDoEmulador === 'memoria' ? (
+              {romEhImagem(jogo.rom_url) ? (
+                /* Cadastro com imagem no campo da ROM — 28 jogos do acervo
+                   estão assim. Sem isto o emulador monta o canvas, pinta de
+                   preto e não avisa nada: nem erro de rede, nem log no
+                   console. A vitrine já esconde esses jogos; aqui cobre quem
+                   chegou por link direto ou por favorito antigo. */
+                <div className="sala__sem-memoria" role="alert">
+                  <h2>Este jogo está com o arquivo errado</h2>
+                  <p>
+                    No cadastro dele, o campo da ROM recebeu uma imagem no
+                    lugar do arquivo do jogo. Não é problema da sua internet
+                    nem do seu navegador — não há o que carregar.
+                  </p>
+                  <p className="sala__sem-memoria-saida">
+                    <strong>Já avisamos a equipe.</strong> Enquanto isso, tem
+                    muito jogo funcionando na Home.
+                  </p>
+                </div>
+              ) : falhaDoEmulador === 'memoria' ? (
                 <div className="sala__sem-memoria" role="alert">
                   <h2>O navegador ficou sem memória</h2>
                   <p>

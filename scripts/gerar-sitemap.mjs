@@ -13,6 +13,7 @@
 // banco não responder: um sitemap com 3 endereços diz ao buscador que o site
 // tem três páginas, e ele apaga da busca as 157 que sumiram.
 import { writeFileSync, existsSync } from 'node:fs';
+import { romEhImagem } from '../src/lib/rom.js';
 import {
   SUPABASE_URL,
   CABECALHOS_SUPABASE,
@@ -34,7 +35,7 @@ const escaparXml = (t) =>
 
 let doBanco = [];
 try {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/jogos?select=id`, {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/jogos?select=id,rom_url`, {
     headers: CABECALHOS_SUPABASE,
   });
   if (!r.ok) throw new Error(`Supabase respondeu ${r.status}`);
@@ -50,7 +51,16 @@ if (doBanco.length === 0) {
   throw new Error('[sitemap] o banco devolveu lista vazia. Abortando.');
 }
 
-const ids = [...new Set(doBanco.map((j) => j.id))];
+// Jogo com imagem no campo da ROM fica de fora. O sitemap é a lista que a
+// gente ENTREGA ao buscador dizendo "vale a pena rastrear isto"; incluir um
+// jogo que não abre gasta orçamento de rastreio e leva gente a uma decepção.
+// A página dele continua existindo e explica o que houve — ela só sai da
+// lista, e volta sozinha quando alguém subir a ROM certa.
+const quebrados = doBanco.filter((j) => romEhImagem(j.rom_url));
+const ids = [...new Set(doBanco.filter((j) => !romEhImagem(j.rom_url)).map((j) => j.id))];
+if (quebrados.length) {
+  console.warn(`[sitemap] ${quebrados.length} jogos fora da lista por terem imagem no campo da ROM`);
+}
 
 const urls = [
   { loc: '/', prioridade: '1.0', frequencia: 'daily' },
