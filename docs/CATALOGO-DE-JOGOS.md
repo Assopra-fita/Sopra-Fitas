@@ -293,9 +293,33 @@ Todos com o mesmo padrão: o nome-base do arquivo da ROM é igual ao da capa —
 recebe um PNG, monta o canvas, pinta de preto e não escreve nada: nem erro de
 rede, nem log no console, nem aviso na tela.
 
-Não dá para consertar daqui: a ROM de verdade nunca foi enviada e não existe
-nem no Storage nem em `public/`. **A correção é reenviar o arquivo pelo painel**,
-um por um. `node supabase/conferir-acervo.mjs --so-ruins` lista quais.
+**A ROM de verdade não existe em lugar nenhum.** Procurado em cinco lugares:
+
+| Onde | O que tem |
+| --- | --- |
+| balde `roms` | 168 arquivos, 29 são PNG, 11 órfãos — nenhum é dos que faltam |
+| `public/` e `public/roms/` | 64 ROMs, nenhuma dos 29 |
+| `backup/arquivos/` (espelho de 03/09) | já tinha os PNGs; a troca é anterior |
+| histórico do git, todos os commits | 75 ROMs, nenhuma dos 29 |
+| os outros dois projetos Supabase da conta | outro site (portfólio, mangá, 3D) |
+
+Só reenviando. Para não serem 29 idas ao formulário, use
+[`scripts/repor-roms.mjs`](../scripts/repor-roms.mjs): junte os arquivos numa
+pasta e rode uma vez.
+
+```bash
+node supabase/conferir-acervo.mjs --so-ruins    # quais faltam
+node scripts/repor-roms.mjs SENHA ~/roms        # ensaio, mostra o casamento
+node scripts/repor-roms.mjs SENHA ~/roms --aplicar
+```
+
+Ele casa arquivo com jogo pelo **nome gravado dentro do cartucho**, não pelo
+nome do arquivo — e recusa subir quando os dois discordam. Um `.sfc` chamado
+`Terranigma.sfc` com `ALADDIN` gravado lá dentro é barrado, porque subir isso
+trocaria um defeito por um pior: o jogo passaria a abrir, só que seria outro.
+
+Também recusa arquivo que não é ROM, sistema que não bate com o console do
+cadastro, e arquivo acima do teto de 50 MB do balde.
 
 Enquanto isso, o site parou de fingir que estão bem:
 
