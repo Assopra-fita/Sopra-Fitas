@@ -11,12 +11,12 @@ O que aplicou as correções está em [`supabase/01-banco.sql`](../supabase/01-b
 Dois scripts conferem se elas continuam de pé:
 
 ```bash
-node supabase/conferir.mjs                    # 38 verificações, só leitura
+node supabase/conferir.mjs                    # 41 verificações, só leitura
 node supabase/auditar-permissoes.mjs SENHA    # 49, cria e apaga conta de teste
 ```
 
-O primeiro olha o estado do banco: políticas, privilégios, o que o visitante
-alcança. O segundo faz o oposto — entra com uma sessão de administrador e uma de
+O primeiro olha o estado do banco e do projeto: políticas, privilégios, chaves,
+e o que o visitante alcança. O segundo faz o oposto — entra com uma sessão de administrador e uma de
 jogador comum e **tenta cada ação de verdade**, para descobrir o que a leitura
 de política não mostra. Vale rodar os dois depois de qualquer mexida no banco, e
 especialmente depois de criar tabela nova.
@@ -157,6 +157,47 @@ O rebaixamento só foi feito depois de a bateria de 49 verificações passar com
 conta nova, e o script recusa rodar se isso fosse deixar o site sem nenhum
 administrador.
 
+### 10. A chave que ignorava todas as correções acima
+
+Achado por último, e o mais grave em consequência: nenhuma das nove correções
+anteriores valia contra ele.
+
+O projeto tinha as **chaves legadas** ainda ligadas. São dois JWT criados junto
+com o projeto, pelo time anterior: `anon` e `service_role`. A segunda tem
+`BYPASSRLS` — ela não passa por política nenhuma, por definição. Medido antes de
+desligar:
+
+```http
+GET /rest/v1/profiles?select=email   (chave service_role legada)
+→ HTTP 200, [{"email":"..."}]
+```
+
+Não é um bug, é como a chave funciona. O problema é quem a tem: ela existe desde
+a criação do projeto, foi usada pelo time que construiu o site, e não há como
+saber quem ficou com uma cópia — nem como trocar o valor dela. Só dá para
+desligar.
+
+Antes de desligar, foi verificado que nada nosso dependia delas: o bundle em
+produção usa a chave publicável nova (`sb_publishable_...`, conferido baixando o
+JavaScript do site no ar), a Vercel não tem nenhuma variável de ambiente, e os
+três scripts deste repositório passaram a usar a chave secreta nova.
+
+Depois de desligar, as duas legadas respondem `401 Legacy API keys are
+disabled`. A propagação levou cerca de 40 segundos — nesse intervalo a
+`service_role` ainda respondia 200, o que vale saber se alguém for repetir a
+checagem logo depois de mexer.
+
+O `conferir.mjs` vigia isso: se alguém religar as legadas, a verificação falha.
+
+## Quem tem acesso à infraestrutura
+
+Conferido pela API de gerenciamento, não pelo painel:
+
+- **Supabase**: `winupsites@gmail.com` é o único Owner, nas duas organizações.
+- **Vercel**: `winupsites@gmail.com` é o único membro do time.
+- **Banco**: um administrador, `dev.team.winup@gmail.com`. As três contas de
+  jogador com nome parecido com o do time anterior estão todas como `user`.
+
 ## Consertos que não eram de segurança, mas apareceram no caminho
 
 - **Recuperação de senha estava quebrada em produção.** A Site URL do Auth era
@@ -195,7 +236,7 @@ administrador.
 
 | Medida | Antes | Depois |
 | --- | --- | --- |
-| Verificações de `conferir.mjs` | 8 de 38 | **38 de 38** |
+| Verificações de `conferir.mjs` | 8 de 41 | **41 de 41** |
 | Verificações de `auditar-permissoes.mjs` | — | **49 de 49** |
 | Avisos do linter do Supabase | 12, com 2 ERROR | **4, nenhum ERROR** |
 
