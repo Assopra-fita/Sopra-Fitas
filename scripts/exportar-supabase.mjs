@@ -1,10 +1,12 @@
 // Cópia de tudo que dá para ler do Supabase, para um lugar que é nosso.
 //
-// POR QUE ISTO EXISTE: o acervo inteiro — 133 jogos, 186 perfis, e os 534 MB de
+// POR QUE ISTO EXISTE: o acervo inteiro — 133 jogos, 187 perfis, e os 534 MB de
 // ROM, capa e print que eles referenciam — vive só no projeto do Supabase.
-// Nenhum arquivo está hospedado em outro lugar. Enquanto o acesso de
-// administrador daquele projeto não estiver com a gente, tudo depende de uma
-// conta que não controlamos.
+// Nenhum arquivo está hospedado em outro lugar.
+//
+// Nasceu para tirar cópia de um projeto que era de outra conta. O projeto já é
+// nosso, mas continua sendo a única cópia que existe: o plano gratuito não tem
+// PITR e a lista de backups do projeto está vazia. Vale rodar de vez em quando.
 //
 //   node scripts/exportar-supabase.mjs              só as tabelas
 //   node scripts/exportar-supabase.mjs --arquivos   baixa também os buckets
@@ -15,6 +17,18 @@
 // políticas de RLS, as triggers e as functions do banco.
 import { writeFileSync, mkdirSync, existsSync, statSync, readFileSync } from 'node:fs';
 import { SUPABASE_URL, CABECALHOS_SUPABASE } from '../src/constants/supabase.js';
+
+// Escolhe a chave secreta do projeto, preferindo a NOVA (`sb_secret_...`) à
+// legada (`service_role`, um JWT).
+//
+// As duas ignoram a RLS por igual. A diferença é que a legada existe desde que
+// o projeto foi criado, pelo time anterior, e não há como saber quem ficou com
+// uma cópia. As legadas foram desligadas no projeto justamente por isso — este
+// fallback existe só para o script não quebrar se alguém religar.
+const escolherSegredo = (chaves) =>
+  chaves.find((k) => k.type === 'secret')?.api_key ??
+  chaves.find((k) => k.name === 'service_role')?.api_key ??
+  null;
 
 // --- Chave de serviço, quando o .env tiver o token de administração ---
 //
@@ -58,7 +72,7 @@ const buscarChaveSecreta = async () => {
     if (!r.ok) return null;
     const chaves = await r.json();
     return Array.isArray(chaves)
-      ? chaves.find((k) => k.name === 'service_role')?.api_key ?? null
+      ? escolherSegredo(chaves)
       : null;
   } catch {
     return null;

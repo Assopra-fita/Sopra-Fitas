@@ -11,6 +11,18 @@
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
+// Escolhe a chave secreta do projeto, preferindo a NOVA (`sb_secret_...`) à
+// legada (`service_role`, um JWT).
+//
+// As duas ignoram a RLS por igual. A diferença é que a legada existe desde que
+// o projeto foi criado, pelo time anterior, e não há como saber quem ficou com
+// uma cópia. As legadas foram desligadas no projeto justamente por isso — este
+// fallback existe só para o script não quebrar se alguém religar.
+const escolherSegredo = (chaves) =>
+  chaves.find((k) => k.type === 'secret')?.api_key ??
+  chaves.find((k) => k.name === 'service_role')?.api_key ??
+  null;
+
 const RAIZ = new URL('../', import.meta.url);
 const env = Object.fromEntries(
   readFileSync(new URL('.env', RAIZ), 'utf8')
@@ -166,6 +178,38 @@ await checar(
   '2'
 );
 
+console.log('\n=== chaves do projeto ===');
+{
+  // As chaves legadas (`anon` e `service_role`, os dois JWT) existem desde que o
+  // projeto foi criado, pelo time anterior. A `service_role` legada tem BYPASSRLS:
+  // ela ignora TODA política deste repositório. Não há como saber quem ficou com
+  // uma cópia, e não há como trocar o valor dela — só desligar.
+  //
+  // Medido antes de desligar: um GET em /rest/v1/profiles?select=email com a
+  // chave legada devolvia 200 e a lista de e-mails. Depois: 401 "Legacy API keys
+  // are disabled". A propagação levou cerca de 40 segundos.
+  //
+  // O site não depende delas: o bundle usa a chave publicável nova
+  // (sb_publishable_...), conferido baixando o JS de produção.
+  const r = await fetch(`https://api.supabase.com/v1/projects/${REF}/api-keys/legacy`, {
+    headers: { Authorization: `Bearer ${env.access_token_supabase}` },
+  });
+  const estado = await r.json();
+  marcar(estado.enabled === false, 'chaves legadas (JWT) continuam desligadas', JSON.stringify(estado));
+
+  const chaves = await (
+    await fetch(`https://api.supabase.com/v1/projects/${REF}/api-keys`, {
+      headers: { Authorization: `Bearer ${env.access_token_supabase}` },
+    })
+  ).json();
+  marcar(
+    chaves.some((k) => k.type === 'secret') && chaves.some((k) => k.type === 'publishable'),
+    'existem as chaves novas (publishable e secret)',
+    chaves.map((k) => k.type).join(', ')
+  );
+  marcar(PUB.startsWith('sb_publishable_'), 'o site usa a chave publicável nova', PUB.slice(0, 12));
+}
+
 console.log('\n=== storage ===');
 await checar(
   'anônimo NÃO sobe arquivo em balde nenhum',
@@ -265,7 +309,7 @@ try {
       headers: { Authorization: `Bearer ${env.access_token_supabase}` },
     })
   ).json();
-  const K = chaves.find((k) => k.name === 'service_role')?.api_key;
+  const K = escolherSegredo(chaves);
   const H = { apikey: K, Authorization: `Bearer ${K}`, 'Content-Type': 'application/json' };
   const email = `teste-${randomUUID()}@exemplo.invalido`;
 

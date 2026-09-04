@@ -20,6 +20,18 @@
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
+// Escolhe a chave secreta do projeto, preferindo a NOVA (`sb_secret_...`) à
+// legada (`service_role`, um JWT).
+//
+// As duas ignoram a RLS por igual. A diferença é que a legada existe desde que
+// o projeto foi criado, pelo time anterior, e não há como saber quem ficou com
+// uma cópia. As legadas foram desligadas no projeto justamente por isso — este
+// fallback existe só para o script não quebrar se alguém religar.
+const escolherSegredo = (chaves) =>
+  chaves.find((k) => k.type === 'secret')?.api_key ??
+  chaves.find((k) => k.name === 'service_role')?.api_key ??
+  null;
+
 const RAIZ = new URL('../', import.meta.url).pathname;
 const REF = 'maataycmixcmozjhezfe';
 const SENHA_ADMIN = process.argv[2];
@@ -36,7 +48,7 @@ const PUB = c.match(/SUPABASE_CHAVE\s*=\s*'([^']+)'/)[1];
 
 const chaves = await (await fetch(`https://api.supabase.com/v1/projects/${REF}/api-keys?reveal=true`,
   { headers: { Authorization: `Bearer ${env.access_token_supabase}` } })).json();
-const SERVICO = chaves.find((k) => k.name === 'service_role').api_key;
+const SERVICO = escolherSegredo(chaves);
 const HS = { apikey: SERVICO, Authorization: `Bearer ${SERVICO}`, 'Content-Type': 'application/json' };
 
 const entrar = async (email, senha) => {
