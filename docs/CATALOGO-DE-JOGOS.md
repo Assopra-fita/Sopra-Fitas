@@ -261,24 +261,55 @@ outras 156; a arte errada continua errada e vale trocar pelo painel.
 
 ### Acervo do banco — tabela `jogos`
 
-| Medida | Valor |
-| --- | --- |
-| Jogos cadastrados | 133 |
-| **Jogos que não iniciam** | **47 (35%)** |
-| — com `rom_url` apontando para uma **imagem** | 29 |
-| — com `core` incompatível com a extensão | 18 |
+Medido em 04/09/2026 por [`supabase/conferir-acervo.mjs`](../supabase/conferir-acervo.mjs),
+que baixa o começo de cada arquivo com `Range` e olha a assinatura de bytes —
+não a extensão, que é o que quem cadastrou digitou.
 
-Os 29 casos de imagem têm todos o mesmo padrão: o nome-base do arquivo é
-idêntico ao da capa, ou seja **a imagem da capa foi selecionada no campo da
-ROM** no formulário de cadastro. O emulador recebe um PNG onde esperava a ROM.
+| Medida | Antes | Depois |
+| --- | --- | --- |
+| Jogos no acervo | 157 | 157 |
+| **Com ROM e capa íntegras** | 108 | **128** |
+| — com imagem no campo da ROM | 29 | 29 |
+| — com o `core` de um sistema e a ROM de outro | 20 | **0** |
 
-Os outros 18 têm ROM válida e `core` errado — ROM de SNES com core `nes`, ROM
-de GBA com core `snes`, `.swc` mandado para o core de GBA. Outros 2 usam cores
-fora do mapa conferido, `neogeo` e `gbc`, e não entram nessa conta.
+**Os 20 de core errado foram corrigidos**, e a correção era de um campo só: o
+arquivo sempre esteve certo. Eram ROMs de Super Nintendo com core `nes`, de
+Game Boy Advance com core `snes`, uma com core `neogeo` e outra com `gbc`.
 
-> Os dois caminhos de entrada desse lixo já estão fechados: o formulário de
-> cadastro valida a extensão contra o console e deriva o `core`, em vez de
-> aceitar texto livre. O que está no banco de antes continua lá.
+O sintoma não era tela preta, e é isso que fazia ninguém achar: o RetroArch não
+consegue carregar a ROM, desiste e mostra o **próprio menu de configuração** no
+lugar do jogo. Conferido em `/jogar/starfox2`, que exibia o menu do FCEUmm —
+core de NES — com uma ROM de SNES. Depois da troca para `snes`, a Arwing
+apareceu na tela.
+
+> Um deles, `gekitouburning`, só apareceu depois de o detector aprender o
+> cabeçalho de copiador Super Wild Card (`AA BB 04` no offset 8). Antes ele caía
+> em "formato desconhecido" e o core errado ficava lá.
+
+### Os 29 que ainda não abrem
+
+Todos com o mesmo padrão: o nome-base do arquivo da ROM é igual ao da capa —
+**a imagem da capa foi selecionada no campo da ROM** no formulário. O emulador
+recebe um PNG, monta o canvas, pinta de preto e não escreve nada: nem erro de
+rede, nem log no console, nem aviso na tela.
+
+Não dá para consertar daqui: a ROM de verdade nunca foi enviada e não existe
+nem no Storage nem em `public/`. **A correção é reenviar o arquivo pelo painel**,
+um por um. `node supabase/conferir-acervo.mjs --so-ruins` lista quais.
+
+Enquanto isso, o site parou de fingir que estão bem:
+
+- **saem da vitrine** — card que leva a tela preta é pior que card nenhum;
+- **saem do sitemap** e ganham `noindex` — o buscador parava de gastar rastreio
+  anunciando "Jogar Axelay Online" para uma página que não abre;
+- **quem chega por link direto vê uma explicação** em vez do retângulo preto.
+
+Eles continuam aparecendo em `listarAcervo`, que é o que a tela do GM usa — é lá
+que se conserta, e voltam sozinhos assim que a ROM certa subir.
+
+> Os dois caminhos de entrada desse lixo já estão fechados: o formulário valida
+> a extensão contra o console ([`AdminJogos.jsx:53`](../src/pages/AdminJogos.jsx#L53))
+> e deriva o `core` em vez de aceitar texto livre. O que está no banco é herança.
 
 ### A coluna `console` está suja, mas não esconde mais ninguém
 
