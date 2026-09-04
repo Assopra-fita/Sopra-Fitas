@@ -16,9 +16,9 @@ node supabase/auditar-permissoes.mjs SENHA    # 49, cria e apaga conta de teste
 ```
 
 O primeiro olha o estado do banco e do projeto: políticas, privilégios, chaves,
-e o que o visitante alcança. O segundo faz o oposto — entra com uma sessão de administrador e uma de
-jogador comum e **tenta cada ação de verdade**, para descobrir o que a leitura
-de política não mostra. Vale rodar os dois depois de qualquer mexida no banco, e
+e o que o visitante alcança. O segundo faz o oposto — entra com uma sessão de
+administrador e uma de jogador comum e **tenta cada ação de verdade**, para
+descobrir o que a leitura de política não mostra. Vale rodar os dois depois de qualquer mexida no banco, e
 especialmente depois de criar tabela nova.
 
 ## Por que a RLS era a única defesa
@@ -31,7 +31,7 @@ O que decide o que o visitante realmente consegue fazer são as políticas de RL
 Onde a RLS estava desligada, frouxa, ou contornada por uma função com privilégio
 de dono, estava aberto para a internet inteira.
 
-## As oito falhas
+## As dez falhas
 
 ### 1. Qualquer visitante podia escrever o placar de qualquer jogador
 
@@ -141,22 +141,6 @@ fechado. O efeito foi `42501 permission denied for table profiles` em qualquer
 edição, inclusive a de trocar o próprio nome, com uma mensagem que não fala em
 coluna nenhuma.
 
-## A conta de administrador
-
-O único administrador do banco era `mary.hunter177@gmail.com`, do time anterior
-— inclusive depois da transferência do projeto. Todas as políticas de
-administrador estavam presas a esse endereço escrito dentro do SQL, então a
-conta nova da Winup entrava no painel pelo papel `role` e mesmo assim não
-conseguia salvar jogo nenhum.
-
-Agora: as políticas olham a coluna `role`, a conta `dev.team.winup@gmail.com` é
-a administradora, e a conta da Mary é jogador comum. A conta dela foi mantida
-com os pontos — rebaixar é reversível, apagar não seria.
-
-O rebaixamento só foi feito depois de a bateria de 49 verificações passar com a
-conta nova, e o script recusa rodar se isso fosse deixar o site sem nenhum
-administrador.
-
 ### 10. A chave que ignorava todas as correções acima
 
 Achado por último, e o mais grave em consequência: nenhuma das nove correções
@@ -188,6 +172,22 @@ disabled`. A propagação levou cerca de 40 segundos — nesse intervalo a
 checagem logo depois de mexer.
 
 O `conferir.mjs` vigia isso: se alguém religar as legadas, a verificação falha.
+
+## A conta de administrador
+
+O único administrador do banco era `mary.hunter177@gmail.com`, do time anterior
+— inclusive depois da transferência do projeto. Todas as políticas de
+administrador estavam presas a esse endereço escrito dentro do SQL, então a
+conta nova da Winup entrava no painel pelo papel `role` e mesmo assim não
+conseguia salvar jogo nenhum.
+
+Agora: as políticas olham a coluna `role`, a conta `dev.team.winup@gmail.com` é
+a administradora, e a conta da Mary é jogador comum. A conta dela foi mantida
+com os pontos — rebaixar é reversível, apagar não seria.
+
+O rebaixamento só foi feito depois de a bateria de 49 verificações passar com a
+conta nova, e o script recusa rodar se isso fosse deixar o site sem nenhum
+administrador.
 
 ## Quem tem acesso à infraestrutura
 
