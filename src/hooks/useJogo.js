@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react';
-import { acharJogo } from '../constants/games';
 import { obterJogo } from '../services/jogos';
 
 // Resolve qual jogo abrir a partir do id da URL.
 //
-// A ordem importa e é oposta à da vitrine: aqui o acervo do código vem
-// primeiro, e o banco só é consultado se o id não existir nele. Ver a seção
-// das duas fontes em docs/CATALOGO-DE-JOGOS.md.
+// Havia aqui um caminho sem rede: 24 jogos moravam em `constants/games.js` e
+// `acharJogo` respondia na hora, sem consultar o banco. Esses 24 foram para a
+// tabela `jogos` (ver docs/CATALOGO-DE-JOGOS.md) e o caminho saiu junto.
+//
+// O CUSTO ESTÁ MEDIDO, no site no ar, em 4G com 150 ms de latência: o título da
+// sala aparecia em 1204 ms pelo acervo do código e passa a aparecer em 1513 ms
+// pelo banco — mediana de três medições. São 310 ms, contra os vários segundos
+// que o emulador leva para baixar o core e a ROM logo em seguida.
+//
+// O que se ganhou em troca: esses 24 jogos eram invisíveis para o painel do GM.
+// A vitrine já lia a versão do banco e a sala lia a do código, então corrigir
+// uma capa ou tirar um deles do ar pelo painel não tinha efeito nenhum aqui.
 export const useJogo = (gameId) => {
-  // O acervo do código responde na hora, sem rede. Ele é DERIVADO e não
-  // estado: guardá-lo com setState num efeito custaria um render a mais e um
-  // quadro mostrando "carregando" para um dado que já estava em memória.
-  const doAcervo = acharJogo(gameId);
-
-  const [doBanco, setDoBanco] = useState(null);
+  const [jogo, setJogo] = useState(null);
   const [erro, setErro] = useState(null);
   const [idAnterior, setIdAnterior] = useState(gameId);
 
@@ -23,13 +26,11 @@ export const useJogo = (gameId) => {
   // e recomeça com o estado limpo, sem chegar a pintar a tela errada.
   if (idAnterior !== gameId) {
     setIdAnterior(gameId);
-    setDoBanco(null);
+    setJogo(null);
     setErro(null);
   }
 
   useEffect(() => {
-    if (doAcervo) return undefined;
-
     let ativo = true;
 
     const buscar = async () => {
@@ -37,7 +38,7 @@ export const useJogo = (gameId) => {
         const encontrado = await obterJogo(gameId);
         if (!ativo) return;
 
-        if (encontrado) setDoBanco(encontrado);
+        if (encontrado) setJogo(encontrado);
         else setErro('Não encontramos esse jogo no acervo.');
       } catch (e) {
         console.error('Erro ao obter o jogo:', e);
@@ -49,7 +50,7 @@ export const useJogo = (gameId) => {
     return () => {
       ativo = false;
     };
-  }, [gameId, doAcervo]);
+  }, [gameId]);
 
-  return { jogo: doAcervo ?? doBanco, erro };
+  return { jogo, erro };
 };

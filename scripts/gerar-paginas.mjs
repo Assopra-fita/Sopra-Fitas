@@ -13,7 +13,6 @@
 // cai no fallback, com as tags genéricas até o próximo deploy. É o preço de
 // não ter servidor de aplicação.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { games } from '../src/constants/games.js';
 import {
   SUPABASE_URL,
   CABECALHOS_SUPABASE,
@@ -115,19 +114,35 @@ const trocarTags = (html, seo, onde) => {
 
 const modelo = readFileSync(new URL('index.html', RAIZ), 'utf8');
 
+// O banco é a única fonte do catálogo desde que os 24 jogos do código foram
+// para a tabela `jogos` — ver docs/CATALOGO-DE-JOGOS.md.
+//
+// Por isso o build PARA quando ele não responde, em vez de avisar e seguir.
+// Antes, seguir era razoável: sobravam as páginas do acervo do código. Agora
+// sobrariam zero, e o deploy iria ao ar com 157 páginas de jogo trocadas pelo
+// fallback da SPA — todas com as tags da Home, todas parecendo duplicata para
+// o buscador. É o pior resultado possível, e ele seria silencioso: o build
+// terminaria com código zero e um aviso no meio do log.
 let doBanco = [];
 try {
   doBanco = await buscarDoBanco();
-  if (doBanco.length === 0) {
-    console.warn('[paginas] o banco devolveu lista vazia — gerando só o acervo do código');
-  }
 } catch (e) {
-  // Sem rede o build não pode quebrar: gera o acervo do código e avisa alto.
-  console.warn(`[paginas] banco indisponível (${e.message}); gerando só o acervo do código`);
+  throw new Error(
+    `[paginas] o banco não respondeu (${e.message}), e ele é a única fonte do ` +
+      'catálogo. Abortando: um deploy sem as páginas de jogo é pior que um ' +
+      'deploy que não acontece.'
+  );
+}
+
+if (doBanco.length === 0) {
+  throw new Error(
+    '[paginas] o banco devolveu lista vazia. Ou o catálogo sumiu, ou a policy ' +
+      'de leitura de `jogos` foi fechada para a chave pública. Abortando.'
+  );
 }
 
 const porId = new Map();
-for (const j of [...doBanco, ...games]) if (!porId.has(j.id)) porId.set(j.id, j);
+for (const j of doBanco) if (!porId.has(j.id)) porId.set(j.id, j);
 
 const escrever = (caminho, seo) => {
   const pasta = new URL(`${caminho}/`, RAIZ);
@@ -154,10 +169,7 @@ for (const jogo of porId.values()) {
 escrever('ranking', { ...seoDoRanking(), imagemPadrao: true });
 escrever('login', { ...seoDoLogin(), imagemPadrao: true });
 
-console.log(
-  `gerado HTML próprio para ${escritas} jogos ` +
-    `(${doBanco.length} do banco, ${games.length} do código) e 2 rotas`
-);
+console.log(`gerado HTML próprio para ${escritas} jogos e 2 rotas`);
 
 if (recusados.length) {
   console.warn(

@@ -1,4 +1,4 @@
-// Gera dist/sitemap.xml a partir das rotas públicas e do catálogo estático.
+// Gera dist/sitemap.xml a partir das rotas públicas e do catálogo do Supabase.
 // Rode com: node scripts/gerar-sitemap.mjs, DEPOIS do vite build.
 //
 // Escreve em dist/ e não em public/, como o gerar-paginas.mjs ao lado. Escrever
@@ -8,11 +8,11 @@
 // jogos adicionados desde o último commit do arquivo não entravam, e nenhum
 // jogo cadastrado pelo painel entrava nunca.
 //
-// Inclui o acervo do código e o cadastrado pelo painel, que vive no Supabase.
-// Sem o segundo, o sitemap listava 27 de 160 endereços: os outros 130 só seriam
-// descobertos pelos links da vitrine, e só até onde a paginação alcança.
+// O catálogo inteiro vem do Supabase desde que os 24 jogos do código foram para
+// a tabela `jogos` — ver docs/CATALOGO-DE-JOGOS.md. Por isso o script PARA se o
+// banco não responder: um sitemap com 3 endereços diz ao buscador que o site
+// tem três páginas, e ele apaga da busca as 157 que sumiram.
 import { writeFileSync, existsSync } from 'node:fs';
-import { games } from '../src/constants/games.js';
 import {
   SUPABASE_URL,
   CABECALHOS_SUPABASE,
@@ -37,14 +37,20 @@ try {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/jogos?select=id`, {
     headers: CABECALHOS_SUPABASE,
   });
-  if (r.ok) doBanco = await r.json();
-  else console.warn(`[sitemap] Supabase respondeu ${r.status}`);
+  if (!r.ok) throw new Error(`Supabase respondeu ${r.status}`);
+  doBanco = await r.json();
 } catch (e) {
-  console.warn(`[sitemap] banco indisponível (${e.message}); gerando só o acervo do código`);
+  throw new Error(
+    `[sitemap] o banco não respondeu (${e.message}), e ele é a única fonte do ` +
+      'catálogo. Abortando em vez de publicar um sitemap com 3 endereços.'
+  );
 }
 
-// Sem repetir id que exista nas duas fontes.
-const ids = [...new Set([...doBanco.map((j) => j.id), ...games.map((j) => j.id)])];
+if (doBanco.length === 0) {
+  throw new Error('[sitemap] o banco devolveu lista vazia. Abortando.');
+}
+
+const ids = [...new Set(doBanco.map((j) => j.id))];
 
 const urls = [
   { loc: '/', prioridade: '1.0', frequencia: 'daily' },

@@ -1,11 +1,11 @@
 # Catálogo de jogos — como funciona e como mexer
 
-Guia operacional do acervo. Cadastrar um jogo é a tarefa mais frequente do projeto e a que mais dá errado em silêncio, porque o catálogo tem **três fontes que nunca se sincronizam** e **dois caminhos de cadastro com convenções diferentes**.
+Guia operacional do acervo. Cadastrar um jogo é a tarefa mais frequente do projeto e a que mais dava errado em silêncio, porque o catálogo tinha **duas fontes que nunca se sincronizavam**. Desde 04/09/2026 tem uma só: a tabela `jogos` do Supabase.
 
-- [1. As duas fontes do catálogo](#1-as-duas-fontes-do-catálogo)
+- [1. A fonte do catálogo](#1-a-fonte-do-catálogo)
 - [2. O contrato de um jogo](#2-o-contrato-de-um-jogo)
 - [3. Consoles, cores e extensões](#3-consoles-cores-e-extensões)
-- [4. Adicionar um jogo pelo código](#4-adicionar-um-jogo-pelo-código)
+- [4. O acervo que existia no código](#4-o-acervo-que-existia-no-código)
 - [5. Adicionar um jogo pelo painel](#5-adicionar-um-jogo-pelo-painel)
 - [6. Onde ficam os binários](#6-onde-ficam-os-binários)
 - [7. Como o acervo está hoje](#7-como-o-acervo-está-hoje)
@@ -13,45 +13,45 @@ Guia operacional do acervo. Cadastrar um jogo é a tarefa mais frequente do proj
 
 ---
 
-## 1. As duas fontes do catálogo
+## 1. A fonte do catálogo
 
 ```mermaid
 flowchart LR
-    EST["src/constants/games.js<br/>acervo estático · 23 jogos · 9 campos<br/>ROMs em public/, versionadas no git"]
-    SUP[("tabela jogos<br/>Supabase · cadastrada pelo painel")]
+    SUP[("tabela jogos<br/>Supabase · 157 jogos<br/>ROM e capa no Storage")]
 
-    EST -->|"games[]"| HOME["Home<br/>grade, busca, filtros"]
-    SUP -->|"unido por id, banco na frente"| HOME
-
-    EST -->|"acharJogo(id) · O(1)"| GAME["GameRoom<br/>resolve a ROM"]
-    SUP -->|"consultado só se o id não existir no acervo"| GAME
+    SUP -->|"listarParaVitrine()"| HOME["Home<br/>grade, busca, filtros"]
+    SUP -->|"obterJogo(id)"| GAME["GameRoom<br/>resolve a ROM"]
+    SUP -->|"REST, no build"| SEO["gerar-paginas.mjs<br/>gerar-sitemap.mjs"]
 
     HOME -->|"/jogar/:id"| GAME
 ```
 
-O acervo estático é **uma estrutura só**. Antes eram duas — um array lido pela
-vitrine e um objeto lido pela sala de jogo — e editar uma sem a outra produzia
-um jogo que aparecia na vitrine e não abria, ou que abria por link direto e não
-aparecia na vitrine. Hoje o arquivo exporta:
-
-| Exportação | O que é | Quem usa |
-| --- | --- | --- |
-| `games` | o array, na ordem de exibição | [`useCatalogo`](../src/hooks/useCatalogo.js), [`gerar-sitemap.mjs`](../scripts/gerar-sitemap.mjs) |
-| `acharJogo(id)` | busca por id em O(1), sobre um índice montado uma vez | [`GameRoom`](../src/pages/GameRoom.jsx) |
-| `outrosJogos(id)` | todos menos um, para os relacionados | [`GameRoom`](../src/pages/GameRoom.jsx) |
-
-O que **continua** valendo é a precedência oposta entre as duas telas:
+Era assim até 04/09/2026:
 
 | | Home | GameRoom |
 | --- | --- | --- |
-| Fonte lida | `games` + tabela `jogos` | acervo estático e, se não achar, tabela `jogos` |
-| Precedência | banco **na frente** do estático | estático **antes** do banco |
-| Referência | [`useCatalogo.js:8-14`](../src/hooks/useCatalogo.js#L8-L14) | [`GameRoom.jsx:185-207`](../src/pages/GameRoom.jsx#L185-L207) |
+| Fonte lida | `games` do código **+** tabela `jogos` | acervo do código e, só se não achar, tabela `jogos` |
+| Precedência | banco **na frente** do código | código **antes** do banco |
 
-> ⚠️ **A armadilha que sobrou:** cadastrar pelo painel um `id` que já existe no
-> acervo estático faz a vitrine mostrar a versão do banco e o emulador rodar a
-> versão do código. São dados diferentes na mesma tela. Use identificadores que
-> não colidam.
+As duas precedências eram **opostas**, e isso não era detalhe de estilo: um jogo
+que existisse nas duas fontes aparecia na vitrine com os dados do banco e abria
+no emulador com os dados do código. Os 24 jogos do código estavam exatamente
+nesse estado depois que foram para a tabela — corrigir a capa de um deles pelo
+painel do GM mudava o card e não mudava o jogo.
+
+O acervo do código foi removido. `src/constants/games.js` não existe mais, as
+ROMs dele estão no balde `roms` e as capas no balde `capas`, com a mesma
+convenção de nome que o painel usa: `roms/{id}.{ext}` e `capas/{id}-capa.{ext}`.
+
+**O que se perdeu:** se o Supabase não responder, a vitrine fica vazia — antes
+sobravam os 24 do código. Na sala de jogo, o título passou a depender de uma ida
+à rede: medido no site no ar, em 4G com 150 ms de latência, 1204 ms pelo código
+contra 1513 ms pelo banco. São 310 ms, contra os vários segundos que o emulador
+leva para baixar o core e a ROM logo depois.
+
+**O que se ganhou:** os 157 jogos são editáveis pelo painel, o repositório
+parou de crescer com binário, e não existe mais o estado em que a vitrine e o
+emulador discordam.
 
 ## 2. O contrato de um jogo
 
@@ -74,9 +74,9 @@ resto é apresentação.
 
 ## 3. Consoles, cores e extensões
 
-O que o acervo estático usa hoje:
+O que o acervo usa hoje:
 
-| Console | `core` em `games.js` | Extensões | Jogos | Válido? |
+| Console | `core` gravado | Extensões | Jogos | Válido? |
 | --- | --- | --- | :---: | :---: |
 | SNES | `snes9x` | `.sfc` `.smc` | 18 | ✅ |
 | MASTER SYSTEM | `smsplus` | `.sms` | 2 | ✅ |
@@ -90,10 +90,14 @@ O que o acervo estático usa hoje:
 
 `window.EJS_core` aceita **duas famílias de nome**, e o projeto usa uma em cada caminho de cadastro:
 
-| Caminho | Vocabulário | Exemplos |
+| Vocabulário | Exemplos | Quantos jogos usam |
 | --- | --- | --- |
-| `games.js` (código) | **nome do core** | `snes9x`, `mgba`, `genesis_plus_gx` |
-| `<select>` do painel | **nome do sistema** | `snes`, `gba`, `segaMD` |
+| **nome do sistema** | `snes`, `gba`, `nes`, `segaMD`, `gbc`, `neogeo` | 133 |
+| **nome do core** | `snes9x`, `mgba`, `nestopia`, `smsplus`, `gambatte`, `stella2014`, `mupen64plus_next` | 24 |
+
+As duas convivem porque vieram dos dois caminhos de cadastro que existiam: o
+`<select>` do painel grava nome de sistema, e o acervo do código escrevia nome
+de core. Com a migração os dois vocabulários ficaram na mesma tabela.
 
 As duas funcionam, porque o EmulatorJS mantém um mapa de sistema → cores. Trecho do mapa oficial (`data/src/consts.js`):
 
@@ -103,55 +107,58 @@ As duas funcionam, porque o EmulatorJS mantém um mapa de sistema → cores. Tre
 "atari2600": ["stella2014"]
 ```
 
-> ❌ **`stella` não é nem sistema nem core.** O core do Atari 2600 chama-se `stella2014`. O CDN responde `404` para `stella-wasm.data` e `200` para `stella2014-wasm.data`, em todas as versões testadas. Como Asteroids é o único jogo de Atari do acervo, **o console inteiro está morto** — a correção é um caractere: `stella` → `stella2014` em [`games.js:229`](../src/constants/games.js#L229) e [`:512`](../src/constants/games.js#L512).
+> **CORREÇÃO (04/09/2026).** Uma versão anterior deste guia afirmava que
+> `stella` não era nem sistema nem core, que o Atari 2600 estava morto por
+> causa disso, e mandava trocar por `stella2014`. **Está errado, e a troca não
+> era necessária.**
+>
+> A parte verdadeira é o 404: `cdn.emulatorjs.org/stable/data/cores/stella-wasm.data`
+> responde 404 mesmo, e `stella2014-wasm.data` responde 200. O erro foi concluir
+> daí que o jogo não abre.
+>
+> O que o navegador realmente pede, medido em `/jogar/atari-asteroids`:
+>
+> | `core` gravado | Arquivos baixados |
+> | --- | --- |
+> | `stella` | `stella2014.json`, `stella2014-legacy-wasm.data` |
+> | `snes` | `snes9x.json`, `snes9x-legacy-wasm.data` |
+> | `smsplus` | `smsplus.json`, `smsplus-legacy-wasm.data` |
+>
+> O EmulatorJS resolve o nome pelo mapa antes de montar a URL, e o arquivo
+> publicado chama-se `-legacy-wasm.data`, não `-wasm.data`. Conferir a
+> existência de `{core}-wasm.data` no CDN **não** testa nada: dá 404 para todos
+> os 13 cores do acervo, inclusive os 24 que funcionam.
+>
+> Asteroids roda. Foto do canvas depois de 13 segundos: 36 cores distintas, 5%
+> de pixel escuro, os asteroides na tela.
 
-O sintoma de um `core` inválido é **tela preta sem nenhum erro visível** — o emulador simplesmente não inicia. Ao inventar um valor de `core`, confira antes contra o mapa oficial.
+O sintoma de um `core` inválido é **tela preta sem nenhum erro visível** — o emulador simplesmente não inicia. Para conferir um valor de `core`, abra o jogo e veja qual arquivo o navegador baixa: se o mapa não reconhecer o nome, não sai pedido de core nenhum.
 
-## 4. Adicionar um jogo pelo código
+## 4. O acervo que existia no código
 
-```mermaid
-flowchart TB
-    A["1. Colocar a ROM na raiz de public/"] --> B["2. Colocar a capa na raiz de public/"]
-    B --> C["3. Uma entrada em games, com os nove campos"]
-    C --> D{"Console novo?"}
-    D -->|sim| E["4. Adicionar ao array CONSOLES<br/>src/constants/consoles.js"]
-    D -->|não| F["Conferir no navegador"]
-    E --> F
-```
+Não existe mais caminho de cadastro pelo código. **Todo jogo entra pelo painel**
+— a seção 5 descreve o processo.
 
-**Passo 3** — em [`src/constants/games.js`](../src/constants/games.js), dentro do
-bloco do console correspondente:
+Até 04/09/2026 havia um segundo caminho: uma entrada em `src/constants/games.js`
+com nove campos, mais a ROM e a capa na raiz de `public/`. Eram 24 jogos, e eles
+tinham três problemas que só um deles era visível:
 
-```js
-{
-  id: 'snes-meu-jogo',
-  nome: 'Meu Jogo',
-  console: 'SNES',
-  core: 'snes9x',
-  rom_url: '/meu-jogo.sfc',
-  capa_url: '/meu-jogo.webp',
-  ano: '1994',
-  fabricante: 'Capcom',
-  descricao: 'Uma frase sobre o jogo.',
-},
-```
+1. **Invisíveis para o painel.** Corrigir capa, descrição ou console exigia
+   editor de código e deploy. E como a sala de jogo lia o código na frente do
+   banco, uma correção feita pelo painel nesses 24 não tinha efeito nenhum.
+2. **As ROMs viajavam no repositório**, que é público — 70 MB dos 24 jogos.
+3. **Duas convenções de `core`** convivendo, o que a seção 3 detalha.
 
-É **uma** edição só. Antes eram duas, num array e num objeto separados, e
-esquecer a segunda era o erro mais comum do repositório.
+A migração está em `scripts/migrar-jogos-do-codigo.mjs`, no commit que a fez
+(`git log -- scripts/migrar-jogos-do-codigo.mjs`). Ela subiu pela sessão de
+admin em vez da chave de serviço, de propósito: assim passou pelas mesmas
+policies do painel. Conferia assinatura de bytes antes de subir, não extensão,
+porque o acervo já teve 29 jogos com a imagem da capa gravada no campo da ROM —
+o emulador recebe um PNG, abre em tela preta e não reclama de nada.
 
-**Passo 4** — o valor de `console` precisa existir como `valor` em
-[`src/constants/consoles.js`](../src/constants/consoles.js), que é a fonte única
-do que o site suporta: dela saem tanto os filtros da vitrine quanto a lista do
-formulário de cadastro.
-
-A comparação **não é mais literal**: [`normalizarConsole`](../src/constants/consoles.js)
-tira acento, espaço sobrando e caixa antes de comparar, e ainda resolve
-sinônimos, então `'Super Nintendo'`, `'super nintendo'` e `'SNES'` caem todos na
-mesma categoria. Foi essa comparação literal que deixou 67 jogos do banco
-invisíveis em qualquer filtro.
-
-Um valor desconhecido não vira `null`: continua aparecendo em "Todos", só não
-ganha filtro próprio.
+> Os arquivos dos 24 continuam em `public/`, sem ninguém referenciar. Tirá-los
+> do repositório é parte da questão maior das 67 ROMs versionadas, registrada em
+> [SEGURANCA-SUPABASE.md](SEGURANCA-SUPABASE.md).
 
 ## 5. Adicionar um jogo pelo painel
 
@@ -185,7 +192,7 @@ Diferenças que importam em relação ao caminho pelo código:
 | Campo `core` | escrito à mão na entrada | **derivado** do console escolhido |
 | Extensão da ROM | por sua conta | validada contra o console antes de subir |
 | Precisa de deploy | sim | não, é imediato |
-| Aparece na GameRoom | sempre | **só se o `id` não existir no acervo estático** |
+| Aparece na GameRoom | sempre | sempre |
 
 Os dois caminhos usam hoje o **mesmo vocabulário de `core`** — o nome do núcleo
 do EmulatorJS, como `snes9x` e `mgba` — porque o formulário deriva o core de
@@ -199,59 +206,58 @@ filtro reconhecia, e 20 jogos com core incompatível com a extensão da ROM.
 
 ## 6. Onde ficam os binários
 
+**No Storage do Supabase, nos baldes `roms` e `capas`.** Nada em `public/` é
+usado pelo catálogo desde que o acervo do código saiu.
+
+| Balde | Arquivos | Peso |
+| --- | --- | --- |
+| `roms` | 168 | 602,4 MB |
+| `capas` | 168 | 17,3 MB |
+| `prints` | 5 | 0,5 MB |
+| `imagens_loja` | 1 | 0,1 MB |
+| **total** | **342** | **620,2 MB** — 61% do 1 GB do plano Free |
+
+O teto por arquivo é **50 MB**, e não é escolha: é o teto do projeto, e o
+Storage aplica o menor entre o do projeto e o do balde. Os baldes de imagem
+recusam SVG e HTML — ver [SEGURANCA-SUPABASE.md](SEGURANCA-SUPABASE.md).
+
+### O que sobrou em `public/`, sem ninguém usar
+
 ```mermaid
 flowchart TB
-    subgraph PUB["public/ — aprox. 400 MB, versionado no git"]
-        RAIZ["raiz<br/>197 MB · 131 arquivos<br/>✅ é o que o código usa"]
-        RM["roms/<br/>187 MB · 65 arquivos<br/>❌ ninguém referencia"]
-        CP["capas/<br/>13 MB · 60 arquivos<br/>❌ ninguém referencia"]
+    subgraph PUB["public/ — versionado no git, nada referenciado"]
+        RAIZ["raiz<br/>197 MB · 131 arquivos<br/>24 migrados + 89 que nunca tiveram entrada"]
+        RM["roms/<br/>187 MB · 65 arquivos"]
+        CP["capas/<br/>13 MB · 60 arquivos"]
     end
     RAIZ -.->|"64 de 65 são cópia byte a byte"| RM
     RAIZ -.->|"59 de 60 são cópia byte a byte"| CP
 ```
 
-**Só a raiz de `public/` é usada.** As subpastas `roms/` e `capas/` não são referenciadas por nenhuma linha de código — são cerca de **200 MB de cópias exatas** que viajam no clone e no deploy.
-
-Coloque arquivo novo sempre na **raiz** de `public/`.
+São cerca de 400 MB que viajam no clone e no deploy sem servir para nada. Tirar
+isso é parte da questão das ROMs versionadas num repositório público, registrada
+em [SEGURANCA-SUPABASE.md](SEGURANCA-SUPABASE.md).
 
 ## 7. Como o acervo está hoje
 
-O acervo tem duas metades independentes, e as duas têm problemas diferentes.
+O acervo é um só desde 04/09/2026. As duas seções abaixo separam o que veio de onde, porque os problemas herdados são diferentes.
 
-### Acervo estático — `src/constants/games.js`
+### Os 24 que vieram do código
+
+Migrados em 04/09/2026, todos conferidos abrindo pelo lado do visitante — linha
+no banco e os dois arquivos respondendo.
 
 | Medida | Valor |
 | --- | --- |
-| Jogos cadastrados | 24 |
-| **Jogos que abrem** | **24** |
+| Jogos migrados | 24 de 24 |
+| Peso dos arquivos | 70,0 MB |
 | Inconsistências entre `console`, `core` e extensão | nenhuma |
-| ROMs ou capas locais apontando para arquivo inexistente | nenhuma |
-| Arquivos em `public/` | 135 |
-| Peso total de `public/` | 196,8 MB |
-| Peso do que o catálogo realmente usa | 70,4 MB |
-| Arquivos na raiz sem entrada no catálogo | 89 (126,5 MB) |
+| ROMs que eram imagem disfarçada | nenhuma (conferido por assinatura de bytes) |
+| Capas apontando para fora do projeto | 1, a do `sms-sonic`, agora hospedada |
 
-Distribuição por console:
-
-| Console | Jogos | `core` |
-| --- | :---: | --- |
-| Super Nintendo | 15 | `snes9x` |
-| Master System | 2 | `smsplus` |
-| Nintendo (NES) | 2 | `nestopia` |
-| Game Boy Advance | 2 | `mgba` |
-| Game Boy / Color | 1 | `gambatte` |
-| Nintendo 64 | 1 | `mupen64plus_next` |
-| Atari 2600 | 1 | `stella2014` |
-| Mega Drive | **0** | `genesis_plus_gx` |
-
-Uma capa ainda é carregada de fora do domínio, da Wikipédia: `sms-sonic`.
-
-O `snes-supermarioworld` saiu do código: era o mesmo Super Mario World que já
-existia no banco como `snes-mario-world`, com id diferente, e por isso a
-deduplicação por id de `useCatalogo.js` não o pegava — o jogo aparecia duas
-vezes na vitrine. Ficou o do banco, que tem a capa no Storage do projeto em vez
-de hotlink da Wikipédia, e descrição completa. A ROM local, de 512 KB, saiu
-junto por não ter mais quem a referenciasse.
+A capa do `sms-sonic` era hotlink da Wikipédia — e, além disso, a arte do
+**Mega Drive** num jogo de **Master System**. Foi baixada e hospedada como as
+outras 156; a arte errada continua errada e vale trocar pelo painel.
 
 ### Acervo do banco — tabela `jogos`
 
@@ -295,10 +301,10 @@ a tabela real, **133 de 133 registros caem num filtro** — inclusive os quatro
 com grafia errada. Limpar a coluna no banco continua valendo, mas hoje é
 arrumação, não correção de bug.
 
-### ⚠️ As 22 ROMs de Mega Drive em `public/` estão corrompidas
+### ⚠️ As 22 ROMs de Mega Drive soltas em `public/` estão corrompidas
 
-**O filtro Mega Drive não tem nenhum jogo no acervo estático**, e é por isso: os
-binários existem, mas não servem. Foram re-encodados como texto UTF-8 em algum
+Elas nunca entraram no catálogo, e é por isso: os binários existem, mas não
+servem. Foram re-encodados como texto UTF-8 em algum
 ponto do histórico, e todo byte `>= 0x80` virou a sequência `EF BF BD`, o
 caractere de substituição U+FFFD.
 
@@ -313,9 +319,13 @@ As ROMs SEGA em **outros** formatos estão intactas — `.smd` e `.bin` têm zer
 ocorrências de `EF BF BD` e tamanho correto. A corrupção atingiu especificamente
 a extensão `.md`.
 
-Para reativar o Mega Drive é preciso **substituir os binários**, não
-renomeá-los. Enquanto isso não acontece, os jogos de Mega Drive que aparecem na
-Home vêm todos da tabela `jogos` do Supabase.
+Esses 22 arquivos **não foram migrados** e ninguém os referencia: nenhum deles
+tinha entrada no acervo do código, justamente porque não funcionavam. Estão
+entre os 89 arquivos soltos na raiz de `public/`.
+
+Os jogos de Mega Drive que aparecem na Home vêm todos da tabela `jogos`. Para
+acrescentar outros, o caminho é o painel, com binários que prestem — substituir,
+não renomear.
 
 ## 8. Diagnóstico de "o jogo não abre"
 
@@ -346,21 +356,27 @@ flowchart TB
     F -->|sim| H["conferir o console no filtro da Home"]
 ```
 
-Um jogo do acervo estático não some mais da vitrine nem deixa de abrir por
-descuido de cadastro: a entrada é uma só, e a vitrine e a sala de jogo leem a
-mesma. Se o jogo aparece num lugar e não no outro, ele vem da tabela `jogos`.
+Um jogo não some mais da vitrine nem deixa de abrir por descuido de cadastro: a
+entrada é uma só, e a vitrine e a sala de jogo leem a mesma linha.
 
-Para conferir o acervo inteiro de uma vez, sem abrir o navegador:
+Para conferir o acervo inteiro de uma vez, sem abrir o navegador — pega ROM que
+na verdade é imagem, que é o defeito mais comum e o mais silencioso:
 
 ```bash
 node --input-type=module -e "
-  import { games } from './src/constants/games.js';
-  for (const j of games) {
-    const r = await fetch('http://localhost:5173' + j.rom_url);
-    const tipo = r.headers.get('content-type');
-    if (tipo?.includes('text/html')) console.log('FALTA', j.id, j.rom_url);
+  import { SUPABASE_URL, CABECALHOS_SUPABASE } from './src/constants/supabase.js';
+  const jogos = await (await fetch(
+    SUPABASE_URL + '/rest/v1/jogos?select=id,nome,rom_url',
+    { headers: CABECALHOS_SUPABASE }
+  )).json();
+
+  for (const j of jogos) {
+    const r = await fetch(j.rom_url, { method: 'HEAD' });
+    const tipo = r.headers.get('content-type') ?? '';
+    if (!r.ok) console.log('NAO ABRE', r.status, j.id);
+    else if (tipo.startsWith('image/')) console.log('E IMAGEM', j.id, j.nome);
   }
-  console.log('conferidos', games.length);
+  console.log('conferidos', jogos.length);
 "
 ```
 

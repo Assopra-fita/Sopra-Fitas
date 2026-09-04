@@ -1,9 +1,11 @@
 import { supabase, desembrulhar, contar } from './consulta';
 import { caminhoNoBalde, enviarArquivo, removerArquivos } from './armazenamento';
 
-// Tudo que o site lê ou escreve na tabela `jogos`, que é o acervo cadastrado
-// pelo painel do GM. O acervo do código vive em constants/games.js e não passa
-// por aqui — ver docs/CATALOGO-DE-JOGOS.md.
+// Tudo que o site lê ou escreve na tabela `jogos`, que é o acervo inteiro.
+//
+// Existia uma segunda fonte, `constants/games.js`, com 24 jogos escritos no
+// código e as ROMs dentro do repositório. Eles foram para esta tabela — ver
+// docs/CATALOGO-DE-JOGOS.md.
 
 // Vitrine: só as colunas que o card usa. Pedir `*` trazia descrição e ficha
 // técnica de 133 jogos para montar uma grade que não mostra nenhum dos dois.
