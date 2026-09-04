@@ -1,5 +1,269 @@
 [
   {
+    "id": "Aliensoldier",
+    "nome": "Alien Soldier",
+    "descricao": "Alien Soldier é um jogo de ação intensa estilo run and gun, conhecido por ser um dos mais difíceis e técnicos do Mega Drive",
+    "ano": "1995",
+    "fabricante": "Sega",
+    "core": "segaMD",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Aliensoldier-capa.png",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Aliensoldier.md",
+    "created_at": "2026-03-29T22:45:39.837898+00:00",
+    "console": "MEGA DRIVE"
+  },
+  {
+    "id": "BEYOND-OASIS",
+    "nome": "Beyond Oasis",
+    "descricao": "Beyond Oasis é um jogo de ação e aventura com elementos de RPG, muito comparado ao estilo de Zelda",
+    "ano": "1994",
+    "fabricante": "SEGA",
+    "core": "segaMD",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/BEYOND-OASIS-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/BEYOND-OASIS.md",
+    "created_at": "2026-03-29T23:28:25.016637+00:00",
+    "console": "MEGA DRIVE"
+  },
+  {
+    "id": "Blackthorne",
+    "nome": "Blackthorne",
+    "descricao": "Em Blackthorne, você controla o príncipe Kyle Blackthorne, que foi exilado ainda bebê e retorna anos depois para libertar seu planeta de um tirano",
+    "ano": "1994",
+    "fabricante": "Interplay Productions",
+    "core": "nes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Blackthorne-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Blackthorne.png",
+    "created_at": "2026-03-31T00:53:25.856735+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "Brain-lord",
+    "nome": "Brain Lord",
+    "descricao": "Enix",
+    "ano": "1994",
+    "fabricante": "Enix",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Brain-lord-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Brain-lord.png",
+    "created_at": "2026-03-31T00:01:39.391337+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "Clayfighter2",
+    "nome": "ClayFighter 2",
+    "descricao": "ClayFighter 2: Judgment Clay é um jogo de luta arcade, continuação direta do primeiro, mantendo o estilo de humor e personagens feitos de “massinha” 🧱😄",
+    "ano": "1994",
+    "fabricante": "Interplay Entertainment",
+    "core": "nes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Clayfighter2-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Clayfighter2.png",
+    "created_at": "2026-03-31T00:38:48.892493+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "Demonscrest",
+    "nome": "Demon's Crest",
+    "descricao": "Demon’s Crest é um jogo de ação, plataforma e RPG, com uma atmosfera sombria e estilo gótico",
+    "ano": "1995",
+    "fabricante": "Capcom",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Demonscrest-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Demonscrest.png",
+    "created_at": "2026-03-30T23:15:16.929091+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "F-ZeroGPLegend",
+    "nome": "F-Zero: GP Legend",
+    "descricao": "F-Zero: GP Legend é um jogo de corrida futurista baseado no anime de F-Zero GP Legend.\n\nVocê compete em corridas de alta velocidade com veículos anti-gravidade, enfrentando pilotos de toda a galáxia.",
+    "ano": "2004",
+    "fabricante": "Nintendo",
+    "core": "gba",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/F-ZeroGPLegend-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/F-ZeroGPLegend.gba",
+    "created_at": "2026-03-31T01:44:14.043158+00:00",
+    "console": "GAME BOY"
+  },
+  {
+    "id": "F-ZeroMaximumVelocity",
+    "nome": "F-Zero: Maximum Velocity",
+    "descricao": "F-Zero: Maximum Velocity é um jogo de corrida futurista ambientado 25 anos após os eventos do F-Zero original.",
+    "ano": "2001",
+    "fabricante": "Nintendo",
+    "core": "gba",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/F-ZeroMaximumVelocity-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/F-ZeroMaximumVelocity.gba",
+    "created_at": "2026-03-31T01:46:38.916147+00:00",
+    "console": "GAME BOY"
+  },
+  {
+    "id": "Final-Fight",
+    "nome": "Final Fight 1",
+    "descricao": "Final Fight é um jogo eletrônico beat-'em-up desenvolvido e publicado pela Capcom para os arcades em 1989. Foi o sétimo jogo lançado pela Capcom para seu sistema de arcade CPS-1",
+    "ano": "1989",
+    "fabricante": "Capcom",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Final-Fight-capa.png",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Final-Fight.sfc",
+    "created_at": "2026-01-17T14:37:52.04773+00:00",
+    "console": "SNES"
+  },
+  {
+    "id": "GoldenAxe2",
+    "nome": "Golden Axe 2 Pt Br",
+    "descricao": "Golden Axe II um videogame de beat 'em up side-scrolling desenvolvido e publicado pela Sega, lançado pela primeira vez para Mega Drive em dezembro de 1991.",
+    "ano": "1991",
+    "fabricante": "Sega",
+    "core": "segaMD",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/GoldenAxe2-capa.jpeg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/GoldenAxe2.md",
+    "created_at": "2026-02-03T15:24:55.297054+00:00",
+    "console": "MEGA DRIVE"
+  },
+  {
+    "id": "GoldenAxe3",
+    "nome": "Golden Axe 3 Pt Br",
+    "descricao": "Golden Axe III um videogame de Beat 'em Up side-scrolling desenvolvido e publicado pela Sega, lançado para o Mega Drive no Japão em 25 de junho de 1993. Foi lançada apenas uma versão norte-americana para o Sega Channel.",
+    "ano": "1993",
+    "fabricante": "SEGA",
+    "core": "segaMD",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/GoldenAxe3-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/GoldenAxe3.md",
+    "created_at": "2026-02-03T15:45:47.408909+00:00",
+    "console": "MEGA DRIVE"
+  },
+  {
+    "id": "INTERNACIONALSTARSOCCER",
+    "nome": "International superstar soccer",
+    "descricao": "O clássico International Superstar Soccer (original/primeira versão) foi lançado pela Konami para o Super Nintendo em 1994 no Japão, chegando ao Ocidente em 1995.",
+    "ano": "1994",
+    "fabricante": "Konami",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/INTERNACIONALSTARSOCCER-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/INTERNACIONALSTARSOCCER.smc",
+    "created_at": "2026-01-28T16:27:38.604481+00:00",
+    "console": "SNES"
+  },
+  {
+    "id": "Illusionofgaia",
+    "nome": "Illusion of Gaia",
+    "descricao": "Illusion of Gaia é um jogo de ação e RPG, conhecido por sua história profunda e temática emocional",
+    "ano": "1994",
+    "fabricante": "Enix",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Illusionofgaia-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Illusionofgaia.png",
+    "created_at": "2026-03-30T23:19:12.08911+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "LittleMagic",
+    "nome": "Little Magic",
+    "descricao": "Little Magic é um jogo de quebra-cabeça (puzzle) antigo, desenvolvido e publicado pela Altron",
+    "ano": "1999",
+    "fabricante": "Altron",
+    "core": "nes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/LittleMagic-capa.webp",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/LittleMagic.smc",
+    "created_at": "2026-03-29T01:58:12.641887+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "MiracleGirls",
+    "nome": "Miracle Girls",
+    "descricao": "Jogadores controlam as gêmeas Tomomi ou Mikage, usando doces para paralisar inimigos e transformá-los em plataformas",
+    "ano": "1993",
+    "fabricante": "Now Production",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/MiracleGirls-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/MiracleGirls.sfc",
+    "created_at": "2026-03-29T02:00:27.303505+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "Mmedabots-rokusho",
+    "nome": "Medabots: Rokusho",
+    "descricao": "Medabots: Rokusho é baseado no anime Medabots e funciona como um RPG onde você monta e luta com robôs chamados Medabots.",
+    "ano": "2002",
+    "fabricante": "Natsume",
+    "core": "gba",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Mmedabots-rokusho-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Mmedabots-rokusho.gba",
+    "created_at": "2026-03-31T02:03:27.414401+00:00",
+    "console": "GAME BOY"
+  },
+  {
+    "id": "SF2",
+    "nome": "Street Fighter 2 Turbo",
+    "descricao": "Street Fighter II: The World Warrior, também conhecido simplesmente por Street Fighter II, é um jogo competitivo de videogame desenvolvido pela Capcom e originalmente lançado para os sistemas de Arcade em 1991. É o segundo jogo da série Street Fighter e a sequência de Street Fighter, jogo lançado em 1987. ",
+    "ano": "1991",
+    "fabricante": "Capcom",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/SF2-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/SF2.smc",
+    "created_at": "2026-03-18T22:01:29.563016+00:00",
+    "console": "SNES"
+  },
+  {
+    "id": "Super-bomberman4",
+    "nome": "Super Bomberman IV",
+    "descricao": "",
+    "ano": "1996",
+    "fabricante": "Produce",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Super-bomberman4-capa.webp",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Super-bomberman4.smc",
+    "created_at": "2026-03-27T21:54:44.648397+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "Superturrican",
+    "nome": "Super Turrican",
+    "descricao": "Super Turrican é um jogo de ação e plataforma estilo run and gun, muito comparado a clássicos como Contra",
+    "ano": "1993",
+    "fabricante": "Seika Corporation",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Superturrican-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Superturrican.png",
+    "created_at": "2026-03-30T23:00:05.301391+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "Uniracers",
+    "nome": "Uniracers",
+    "descricao": "Uniracers (também conhecido como Unirally em algumas regiões) é um jogo de corrida completamente diferente: você controla monociclos vivos 🤯",
+    "ano": "1994",
+    "fabricante": "Nintendo",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Uniracers-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Uniracers.png",
+    "created_at": "2026-03-31T00:57:48.741344+00:00",
+    "console": "Super Nintendo"
+  },
+  {
+    "id": "Vectorman2",
+    "nome": "Vectorman 2",
+    "descricao": "Vectorman 2 é um jogo de ação e plataforma, continuação direta do primeiro Vectorman",
+    "ano": "1996",
+    "fabricante": "Sega",
+    "core": "segaMD",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Vectorman2-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Vectorman2.md",
+    "created_at": "2026-03-30T00:32:43.729377+00:00",
+    "console": "MEGA DRIVE"
+  },
+  {
+    "id": "XmenClonesWar",
+    "nome": "X-Men 2 Clones War",
+    "descricao": "jogo top bla bla bla",
+    "ano": "1993",
+    "fabricante": "Sega",
+    "core": "segaMD",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/XmenClonesWar-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/XmenClonesWar.md",
+    "created_at": "2026-02-19T17:35:33.936015+00:00",
+    "console": "MEGA DRIVE"
+  },
+  {
     "id": "after-burner",
     "nome": "After Burner II",
     "descricao": "After Burner II é um jogo de combate aéreo arcade, onde você pilota um caça em missões cheias de ação",
@@ -22,18 +286,6 @@
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/alcahest.smc",
     "created_at": "2026-03-28T00:06:14.245641+00:00",
     "console": "Super Nintendo"
-  },
-  {
-    "id": "Aliensoldier",
-    "nome": "Alien Soldier",
-    "descricao": "Alien Soldier é um jogo de ação intensa estilo run and gun, conhecido por ser um dos mais difíceis e técnicos do Mega Drive",
-    "ano": "1995",
-    "fabricante": "Sega",
-    "core": "segaMD",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Aliensoldier-capa.png",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Aliensoldier.md",
-    "created_at": "2026-03-29T22:45:39.837898+00:00",
-    "console": "MEGA DRIVE"
   },
   {
     "id": "assault-suits",
@@ -72,18 +324,6 @@
     "console": "Super Nintendo"
   },
   {
-    "id": "BEYOND-OASIS",
-    "nome": "Beyond Oasis",
-    "descricao": "Beyond Oasis é um jogo de ação e aventura com elementos de RPG, muito comparado ao estilo de Zelda",
-    "ano": "1994",
-    "fabricante": "SEGA",
-    "core": "segaMD",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/BEYOND-OASIS-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/BEYOND-OASIS.md",
-    "created_at": "2026-03-29T23:28:25.016637+00:00",
-    "console": "MEGA DRIVE"
-  },
-  {
     "id": "biohazard-battle",
     "nome": "Bio Hazard Battle",
     "descricao": "Bio-Hazard Battle é um jogo de nave (shoot ‘em up) com um tema bem diferente\n",
@@ -94,18 +334,6 @@
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/biohazard-battle.md",
     "created_at": "2026-03-29T23:19:12.748219+00:00",
     "console": "MEGA DRIVE"
-  },
-  {
-    "id": "Blackthorne",
-    "nome": "Blackthorne",
-    "descricao": "Em Blackthorne, você controla o príncipe Kyle Blackthorne, que foi exilado ainda bebê e retorna anos depois para libertar seu planeta de um tirano",
-    "ano": "1994",
-    "fabricante": "Interplay Productions",
-    "core": "nes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Blackthorne-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Blackthorne.png",
-    "created_at": "2026-03-31T00:53:25.856735+00:00",
-    "console": "Super Nintendo"
   },
   {
     "id": "boktai2",
@@ -132,15 +360,15 @@
     "console": "Game Boy"
   },
   {
-    "id": "Brain-lord",
-    "nome": "Brain Lord",
-    "descricao": "Enix",
+    "id": "breath-of-fire2",
+    "nome": "Breath of Fire II",
+    "descricao": "Breath of Fire II é um RPG por turnos, sequência direta do primeiro jogo, com uma história mais madura e sombria",
     "ano": "1994",
-    "fabricante": "Enix",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Brain-lord-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Brain-lord.png",
-    "created_at": "2026-03-31T00:01:39.391337+00:00",
+    "fabricante": "Capcom",
+    "core": "nes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/breath-of-fire2-capa.png",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/breath-of-fire2.png",
+    "created_at": "2026-03-30T23:25:23.709244+00:00",
     "console": "Super Nintendo"
   },
   {
@@ -153,18 +381,6 @@
     "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/breathoffire-capa.png",
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/breathoffire.png",
     "created_at": "2026-03-30T23:23:14.649999+00:00",
-    "console": "Super Nintendo"
-  },
-  {
-    "id": "breath-of-fire2",
-    "nome": "Breath of Fire II",
-    "descricao": "Breath of Fire II é um RPG por turnos, sequência direta do primeiro jogo, com uma história mais madura e sombria",
-    "ano": "1994",
-    "fabricante": "Capcom",
-    "core": "nes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/breath-of-fire2-capa.png",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/breath-of-fire2.png",
-    "created_at": "2026-03-30T23:25:23.709244+00:00",
     "console": "Super Nintendo"
   },
   {
@@ -192,18 +408,6 @@
     "console": "Super Nintendo"
   },
   {
-    "id": "Clayfighter2",
-    "nome": "ClayFighter 2",
-    "descricao": "ClayFighter 2: Judgment Clay é um jogo de luta arcade, continuação direta do primeiro, mantendo o estilo de humor e personagens feitos de “massinha” 🧱😄",
-    "ano": "1994",
-    "fabricante": "Interplay Entertainment",
-    "core": "nes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Clayfighter2-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Clayfighter2.png",
-    "created_at": "2026-03-31T00:38:48.892493+00:00",
-    "console": "Super Nintendo"
-  },
-  {
     "id": "crusader-of-centry",
     "nome": "Crusader of Centy",
     "descricao": "Crusader of Centy é um jogo de ação e aventura estilo RPG, muito comparado com The Legend of Zelda",
@@ -226,18 +430,6 @@
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/decapattack.md",
     "created_at": "2026-03-29T22:34:26.411337+00:00",
     "console": "MEGA DRIVE"
-  },
-  {
-    "id": "Demonscrest",
-    "nome": "Demon's Crest",
-    "descricao": "Demon’s Crest é um jogo de ação, plataforma e RPG, com uma atmosfera sombria e estilo gótico",
-    "ano": "1995",
-    "fabricante": "Capcom",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Demonscrest-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Demonscrest.png",
-    "created_at": "2026-03-30T23:15:16.929091+00:00",
-    "console": "Super Nintendo"
   },
   {
     "id": "digimon",
@@ -336,30 +528,6 @@
     "console": "MEGA DRIVE"
   },
   {
-    "id": "F-ZeroGPLegend",
-    "nome": "F-Zero: GP Legend",
-    "descricao": "F-Zero: GP Legend é um jogo de corrida futurista baseado no anime de F-Zero GP Legend.\n\nVocê compete em corridas de alta velocidade com veículos anti-gravidade, enfrentando pilotos de toda a galáxia.",
-    "ano": "2004",
-    "fabricante": "Nintendo",
-    "core": "gba",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/F-ZeroGPLegend-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/F-ZeroGPLegend.gba",
-    "created_at": "2026-03-31T01:44:14.043158+00:00",
-    "console": "GAME BOY"
-  },
-  {
-    "id": "F-ZeroMaximumVelocity",
-    "nome": "F-Zero: Maximum Velocity",
-    "descricao": "F-Zero: Maximum Velocity é um jogo de corrida futurista ambientado 25 anos após os eventos do F-Zero original.",
-    "ano": "2001",
-    "fabricante": "Nintendo",
-    "core": "gba",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/F-ZeroMaximumVelocity-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/F-ZeroMaximumVelocity.gba",
-    "created_at": "2026-03-31T01:46:38.916147+00:00",
-    "console": "GAME BOY"
-  },
-  {
     "id": "famicomdetective",
     "nome": "Famicom Detective Club - Part II",
     "descricao": " o jogador assume o papel de um assistente de detetive de 15 anos investigando o assassinato de uma estudante, Yoko Kojima, que estava pesquisando uma lenda escolar sobre uma \"garota fantasma",
@@ -370,18 +538,6 @@
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/famicomdetective.sfc",
     "created_at": "2026-03-28T21:35:04.274394+00:00",
     "console": "Game Boy"
-  },
-  {
-    "id": "finalfantasy",
-    "nome": "Final Fantasy I & II: Dawn of Souls",
-    "descricao": "Final Fantasy I & II: Dawn of Souls é uma coletânea que traz versões remasterizadas e melhoradas dos dois primeiros jogos da famosa série Final Fantasy.",
-    "ano": "2005",
-    "fabricante": "Nintendo",
-    "core": "gba",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/finalfantasy-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/finalfantasy.gba",
-    "created_at": "2026-03-31T01:51:00.340165+00:00",
-    "console": "GAME BOY"
   },
   {
     "id": "final-fantasy5",
@@ -396,27 +552,15 @@
     "console": "Super Nintendo"
   },
   {
-    "id": "finalfantasy-vi-advance",
-    "nome": "Final Fantasy VI Advance",
-    "descricao": "Final Fantasy VI Advance é a versão melhorada de Final Fantasy VI, considerado por muitos um dos melhores RPGs já feitos.",
-    "ano": "2005",
-    "fabricante": "Nintendo",
-    "core": "gba",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/finalfantasy-vi-advance-capa.webp",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/finalfantasy-vi-advance.gba",
-    "created_at": "2026-03-31T01:53:50.083877+00:00",
-    "console": "GAME BOY"
-  },
-  {
-    "id": "Final-Fight",
-    "nome": "Final Fight 1",
-    "descricao": "Final Fight é um jogo eletrônico beat-'em-up desenvolvido e publicado pela Capcom para os arcades em 1989. Foi o sétimo jogo lançado pela Capcom para seu sistema de arcade CPS-1",
-    "ano": "1989",
+    "id": "final-fight3",
+    "nome": "Final Fight 3",
+    "descricao": "Final Fight 3 é um jogo de luta, no estilo beat 'em up, lançado em 1995 pela empresa japonesa Capcom exclusivamente para o Super Nintendo. É o terceiro jogo da série Final Fight e como seu predecessor, Final Fight 2, não foi lançado anteriormente na versão arcade.",
+    "ano": "1995",
     "fabricante": "Capcom",
     "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Final-Fight-capa.png",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Final-Fight.sfc",
-    "created_at": "2026-01-17T14:37:52.04773+00:00",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/final-fight3-capa.png",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/final-fight3.sfc",
+    "created_at": "2026-01-17T14:52:09.510357+00:00",
     "console": "SNES"
   },
   {
@@ -432,16 +576,28 @@
     "console": "SNES"
   },
   {
-    "id": "final-fight3",
-    "nome": "Final Fight 3",
-    "descricao": "Final Fight 3 é um jogo de luta, no estilo beat 'em up, lançado em 1995 pela empresa japonesa Capcom exclusivamente para o Super Nintendo. É o terceiro jogo da série Final Fight e como seu predecessor, Final Fight 2, não foi lançado anteriormente na versão arcade.",
-    "ano": "1995",
-    "fabricante": "Capcom",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/final-fight3-capa.png",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/final-fight3.sfc",
-    "created_at": "2026-01-17T14:52:09.510357+00:00",
-    "console": "SNES"
+    "id": "finalfantasy",
+    "nome": "Final Fantasy I & II: Dawn of Souls",
+    "descricao": "Final Fantasy I & II: Dawn of Souls é uma coletânea que traz versões remasterizadas e melhoradas dos dois primeiros jogos da famosa série Final Fantasy.",
+    "ano": "2005",
+    "fabricante": "Nintendo",
+    "core": "gba",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/finalfantasy-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/finalfantasy.gba",
+    "created_at": "2026-03-31T01:51:00.340165+00:00",
+    "console": "GAME BOY"
+  },
+  {
+    "id": "finalfantasy-vi-advance",
+    "nome": "Final Fantasy VI Advance",
+    "descricao": "Final Fantasy VI Advance é a versão melhorada de Final Fantasy VI, considerado por muitos um dos melhores RPGs já feitos.",
+    "ano": "2005",
+    "fabricante": "Nintendo",
+    "core": "gba",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/finalfantasy-vi-advance-capa.webp",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/finalfantasy-vi-advance.gba",
+    "created_at": "2026-03-31T01:53:50.083877+00:00",
+    "console": "GAME BOY"
   },
   {
     "id": "front-mission",
@@ -480,30 +636,6 @@
     "console": "MEGA DRIVE"
   },
   {
-    "id": "GoldenAxe2",
-    "nome": "Golden Axe 2 Pt Br",
-    "descricao": "Golden Axe II um videogame de beat 'em up side-scrolling desenvolvido e publicado pela Sega, lançado pela primeira vez para Mega Drive em dezembro de 1991.",
-    "ano": "1991",
-    "fabricante": "Sega",
-    "core": "segaMD",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/GoldenAxe2-capa.jpeg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/GoldenAxe2.md",
-    "created_at": "2026-02-03T15:24:55.297054+00:00",
-    "console": "MEGA DRIVE"
-  },
-  {
-    "id": "GoldenAxe3",
-    "nome": "Golden Axe 3 Pt Br",
-    "descricao": "Golden Axe III um videogame de Beat 'em Up side-scrolling desenvolvido e publicado pela Sega, lançado para o Mega Drive no Japão em 25 de junho de 1993. Foi lançada apenas uma versão norte-americana para o Sega Channel.",
-    "ano": "1993",
-    "fabricante": "SEGA",
-    "core": "segaMD",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/GoldenAxe3-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/GoldenAxe3.md",
-    "created_at": "2026-02-03T15:45:47.408909+00:00",
-    "console": "MEGA DRIVE"
-  },
-  {
     "id": "holyumbrella",
     "nome": "Holy Umbrella - Dondera's Wild!!",
     "descricao": "O jogador controla um estudante transportado para outro mundo, usando um guarda-chuva mágico para combater o vilão Dondera em um estilo que alterna entre exploração top-down e ação 2D",
@@ -514,30 +646,6 @@
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/holyumbrella.smc",
     "created_at": "2026-03-28T00:20:30.121589+00:00",
     "console": "Super Nintendo"
-  },
-  {
-    "id": "Illusionofgaia",
-    "nome": "Illusion of Gaia",
-    "descricao": "Illusion of Gaia é um jogo de ação e RPG, conhecido por sua história profunda e temática emocional",
-    "ano": "1994",
-    "fabricante": "Enix",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Illusionofgaia-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Illusionofgaia.png",
-    "created_at": "2026-03-30T23:19:12.08911+00:00",
-    "console": "Super Nintendo"
-  },
-  {
-    "id": "INTERNACIONALSTARSOCCER",
-    "nome": "International superstar soccer",
-    "descricao": "O clássico International Superstar Soccer (original/primeira versão) foi lançado pela Konami para o Super Nintendo em 1994 no Japão, chegando ao Ocidente em 1995.",
-    "ano": "1994",
-    "fabricante": "Konami",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/INTERNACIONALSTARSOCCER-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/INTERNACIONALSTARSOCCER.smc",
-    "created_at": "2026-01-28T16:27:38.604481+00:00",
-    "console": "SNES"
   },
   {
     "id": "jikkyoupower",
@@ -648,18 +756,6 @@
     "console": "MEGA DRIVE"
   },
   {
-    "id": "LittleMagic",
-    "nome": "Little Magic",
-    "descricao": "Little Magic é um jogo de quebra-cabeça (puzzle) antigo, desenvolvido e publicado pela Altron",
-    "ano": "1999",
-    "fabricante": "Altron",
-    "core": "nes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/LittleMagic-capa.webp",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/LittleMagic.smc",
-    "created_at": "2026-03-29T01:58:12.641887+00:00",
-    "console": "Super Nintendo"
-  },
-  {
     "id": "ludda2-rise",
     "nome": "Lufia II: Rise of the Sinistrals",
     "descricao": "Lufia II: Rise of the Sinistrals é um RPG por turnos com forte foco em puzzles, considerado um dos melhores do SNES",
@@ -696,6 +792,18 @@
     "console": "GAME BOY"
   },
   {
+    "id": "mariokartsnes",
+    "nome": "Super Mario Kart",
+    "descricao": "Super Mario Kart é um jogo eletrônico de corrida com personagens da série Mario lançado em 1992 para o Super Nintendo. Foi relançado em 1996 como Player's Choice, em 2009 para o Virtual Console do Wii e em 2019 para Nintendo Switch, para assinantes do Nintendo Switch Online.",
+    "ano": "1992",
+    "fabricante": "Nintendo",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/mariokartsnes-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/mariokartsnes.smc",
+    "created_at": "2026-03-28T16:57:13.319959+00:00",
+    "console": "SNES"
+  },
+  {
     "id": "medabots-metabee",
     "nome": "Medabots: Metabee",
     "descricao": "Medabots: Metabee é a versão “irmã” de Medabots: Rokusho, com a mesma base de gameplay, mas com algumas diferenças nos robôs, peças e estilo de combate.",
@@ -705,18 +813,6 @@
     "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/medabots-metabee-capa.jpg",
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/medabots-metabee.gba",
     "created_at": "2026-03-31T02:05:17.593677+00:00",
-    "console": "GAME BOY"
-  },
-  {
-    "id": "Mmedabots-rokusho",
-    "nome": "Medabots: Rokusho",
-    "descricao": "Medabots: Rokusho é baseado no anime Medabots e funciona como um RPG onde você monta e luta com robôs chamados Medabots.",
-    "ano": "2002",
-    "fabricante": "Natsume",
-    "core": "gba",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Mmedabots-rokusho-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Mmedabots-rokusho.gba",
-    "created_at": "2026-03-31T02:03:27.414401+00:00",
     "console": "GAME BOY"
   },
   {
@@ -792,16 +888,16 @@
     "console": "MEGA DRIVE"
   },
   {
-    "id": "MiracleGirls",
-    "nome": "Miracle Girls",
-    "descricao": "Jogadores controlam as gêmeas Tomomi ou Mikage, usando doces para paralisar inimigos e transformá-los em plataformas",
+    "id": "mk1",
+    "nome": "Mortal Kombat 1",
+    "descricao": "Mortal Kombat para SNES (1993) é um clássico de luta, famoso pela polêmica censura que substituiu o sangue por \"suor\" e alterou fatalities, diferentemente da versão mais violenta do Mega Drive. Apesar disso, o jogo é elogiado por ter gráficos e jogabilidade próximos ao arcade, tornando-se um marco no console. \n",
     "ano": "1993",
-    "fabricante": "Now Production",
+    "fabricante": "Acclaim Entertainment",
     "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/MiracleGirls-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/MiracleGirls.sfc",
-    "created_at": "2026-03-29T02:00:27.303505+00:00",
-    "console": "Super Nintendo"
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/mk1-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/mk1.smc",
+    "created_at": "2026-03-18T21:59:09.004478+00:00",
+    "console": "SNES"
   },
   {
     "id": "mobilesult-gundam",
@@ -826,18 +922,6 @@
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/monsterworld-iv.md",
     "created_at": "2026-03-30T00:47:38.506269+00:00",
     "console": "MEGA DRIVE"
-  },
-  {
-    "id": "mk1",
-    "nome": "Mortal Kombat 1",
-    "descricao": "Mortal Kombat para SNES (1993) é um clássico de luta, famoso pela polêmica censura que substituiu o sangue por \"suor\" e alterou fatalities, diferentemente da versão mais violenta do Mega Drive. Apesar disso, o jogo é elogiado por ter gráficos e jogabilidade próximos ao arcade, tornando-se um marco no console. \n",
-    "ano": "1993",
-    "fabricante": "Acclaim Entertainment",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/mk1-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/mk1.smc",
-    "created_at": "2026-03-18T21:59:09.004478+00:00",
-    "console": "SNES"
   },
   {
     "id": "narutoninja",
@@ -1020,18 +1104,6 @@
     "console": "MEGA DRIVE"
   },
   {
-    "id": "shinmegami-tensei2",
-    "nome": "Shin Megami Tensei 2",
-    "descricao": "",
-    "ano": "1994",
-    "fabricante": "Atlus",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/shinmegami-tensei2-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/shinmegami-tensei2.smc",
-    "created_at": "2026-03-27T23:17:29.310631+00:00",
-    "console": "Super Nintendo"
-  },
-  {
     "id": "shining-soul",
     "nome": "Shining Soul",
     "descricao": "Shining Soul faz parte da série Shining e traz uma experiência focada em ação e exploração de dungeons.",
@@ -1056,6 +1128,18 @@
     "console": "GAME BOY"
   },
   {
+    "id": "shinmegami-tensei2",
+    "nome": "Shin Megami Tensei 2",
+    "descricao": "",
+    "ano": "1994",
+    "fabricante": "Atlus",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/shinmegami-tensei2-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/shinmegami-tensei2.smc",
+    "created_at": "2026-03-27T23:17:29.310631+00:00",
+    "console": "Super Nintendo"
+  },
+  {
     "id": "shodainekketsu",
     "nome": "Shodai Nekketsu Kouha Kunio-kun",
     "descricao": "Shodai Nekketsu Kouha Kunio-kun (SNES, 1992) é um beat 'em up de ação com fortes elementos de RPG e exploração, exclusivo do Japão",
@@ -1078,6 +1162,18 @@
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/show-do-milhao.md",
     "created_at": "2026-01-15T14:56:27.84056+00:00",
     "console": "MEGA DRIVE"
+  },
+  {
+    "id": "snes-mario-world",
+    "nome": "Super Mario World",
+    "descricao": "Super Mario World, originalmente chamado no Japão de Super Mario Bros. 4, é um jogo eletrônico de plataforma desenvolvido pela Nintendo Entertainment Analysis & Development e publicado pela Nintendo, em 1990, para o console Super Nintendo Entertainment System.",
+    "ano": "1990",
+    "fabricante": "Nintendo",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/snes-mario-world-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/snes-mario-world.sfc",
+    "created_at": "2026-01-09T22:38:05.261409+00:00",
+    "console": "SNES"
   },
   {
     "id": "sonic2",
@@ -1140,18 +1236,6 @@
     "console": "SNES"
   },
   {
-    "id": "SF2",
-    "nome": "Street Fighter 2 Turbo",
-    "descricao": "Street Fighter II: The World Warrior, também conhecido simplesmente por Street Fighter II, é um jogo competitivo de videogame desenvolvido pela Capcom e originalmente lançado para os sistemas de Arcade em 1991. É o segundo jogo da série Street Fighter e a sequência de Street Fighter, jogo lançado em 1987. ",
-    "ano": "1991",
-    "fabricante": "Capcom",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/SF2-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/SF2.smc",
-    "created_at": "2026-03-18T22:01:29.563016+00:00",
-    "console": "SNES"
-  },
-  {
     "id": "stunt-race-FX",
     "nome": "Stunt Race FX",
     "descricao": "Stunt Race FX é um jogo de corrida em 3D (bem primitivo 👀) onde você controla veículos em pistas cheias de obstáculos, saltos e desafios.",
@@ -1164,18 +1248,6 @@
     "console": "Super Nintendo"
   },
   {
-    "id": "summon-nigth",
-    "nome": "Summon Night: Swordcraft Story",
-    "descricao": "Sword of Mana é um remake expandido do clássico Final Fantasy Adventure (Game Boy), e faz parte da famosa série Mana.",
-    "ano": "2003",
-    "fabricante": "Square Enix",
-    "core": "gba",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/summon-nigth-capa.png",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/summon-nigth.gba",
-    "created_at": "2026-03-31T01:23:06.081979+00:00",
-    "console": "Game Boy"
-  },
-  {
     "id": "summon-night",
     "nome": "Summon Night: Swordcraft Story 2",
     "descricao": "Summon Night: Swordcraft Story 2 é a sequência direta do primeiro jogo e se passa no mesmo universo mágico onde humanos convivem com espíritos de outras dimensões.",
@@ -1185,6 +1257,18 @@
     "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/summon-night-capa.jpg",
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/summon-night.gba",
     "created_at": "2026-03-31T01:25:48.153988+00:00",
+    "console": "Game Boy"
+  },
+  {
+    "id": "summon-nigth",
+    "nome": "Summon Night: Swordcraft Story",
+    "descricao": "Sword of Mana é um remake expandido do clássico Final Fantasy Adventure (Game Boy), e faz parte da famosa série Mana.",
+    "ano": "2003",
+    "fabricante": "Square Enix",
+    "core": "gba",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/summon-nigth-capa.png",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/summon-nigth.gba",
+    "created_at": "2026-03-31T01:23:06.081979+00:00",
     "console": "Game Boy"
   },
   {
@@ -1212,18 +1296,6 @@
     "console": "Super Nintendo"
   },
   {
-    "id": "Super-bomberman4",
-    "nome": "Super Bomberman IV",
-    "descricao": "",
-    "ano": "1996",
-    "fabricante": "Produce",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Super-bomberman4-capa.webp",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Super-bomberman4.smc",
-    "created_at": "2026-03-27T21:54:44.648397+00:00",
-    "console": "Super Nintendo"
-  },
-  {
     "id": "super-bonk",
     "nome": "Super Bonk II",
     "descricao": "A aventura foca na exploração, onde Bonk usa sua cabeça para atacar e se transforma em criaturas, como um caranguejo, atravessando fases temáticas que vão da pré-história à lua para enfrentar o Rei Babão",
@@ -1236,30 +1308,6 @@
     "console": "Super Nintendo"
   },
   {
-    "id": "mariokartsnes",
-    "nome": "Super Mario Kart",
-    "descricao": "Super Mario Kart é um jogo eletrônico de corrida com personagens da série Mario lançado em 1992 para o Super Nintendo. Foi relançado em 1996 como Player's Choice, em 2009 para o Virtual Console do Wii e em 2019 para Nintendo Switch, para assinantes do Nintendo Switch Online.",
-    "ano": "1992",
-    "fabricante": "Nintendo",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/mariokartsnes-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/mariokartsnes.smc",
-    "created_at": "2026-03-28T16:57:13.319959+00:00",
-    "console": "SNES"
-  },
-  {
-    "id": "snes-mario-world",
-    "nome": "Super Mario World",
-    "descricao": "Super Mario World, originalmente chamado no Japão de Super Mario Bros. 4, é um jogo eletrônico de plataforma desenvolvido pela Nintendo Entertainment Analysis & Development e publicado pela Nintendo, em 1990, para o console Super Nintendo Entertainment System.",
-    "ano": "1990",
-    "fabricante": "Nintendo",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/snes-mario-world-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/snes-mario-world.sfc",
-    "created_at": "2026-01-09T22:38:05.261409+00:00",
-    "console": "SNES"
-  },
-  {
     "id": "super-star-wars",
     "nome": "Super Star Wars",
     "descricao": "Super Star Wars é um jogo de ação e plataforma, baseado no filme clássico",
@@ -1269,18 +1317,6 @@
     "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/super-star-wars-capa.jpg",
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/super-star-wars.png",
     "created_at": "2026-03-30T23:36:21.792861+00:00",
-    "console": "Super Nintendo"
-  },
-  {
-    "id": "superstarwars-returnjedi",
-    "nome": "Super Star Wars: Return of the Jedi",
-    "descricao": "Super Star Wars: Return of the Jedi é um jogo de ação e plataforma, baseado no filme\n👉 Star Wars Episode VI – Return of the Jedi",
-    "ano": "1994",
-    "fabricante": "JVC Musical Industries",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/superstarwars-returnjedi-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/superstarwars-returnjedi.png",
-    "created_at": "2026-03-30T23:40:45.349037+00:00",
     "console": "Super Nintendo"
   },
   {
@@ -1296,15 +1332,15 @@
     "console": "Super Nintendo"
   },
   {
-    "id": "Superturrican",
-    "nome": "Super Turrican",
-    "descricao": "Super Turrican é um jogo de ação e plataforma estilo run and gun, muito comparado a clássicos como Contra",
-    "ano": "1993",
-    "fabricante": "Seika Corporation",
+    "id": "superstarwars-returnjedi",
+    "nome": "Super Star Wars: Return of the Jedi",
+    "descricao": "Super Star Wars: Return of the Jedi é um jogo de ação e plataforma, baseado no filme\n👉 Star Wars Episode VI – Return of the Jedi",
+    "ano": "1994",
+    "fabricante": "JVC Musical Industries",
     "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Superturrican-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Superturrican.png",
-    "created_at": "2026-03-30T23:00:05.301391+00:00",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/superstarwars-returnjedi-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/superstarwars-returnjedi.png",
+    "created_at": "2026-03-30T23:40:45.349037+00:00",
     "console": "Super Nintendo"
   },
   {
@@ -1392,30 +1428,6 @@
     "console": "SNES"
   },
   {
-    "id": "zeldaminishptbr",
-    "nome": "The Legend of Zelda The Minish Cap PTBR",
-    "descricao": "The Legend of Zelda: The Minish Cap foi lançado originalmente para o Game Boy Advance em 2004 no Japão e na Europa, chegando à América do Norte e Austrália em janeiro de 2005. Desenvolvido pela Capcom e Flagship sob a supervisão da Nintendo, o jogo é o 12º título da série principal e celebra seu 20º aniversário em 2024. ",
-    "ano": "2004",
-    "fabricante": "Nintendo",
-    "core": "gba",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/zeldaminishptbr-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/zeldaminishptbr.gba",
-    "created_at": "2026-01-27T11:58:33.817644+00:00",
-    "console": "GBA"
-  },
-  {
-    "id": "zeldalinktothepast",
-    "nome": "The Legend of Zelda: A Link to the Past PT Br",
-    "descricao": "The Legend of Zelda: A Link to the Past, também conhecido como Zelda no Densetsu: Kamigami no Triforce no Japão e A Lenda de Zelda: Um Elo com o Passado no Brasil, é um jogo eletrônico de ação-aventura desenvolvido e publicado pela Nintendo para o Super Nintendo Entertainment System.",
-    "ano": "1991",
-    "fabricante": "Nintendo",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/zeldalinktothepast-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/zeldalinktothepast.smc",
-    "created_at": "2026-03-19T12:17:46.90905+00:00",
-    "console": "Nintendo"
-  },
-  {
     "id": "thelostvikings",
     "nome": "The Lost Vikings",
     "descricao": "Em Plok!, você controla o personagem Plok, um herói excêntrico que vive em uma ilha colorida chamada Akrillic.",
@@ -1450,30 +1462,6 @@
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/tomorrow's-joe.sfc",
     "created_at": "2026-03-27T22:13:12.511134+00:00",
     "console": "Super Nitendo"
-  },
-  {
-    "id": "Uniracers",
-    "nome": "Uniracers",
-    "descricao": "Uniracers (também conhecido como Unirally em algumas regiões) é um jogo de corrida completamente diferente: você controla monociclos vivos 🤯",
-    "ano": "1994",
-    "fabricante": "Nintendo",
-    "core": "snes",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Uniracers-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Uniracers.png",
-    "created_at": "2026-03-31T00:57:48.741344+00:00",
-    "console": "Super Nintendo"
-  },
-  {
-    "id": "Vectorman2",
-    "nome": "Vectorman 2",
-    "descricao": "Vectorman 2 é um jogo de ação e plataforma, continuação direta do primeiro Vectorman",
-    "ano": "1996",
-    "fabricante": "Sega",
-    "core": "segaMD",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/Vectorman2-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/Vectorman2.md",
-    "created_at": "2026-03-30T00:32:43.729377+00:00",
-    "console": "MEGA DRIVE"
   },
   {
     "id": "violinist-of-hamein",
@@ -1536,30 +1524,6 @@
     "console": "Super Nintendo"
   },
   {
-    "id": "XmenClonesWar",
-    "nome": "X-Men 2 Clones War",
-    "descricao": "jogo top bla bla bla",
-    "ano": "1993",
-    "fabricante": "Sega",
-    "core": "segaMD",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/XmenClonesWar-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/XmenClonesWar.md",
-    "created_at": "2026-02-19T17:35:33.936015+00:00",
-    "console": "MEGA DRIVE"
-  },
-  {
-    "id": "yugi-rd",
-    "nome": "Yu-Gi-Oh! – Reshef of Destruction",
-    "descricao": "Reshef of Destruction é vagamente baseado no anime, sendo ambientado em uma continuidade alternativa dos eventos do anime, e é a sequência direta de The Sacred Cards , começando algum tempo após os eventos de Battle City.",
-    "ano": "2004",
-    "fabricante": "Konami",
-    "core": "gba",
-    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/yugi-rd-capa.jpg",
-    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/yugi-rd.gba",
-    "created_at": "2026-01-17T15:20:03.472094+00:00",
-    "console": "GBA"
-  },
-  {
     "id": "yu-gi-oh-thesacredcards",
     "nome": "Yu-Gi-Oh! The Sacred Cards",
     "descricao": "Diferente dos jogos focados puramente em duelos de menu, The Sacred Cards coloca você na pele de um duelista customizável (você escolhe o nome) explorando a cidade de Battle City durante o arco do torneio organizado por Seto Kaiba.",
@@ -1582,6 +1546,42 @@
     "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/yu-gi-oh-worldwide.gba",
     "created_at": "2026-03-31T02:10:46.641083+00:00",
     "console": "GAME BOY"
+  },
+  {
+    "id": "yugi-rd",
+    "nome": "Yu-Gi-Oh! – Reshef of Destruction",
+    "descricao": "Reshef of Destruction é vagamente baseado no anime, sendo ambientado em uma continuidade alternativa dos eventos do anime, e é a sequência direta de The Sacred Cards , começando algum tempo após os eventos de Battle City.",
+    "ano": "2004",
+    "fabricante": "Konami",
+    "core": "gba",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/yugi-rd-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/yugi-rd.gba",
+    "created_at": "2026-01-17T15:20:03.472094+00:00",
+    "console": "GBA"
+  },
+  {
+    "id": "zeldalinktothepast",
+    "nome": "The Legend of Zelda: A Link to the Past PT Br",
+    "descricao": "The Legend of Zelda: A Link to the Past, também conhecido como Zelda no Densetsu: Kamigami no Triforce no Japão e A Lenda de Zelda: Um Elo com o Passado no Brasil, é um jogo eletrônico de ação-aventura desenvolvido e publicado pela Nintendo para o Super Nintendo Entertainment System.",
+    "ano": "1991",
+    "fabricante": "Nintendo",
+    "core": "snes",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/zeldalinktothepast-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/zeldalinktothepast.smc",
+    "created_at": "2026-03-19T12:17:46.90905+00:00",
+    "console": "Nintendo"
+  },
+  {
+    "id": "zeldaminishptbr",
+    "nome": "The Legend of Zelda The Minish Cap PTBR",
+    "descricao": "The Legend of Zelda: The Minish Cap foi lançado originalmente para o Game Boy Advance em 2004 no Japão e na Europa, chegando à América do Norte e Austrália em janeiro de 2005. Desenvolvido pela Capcom e Flagship sob a supervisão da Nintendo, o jogo é o 12º título da série principal e celebra seu 20º aniversário em 2024. ",
+    "ano": "2004",
+    "fabricante": "Nintendo",
+    "core": "gba",
+    "capa_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/capas/zeldaminishptbr-capa.jpg",
+    "rom_url": "https://maataycmixcmozjhezfe.supabase.co/storage/v1/object/public/roms/zeldaminishptbr.gba",
+    "created_at": "2026-01-27T11:58:33.817644+00:00",
+    "console": "GBA"
   },
   {
     "id": "zoneoftheenders",

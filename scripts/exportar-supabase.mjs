@@ -11,11 +11,70 @@
 //
 // SÓ LEITURA. Este script nunca escreve no Supabase.
 //
-// O QUE ELE NÃO ALCANÇA, e nenhuma chave pública alcança: as contas em
-// auth.users (senhas incluídas), as políticas de RLS, as triggers e as functions
-// do banco. Isso exige a chave secreta do projeto. Ver docs/MIGRACAO-SUPABASE.md.
-import { writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
+// O QUE ELE NÃO ALCANÇA: as contas em auth.users (senhas incluídas), as
+// políticas de RLS, as triggers e as functions do banco.
+import { writeFileSync, mkdirSync, existsSync, statSync, readFileSync } from 'node:fs';
 import { SUPABASE_URL, CABECALHOS_SUPABASE } from '../src/constants/supabase.js';
+
+// --- Chave de serviço, quando o .env tiver o token de administração ---
+//
+// A chave pública não é suficiente para um backup honesto, e por dois motivos
+// que se somam: a RLS de `missoes` mostra ao visitante só os envios dele (o
+// backup dessa tabela sempre saiu com zero linha), e a coluna `email` de
+// `profiles` deixou de ser legível pelo público quando fechamos o vazamento dos
+// 186 e-mails — de lá para cá um `select=*` com a chave pública devolve erro de
+// permissão, não uma lista menor.
+//
+// Com o token, o script pega a chave secreta na hora e lê tudo. Sem ele,
+// continua rodando com a pública e AVISA exatamente o que ficou de fora, em vez
+// de gravar um arquivo incompleto com cara de completo.
+const lerEnv = () => {
+  try {
+    return Object.fromEntries(
+      readFileSync(new URL('../.env', import.meta.url), 'utf8')
+        .split('\n')
+        .filter((l) => l.trim() && !l.startsWith('#') && l.includes('='))
+        .map((l) => {
+          const [chave, ...resto] = l.split('=');
+          return [chave.trim(), resto.join('=').trim().replace(/^["']|["']$/g, '')];
+        })
+    );
+  } catch {
+    return {};
+  }
+};
+
+const buscarChaveSecreta = async () => {
+  const token = lerEnv().access_token_supabase;
+  if (!token) return null;
+
+  const ref = SUPABASE_URL.match(/https:\/\/([^.]+)\./)?.[1];
+  if (!ref) return null;
+
+  try {
+    const r = await fetch(`https://api.supabase.com/v1/projects/${ref}/api-keys?reveal=true`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!r.ok) return null;
+    const chaves = await r.json();
+    return Array.isArray(chaves)
+      ? chaves.find((k) => k.name === 'service_role')?.api_key ?? null
+      : null;
+  } catch {
+    return null;
+  }
+};
+
+const chaveSecreta = await buscarChaveSecreta();
+const CABECALHOS = chaveSecreta
+  ? { apikey: chaveSecreta, Authorization: `Bearer ${chaveSecreta}` }
+  : CABECALHOS_SUPABASE;
+
+console.log(
+  chaveSecreta
+    ? 'lendo com a chave de serviço: o backup enxerga tudo'
+    : 'lendo com a chave pública: sem access_token_supabase no .env, parte fica de fora'
+);
 
 const PASTA = new URL('../backup/', import.meta.url);
 const PASTA_PRIVADA = new URL('privado/', PASTA);
@@ -36,11 +95,21 @@ const PASTA_ARQUIVOS = new URL('arquivos/', PASTA);
 // `soRLS` marca a tabela que a chave PÚBLICA nunca consegue ler por inteiro: a
 // RLS de `missoes` mostra ao visitante apenas os envios dele, então sem chave
 // secreta o resultado é sempre zero. Não é erro, mas também não é backup.
+//
+// `colunasPublicas` existe porque `profiles` perdeu o GRANT de tabela: a chave
+// pública só alcança id, nome e pontos. Pedir `*` de lá devolve 403, e o backup
+// inteiro morreria por causa de uma coluna. Com a chave secreta, `*` volta a
+// valer e o e-mail entra no arquivo — que por isso vai para backup/privado/.
 const TABELAS = [
   { nome: 'jogos', arquivo: 'acervo.json' },
   { nome: 'missoes_globais', arquivo: 'desafios.json' },
   { nome: 'missoes', arquivo: 'missoes.json', privada: true, soRLS: true },
-  { nome: 'profiles', arquivo: 'perfis.json', privada: true },
+  {
+    nome: 'profiles',
+    arquivo: 'perfis.json',
+    privada: true,
+    colunasPublicas: 'id,nome,pontos,role',
+  },
 ];
 
 // Os três baldes de Storage, com as colunas que guardam a URL de cada um.
@@ -57,7 +126,7 @@ const EM_PARALELO = 4;
 
 const buscar = async (caminho, cabecalhos = {}) => {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${caminho}`, {
-    headers: { ...CABECALHOS_SUPABASE, ...cabecalhos },
+    headers: { ...CABECALHOS, ...cabecalhos },
   });
   if (!r.ok) throw new Error(`${r.status} em ${caminho}: ${(await r.text()).slice(0, 120)}`);
   return r.json();
@@ -65,16 +134,31 @@ const buscar = async (caminho, cabecalhos = {}) => {
 
 // Em blocos porque o PostgREST tem teto de linhas por resposta. Sem isto, um
 // acervo que cresce faria o backup parar de trazer tudo em silêncio.
-const listarTudo = async (tabela) => {
+const listarTudo = async (t) => {
+  const colunas = chaveSecreta ? '*' : t.colunasPublicas ?? '*';
   const tudo = [];
   const passo = 500;
   for (let de = 0; ; de += passo) {
-    const bloco = await buscar(`${tabela}?select=*&order=id`, {
+    const bloco = await buscar(`${t.nome}?select=${colunas}&order=id`, {
       Range: `${de}-${de + passo - 1}`,
     });
     tudo.push(...bloco);
-    if (bloco.length < passo) return tudo;
+    if (bloco.length < passo) break;
   }
+
+  // Reordena aqui, mesmo o servidor já tendo ordenado.
+  //
+  // O `order=id` de cima existe para a paginação em blocos ser estável dentro de
+  // uma execução — sem ele, duas consultas separadas podem repetir uma linha e
+  // perder outra. Mas a ordem que o servidor devolve depende da collation do
+  // plano que ele escolheu, e ela mudou quando o script passou a usar a chave de
+  // serviço: `breathoffire` e `breath-of-fire2` trocaram de lugar, e o backup
+  // saiu com 194 linhas de diferença sem um único dado ter mudado.
+  //
+  // Um backup versionado tem que ter diff honesto: se aparecem 194 linhas
+  // mudadas, é porque 194 linhas mudaram. Comparação por code point, que é
+  // igual em qualquer máquina e em qualquer collation.
+  return tudo.sort((a, b) => (String(a.id) < String(b.id) ? -1 : String(a.id) > String(b.id) ? 1 : 0));
 };
 
 mkdirSync(PASTA, { recursive: true });
@@ -88,7 +172,7 @@ const falhasDeTabela = [];
 
 for (const t of TABELAS) {
   try {
-    const dados = await listarTudo(t.nome);
+    const dados = await listarTudo(t);
     linhas[t.nome] = dados;
 
     // Só grava se veio: um erro no meio da paginação não pode substituir o
@@ -103,6 +187,12 @@ for (const t of TABELAS) {
       console.log(`     ATENÇÃO: a RLS esconde ${t.nome} da chave pública. Isto NÃO é backup`);
       console.log(`     desta tabela nem do balde que depende dela — só a chave secreta lê tudo.`);
       falhasDeTabela.push(`${t.nome}: zero linhas, a chave pública não enxerga`);
+    }
+
+    if (!chaveSecreta && t.colunasPublicas) {
+      console.log(`     ATENÇÃO: sem a chave secreta só vieram as colunas ${t.colunasPublicas}.`);
+      console.log(`     Falta o e-mail — sem ele não dá para restaurar conta nenhuma.`);
+      falhasDeTabela.push(`${t.nome}: backup sem a coluna email`);
     }
   } catch (e) {
     linhas[t.nome] = [];

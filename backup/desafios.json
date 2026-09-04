@@ -1,5 +1,13 @@
 [
   {
+    "id": "597a4398-586a-41a4-a392-fcc3ac21805f",
+    "titulo": "Beat em up favorito",
+    "objetivo": "Quem zerar um beat em up favorito e mandar o print zerado vai receber a recompensa!",
+    "recompensa": 1200,
+    "tipo": "mensal",
+    "created_at": "2026-03-16T17:55:13.618736+00:00"
+  },
+  {
     "id": "769e37a8-6622-4214-a7d4-b70f58344517",
     "titulo": "🌀 Super Sonic Speedrun: O Poder das Esmeraldas",
     "objetivo": "Quando conseguir as 7 esmeraldas (ou estiver transformado em Super Sonic), tire um print da tela e envie agora mesmo pelo botão 'ENVIAR PRINT' direto na Game Room.",
@@ -14,13 +22,5 @@
     "recompensa": 100,
     "tipo": "mensal",
     "created_at": "2026-01-16T11:19:13.139396+00:00"
-  },
-  {
-    "id": "597a4398-586a-41a4-a392-fcc3ac21805f",
-    "titulo": "Beat em up favorito",
-    "objetivo": "Quem zerar um beat em up favorito e mandar o print zerado vai receber a recompensa!",
-    "recompensa": 1200,
-    "tipo": "mensal",
-    "created_at": "2026-03-16T17:55:13.618736+00:00"
   }
 ]
