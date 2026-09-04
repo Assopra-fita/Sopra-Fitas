@@ -33,3 +33,6 @@ backup/privado/
 
 # Gerado pelo build em dist/, não versionado — ver scripts/gerar-sitemap.mjs
 public/sitemap.xml
+
+# Cache do CLI do Supabase, gerado quando ele roda. Nada nosso.
+supabase/.temp/
