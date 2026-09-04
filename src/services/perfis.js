@@ -2,10 +2,16 @@ import { supabase, desembrulhar, escrever, contar } from './consulta';
 
 // Tudo que o site lê ou escreve na tabela `profiles`.
 //
-// A regra de ouro desta tabela: **nunca pedir `email`** numa consulta que
-// alimenta tela pública. A coluna já trafegou para o navegador de qualquer
-// visitante pelo ranking, e a chave anônima que autoriza isso viaja no bundle.
-// Quem impede de verdade são as policies de RLS; aqui a gente só não pede.
+// A regra de ouro desta tabela é **nunca pedir `email`** daqui. Antes ela valia
+// por disciplina: a RLS filtra linha, não coluna, e a política de leitura é
+// `USING (true)` porque o ranking precisa mesmo ver todo mundo — então a coluna
+// ia junto para o navegador de qualquer visitante, com a chave anônima que
+// viaja no bundle autorizando.
+//
+// Hoje quem impede é o banco: `anon` e `authenticated` só têm GRANT de SELECT
+// nas colunas id, nome, pontos (e role, para quem está logado). Pedir `email`
+// ou `*` por aqui devolve erro de permissão, de propósito. Quem precisa do
+// e-mail é só a tela do GM, e ela passa pela função `listar_jogadores_admin`.
 
 const UM = (colunas) => supabase.from('profiles').select(colunas);
 
@@ -35,9 +41,14 @@ export const listarRanking = (limite = 50) =>
     UM('id, nome, pontos').order('pontos', { ascending: false }).limit(limite)
   );
 
-// Tela do GM, que precisa de todas as colunas para editar.
+// Tela do GM, a única que precisa do e-mail.
+//
+// Não dá para pedir `*` aqui: o e-mail não está no GRANT de coluna de ninguém
+// que venha do navegador. Quem devolve é uma função no banco que confere o
+// papel de quem chamou antes de responder — o filtro deixa de ser "o cliente
+// não pediu" e passa a ser "o banco não entrega".
 export const listarJogadores = () =>
-  desembrulhar(UM('*').order('pontos', { ascending: false }));
+  desembrulhar(supabase.rpc('listar_jogadores_admin'));
 
 export const atualizarPontos = (userId, pontos) =>
   escrever(
@@ -51,5 +62,7 @@ export const definirPapel = (userId, papel) =>
     'o papel'
   );
 
+// `id` em vez de `*` pelo mesmo motivo: `*` inclui o e-mail, e o GRANT de
+// coluna barra a consulta inteira mesmo quando só se quer a contagem.
 export const contarJogadores = () =>
-  contar(supabase.from('profiles').select('*', { count: 'exact', head: true }));
+  contar(supabase.from('profiles').select('id', { count: 'exact', head: true }));
