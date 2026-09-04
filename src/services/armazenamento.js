@@ -6,9 +6,17 @@
 // tela preta, sem erro nenhum no console.
 import { supabase } from './consulta';
 
-// Teto por arquivo. A maior ROM do acervo tem 8 MB; 64 MB cobre até cartucho
-// de Nintendo 64 com folga e ainda barra upload acidental de vídeo.
-const TETO_ROM = 64 * 1024 * 1024;
+// Teto por arquivo. A maior ROM do acervo tem 8 MB.
+//
+// Os 50 MB não são escolha: é o teto do projeto no Supabase, e o Storage aplica
+// o menor entre o do projeto e o do balde. O valor daqui era 64 MB, que nunca
+// valeu — um arquivo entre 50 e 64 MB passava por esta validação e era recusado
+// pelo servidor depois, com uma mensagem que não dizia por quê.
+//
+// Isto aqui é conveniência para quem envia, não controle: quem chama a API
+// direto não passa por esta linha. Quem barra de verdade é o file_size_limit
+// do balde, definido em supabase/02-storage.sql.
+const TETO_ROM = 50 * 1024 * 1024;
 const TETO_IMAGEM = 5 * 1024 * 1024;
 
 const megabytes = (bytes) => (bytes / 1024 / 1024).toFixed(1).replace('.', ',');
