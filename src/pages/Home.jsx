@@ -273,8 +273,16 @@ const Home = () => {
                 mudar nada na tela: o texto alternativo da imagem vira o
                 título de primeiro nível da página. */}
             <h1 className="home__titulo">
+              {/* Esta é a maior imagem da primeira dobra e o elemento de LCP.
+                  O CSS desenha 420px de largura no desktop e 220 no celular —
+                  o arquivo de 700 é o certo para o primeiro, e desperdício
+                  para o segundo. `sizes` deixa o navegador escolher antes de
+                  baixar, e repete o corte de 768px de paginas.css:1169 — se um
+                  dos dois mudar, o outro tem que acompanhar. */}
               <img
                 src="/logo.webp"
+                srcSet="/logo-440.webp 440w, /logo.webp 700w"
+                sizes="(max-width: 768px) 220px, 420px"
                 alt={MARCA}
                 width="700"
                 height="374"

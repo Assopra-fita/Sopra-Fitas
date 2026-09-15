@@ -10,7 +10,11 @@ const Cabecalho = ({ session, pontos, nomeUsuario, aoSair }) => (
         entrar solto na ponta direita e nada do outro lado. */}
     <nav className="topo__marca" aria-label="Navegação principal">
       <Link to="/" className="topo__logo" aria-label={`${MARCA}, ir para o início`}>
-        <img src="/logo.webp" alt="" width="700" height="374" />
+        {/* Arquivo de 160px e não o de 700: aqui a marca é desenhada com 40px
+            de altura (28 no celular), ou seja 75x40 de tela, e o arquivo
+            grande custava 24,5 KB em TODA página do site. Este custa 5,8 KB e
+            ainda sobra resolução para aparelho 2x. */}
+        <img src="/logo-160.webp" alt="" width="160" height="85" />
       </Link>
 
       <Link to="/ranking" className="topo__link">
