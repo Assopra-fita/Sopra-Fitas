@@ -7,10 +7,20 @@
 // arquivo como veio, e ninguém redimensiona nada.
 //
 // O Storage tem um endpoint de transformação ligado neste projeto. Trocar
-// `/object/public/` por `/render/image/public/` e pedir o tamanho certo:
+// `/object/public/` por `/render/image/public/` e pedir o tamanho certo.
 //
-//   soma de 6 capas    1.475 KiB  ->  104 KiB
-//   show-do-milhao       551 KiB  ->   11 KiB
+// Medido no site no ar, celular a dpr 1,75, nas 12 capas da primeira página:
+//
+//   as 12 capas          2.119,8 KiB  ->  199,3 KiB   (10,6x)
+//   imagem da página     2.144,3 KiB  ->  225,7 KiB   (89,5%)
+//   show-do-milhao         551,5 KiB  ->   11,7 KiB
+//   as 128 capas do acervo inteiro, somadas: 2.381 KiB, média de 18,6 KiB
+//
+// Ver a Home INTEIRA hoje custa quase o mesmo que UMA página custava antes.
+//
+// (Uma primeira versão deste comentário dizia 98 KiB. Era a soma de SEIS
+// capas comparada contra o total de DOZE — metade do número contra o dobro da
+// amostra. O ganho verdadeiro é 199 KiB, e continua sendo 10 vezes.)
 //
 // POR QUE ESTES NÚMEROS. A caixa da capa tem largura de no máximo ~300 CSS px
 // (o card mais largo do desktop) e altura fixa de 130 a 160 px, com
