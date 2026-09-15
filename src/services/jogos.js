@@ -26,8 +26,25 @@ export const listarParaVitrine = async () => {
 export const obterJogo = (id) =>
   desembrulhar(supabase.from('jogos').select('*').eq('id', id).single());
 
-export const listarOutros = (id, limite = 8) =>
-  desembrulhar(supabase.from('jogos').select('*').neq('id', id).limit(limite));
+// Candidatos para a lista de "jogos relacionados" da sala de jogo.
+//
+// Era `.select('*').neq('id', id).limit(8)`, e o limit corta ANTES de qualquer
+// sorteio: o banco devolvia sempre as 8 primeiras linhas na ordem física da
+// tabela, então o embaralhamento do hook nunca teve mais do que 9 jogos para
+// escolher e 148 dos 157 NUNCA apareciam como relacionado. Medido abrindo 21
+// páginas de jogo: a união de tudo que apareceu foram 9 títulos.
+//
+// Agora vem o acervo inteiro e quem sorteia é o hook. Custa 5,3 KB na rede —
+// são 157 linhas, mas os endereços de capa e ROM repetem o mesmo prefixo e o
+// gzip reduz de 46 KB para isso.
+//
+// De quebra herda o filtro da vitrine: jogo com imagem no campo da ROM deixa
+// de poder entrar na lista. Antes não podia por sorte, porque nenhum dos 9 da
+// janela fixa era um deles.
+export const listarOutros = async (id) => {
+  const todos = await listarParaVitrine();
+  return todos.filter((jogo) => jogo.id !== id);
+};
 
 // Tela de gerenciar acervo.
 export const listarAcervo = () =>

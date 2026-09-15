@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { listarOutros } from '../services/jogos';
 
-// Quantos candidatos pedir ao banco antes de sortear.
-const CANDIDATOS = 8;
-
 // Sorteia sem mexer no array recebido. O `.sort()` ordena no próprio lugar, e
 // um comparador aleatório não produz permutação uniforme. Medido em 200 mil
 // rodadas: o primeiro da lista saía em 10,5% dos sorteios contra 3,2% do
@@ -44,7 +41,7 @@ export const useRelacionados = (gameId, quantos = 4) => {
       let candidatos = [];
 
       try {
-        candidatos = (await listarOutros(gameId, CANDIDATOS)) ?? [];
+        candidatos = (await listarOutros(gameId)) ?? [];
       } catch (e) {
         console.error('Erro ao buscar outros jogos:', e);
         // Sem o banco não há de onde tirar sugestão: a seção some da tela em
