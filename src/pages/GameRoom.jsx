@@ -50,6 +50,16 @@ const GameRoom = () => {
   // aqui o jogo existe, o que faltou foi memória no navegador.
   const [falhaDoEmulador, setFalhaDoEmulador] = useState(null);
 
+  // Os dois motivos para a tela do jogo não ter emulador nenhum. Ficam num
+  // valor só porque três lugares perguntam a mesma coisa — qual aviso mostrar,
+  // e se a barra de controles faz sentido — e uma condição repetida em três
+  // lugares é uma que vai divergir.
+  const semEmulador = romEhImagem(jogo?.rom_url)
+    ? 'arquivo-errado'
+    : falhaDoEmulador === 'memoria'
+      ? 'memoria'
+      : null;
+
   // `{ assistir }` enquanto o jogo está travado por anúncio não assistido, e
   // null quando está liberado. Quem decide isso é src/lib/premiadoAoJogar.js.
   const [anuncioExigido, setAnuncioExigido] = useState(null);
@@ -159,7 +169,7 @@ const GameRoom = () => {
                   menu da biblioteca não funcionou — o botão de ajustes ficava
                   por cima do texto — e desmontar ainda dispara o encerramento,
                   soltando o que a instância morta ainda segurava. */}
-              {romEhImagem(jogo.rom_url) ? (
+              {semEmulador === 'arquivo-errado' ? (
                 /* Cadastro com imagem no campo da ROM — 28 jogos do acervo
                    estão assim. Sem isto o emulador monta o canvas, pinta de
                    preto e não avisa nada: nem erro de rede, nem log no
@@ -177,7 +187,7 @@ const GameRoom = () => {
                     muito jogo funcionando na Home.
                   </p>
                 </div>
-              ) : falhaDoEmulador === 'memoria' ? (
+              ) : semEmulador === 'memoria' ? (
                 <div className="sala__sem-memoria" role="alert">
                   <h2>O navegador ficou sem memória</h2>
                   <p>
@@ -201,13 +211,24 @@ const GameRoom = () => {
               )}
             </div>
 
-            <BarraDeControles
-              aoSair={sair}
-              aoSalvar={emulador.salvar}
-              aoCarregar={emulador.carregar}
-              aoReiniciar={emulador.reiniciar}
-              aoTelaCheia={emulador.telaCheia}
-            />
+            {/* A barra só existe quando existe emulador para controlar.
+                Antes ela ficava fora deste teste e aparecia também nas duas
+                telas de falha — nos 29 cadastros com imagem no campo da ROM e
+                no aviso de falta de memória.
+                Não era só enfeite inútil: Salvar, Carregar e Reiniciar
+                respondiam com "O jogo ainda está carregando", contradizendo o
+                aviso logo acima que diz que não há o que carregar; e Tela
+                cheia FUNCIONAVA, jogando a pessoa num preto sem botão de sair
+                e, no celular, girando a tela à força. Só o ESC tirava de lá. */}
+            {semEmulador ? null : (
+              <BarraDeControles
+                aoSair={sair}
+                aoSalvar={emulador.salvar}
+                aoCarregar={emulador.carregar}
+                aoReiniciar={emulador.reiniciar}
+                aoTelaCheia={emulador.telaCheia}
+              />
+            )}
 
             <Aviso aviso={aviso} aoFechar={limparAviso} className="sala__aviso" />
           </div>
