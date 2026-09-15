@@ -12,9 +12,25 @@ const Cabecalho = ({ session, pontos, nomeUsuario, aoSair }) => (
       <Link to="/" className="topo__logo" aria-label={`${MARCA}, ir para o início`}>
         {/* Arquivo de 160px e não o de 700: aqui a marca é desenhada com 40px
             de altura (28 no celular), ou seja 75x40 de tela, e o arquivo
-            grande custava 24,5 KB em TODA página do site. Este custa 5,8 KB e
-            ainda sobra resolução para aparelho 2x. */}
-        <img src="/logo-160.webp" alt="" width="160" height="85" />
+            grande custava 24,5 KB em TODA página do site. Este custa 5,8 KB.
+
+            O srcset existe porque 160px empata na conta e não sobra nada: a
+            160 de origem para 75x40 desenhados, um aparelho a dpr 3 precisa de
+            226x120 e amplia 1,41x — medido, com o texto miúdo "GASTE O FÔLEGO
+            SÓ PRA RIR" saindo visivelmente mole. E não é caso raro: celular a
+            dpr 3 DEITADO passa de 768px de largura e cai na regra de 40px, que
+            num site de emulador é o jeito normal de jogar.
+
+            O /logo-440.webp já existe para a marca grande da Home, então só
+            aparelho de dpr 3 para cima paga por ele. */}
+        <img
+          src="/logo-160.webp"
+          srcSet="/logo-160.webp 160w, /logo-440.webp 440w"
+          sizes="(max-width: 768px) 53px, 76px"
+          alt=""
+          width="160"
+          height="85"
+        />
       </Link>
 
       <Link to="/ranking" className="topo__link">
