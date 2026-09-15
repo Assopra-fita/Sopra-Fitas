@@ -14,6 +14,7 @@
 // tem três páginas, e ele apaga da busca as 157 que sumiram.
 import { writeFileSync, existsSync } from 'node:fs';
 import { romEhImagem } from '../src/lib/rom.js';
+import { acharConsole, normalizarConsole } from '../src/constants/consoles.js';
 import {
   SUPABASE_URL,
   CABECALHOS_SUPABASE,
@@ -35,7 +36,7 @@ const escaparXml = (t) =>
 
 let doBanco = [];
 try {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/jogos?select=id,rom_url`, {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/jogos?select=id,nome,console,rom_url`, {
     headers: CABECALHOS_SUPABASE,
   });
   if (!r.ok) throw new Error(`Supabase respondeu ${r.status}`);
@@ -98,3 +99,60 @@ if (!existsSync(new URL('../dist/', import.meta.url))) {
 
 writeFileSync(destino, xml);
 console.log(`dist/sitemap.xml gerado com ${urls.length} endereços`);
+
+// --- llms.txt, o mapa do site para agente de IA ---
+//
+// A convenção (llmstxt.org) pede um Markdown com um H1 e listas de links. O
+// endereço respondia 200 porque o rewrite da Vercel devolve o index.html para
+// qualquer caminho — o agente recebia a página inteira em HTML, sem H1 de
+// Markdown e sem lista. É o que o PageSpeed apontava em "navegação agêntica".
+//
+// Arquivo estático em public/ não serve: ele nasceria com o número de jogos do
+// dia em que foi escrito. Aqui ele sai do mesmo banco e da mesma filtragem do
+// sitemap, então cresce junto com o acervo e já exclui os jogos que não abrem.
+// A coluna `console` do banco está suja — o mesmo aparelho aparece como
+// "Super Nintendo", "SNES" e "Super Nitendo", e agrupar pelo valor cru rendia
+// 14 seções para 8 consoles. `normalizarConsole` é o mesmo mapeamento que o
+// filtro da Home usa, então o agente vê a mesma organização que a pessoa vê.
+const porConsole = new Map();
+for (const j of doBanco) {
+  if (romEhImagem(j.rom_url)) continue;
+  const chave = normalizarConsole(j.console) ?? 'OUTROS';
+  if (!porConsole.has(chave)) porConsole.set(chave, []);
+  porConsole.get(chave).push(j);
+}
+
+const consolesOrdenados = [...porConsole.entries()].sort((a, b) => b[1].length - a[1].length);
+const totalJogavel = ids.length;
+
+const llms = `# Sopra Fitas
+
+> Emulador de videogame retrô que roda no navegador: ${totalJogavel} jogos de Super Nintendo, Mega Drive, Game Boy Advance e outros consoles, sem instalar nada e sem precisar de conta para jogar.
+
+Cada jogo tem uma página própria em \`/jogar/{id}\`. A emulação acontece inteira no navegador, por WebAssembly — nenhum jogo roda em servidor. Criar conta é opcional e serve para o ranking e o envio de missões.
+
+## Navegação
+
+- [Página inicial](${SITE}/): grade com busca por nome e filtro por console
+- [Ranking global](${SITE}/ranking): pontuação de quem envia missões
+- [Entrar ou criar conta](${SITE}/login): opcional, só para ranking e missões
+- [Mapa do site](${SITE}/sitemap.xml): todos os endereços públicos
+
+## Jogos por console
+
+${consolesOrdenados
+  .map(
+    ([nomeDoConsole, lista]) =>
+      `### ${acharConsole(nomeDoConsole)?.rotulo ?? nomeDoConsole} (${lista.length})\n\n` +
+      lista
+        .sort((a, b) => String(a.nome).localeCompare(String(b.nome), 'pt-BR'))
+        .map((j) => `- [${j.nome}](${SITE}/jogar/${encodeURIComponent(j.id)})`)
+        .join('\n')
+  )
+  .join('\n\n')}
+`;
+
+writeFileSync(new URL('../dist/llms.txt', import.meta.url), llms);
+console.log(
+  `dist/llms.txt gerado com ${totalJogavel} jogos em ${consolesOrdenados.length} consoles`
+);
