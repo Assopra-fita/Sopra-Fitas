@@ -4,6 +4,7 @@ import { Edit, Trash2, X, Check, Library } from 'lucide-react';
 import { useTituloDaPagina } from '../hooks/useTituloDaPagina';
 import { useAviso } from '../hooks/useAviso';
 import { paraComparar } from '../lib/texto';
+import { miniaturaDaCapa } from '../lib/imagem';
 import {
   Aviso,
   Botao,
@@ -127,7 +128,7 @@ const AdminGerenciarJogos = () => {
       render: (j) => (
         <img
           className="acervo__capa"
-          src={j.capa_url}
+          src={miniaturaDaCapa(j.capa_url)}
           alt=""
           width="40"
           height="40"
