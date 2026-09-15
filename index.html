@@ -144,6 +144,28 @@
     <link rel="preconnect" href="https://cdn.emulatorjs.org" crossorigin />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
+    <!-- A marca da Home é o elemento de LCP, e a tag <img> dela só existe
+         depois que o React monta: o HTML servido tem 13.728 bytes e nenhuma
+         ocorrência de "logo". O navegador só descobre o arquivo no fim da
+         cadeia HTML -> bundle -> React, e o fetchpriority="high" não adianta
+         antes disso.
+
+         Medido em celular a 1,6 Mbps: 1.358 ms entre o HTML chegar e o pedido
+         da imagem sair. Com os anúncios bloqueados a espera continua — 1.189
+         ms — ou seja, não é rede disputada, é a ordem em que as coisas
+         acontecem.
+
+         O `imagesrcset` repete o do <img> em Home.jsx para o navegador escolher
+         o MESMO arquivo; se os dois divergirem, ele baixa os dois. -->
+    <link
+      rel="preload"
+      as="image"
+      href="/logo.webp"
+      imagesrcset="/logo-440.webp 440w, /logo.webp 700w"
+      imagesizes="(max-width: 768px) 220px, 420px"
+      fetchpriority="high"
+    />
+
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/icone-192.png" sizes="192x192" type="image/png" />
     <!-- O iOS não lê o manifest para escolher ícone: ele quer esta tag, e

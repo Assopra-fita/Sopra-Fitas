@@ -145,13 +145,40 @@ if (doBanco.length === 0) {
 const porId = new Map();
 for (const j of doBanco) if (!porId.has(j.id)) porId.set(j.id, j);
 
+// O index.html traz um <link rel="preload"> da marca grande da Home, que é o
+// elemento de LCP DELA. Estas outras 159 páginas usam só a marca pequena do
+// cabeçalho, então herdar o preload faria cada uma baixar 19 KB de um arquivo
+// que não aparece na tela. Aqui ele vira o preload do arquivo certo.
+//
+// A troca é obrigatória, não opcional: se o preload do index.html mudar de
+// forma e este replace deixar de casar, o build para em vez de publicar 159
+// páginas baixando imagem à toa.
+const PRELOAD_DA_HOME =
+  /<link\s+rel="preload"\s+as="image"[\s\S]*?\/>/;
+
+const PRELOAD_DO_CABECALHO =
+  '<link rel="preload" as="image" href="/logo-160.webp" fetchpriority="high" />';
+
+const trocarPreload = (html, caminho) => {
+  if (!PRELOAD_DA_HOME.test(html)) {
+    throw new Error(
+      `o <link rel="preload"> da marca não foi encontrado no index.html (gerando ${caminho}). ` +
+        'O formato mudou e este script precisa acompanhar.'
+    );
+  }
+  return html.replace(PRELOAD_DA_HOME, PRELOAD_DO_CABECALHO);
+};
+
 const escrever = (caminho, seo) => {
   const pasta = new URL(`${caminho}/`, RAIZ);
   if (!pasta.pathname.startsWith(new URL('.', RAIZ).pathname)) {
     throw new Error(`caminho fora de dist/: ${caminho}`);
   }
   mkdirSync(pasta, { recursive: true });
-  writeFileSync(new URL('index.html', pasta), trocarTags(modelo, seo, caminho));
+  writeFileSync(
+    new URL('index.html', pasta),
+    trocarPreload(trocarTags(modelo, seo, caminho), caminho)
+  );
 };
 
 const recusados = [];
