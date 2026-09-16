@@ -34,6 +34,17 @@
 // a altura é que manda no tamanho do arquivo, então não vale economizar ali e
 // entregar capa borrada no desktop.
 //
+// A ALTURA DE 320 FICA, mesmo com o PageSpeed pedindo menos. Ele mede num
+// aparelho a dpr 1,75, onde a caixa de 130 CSS precisa de 228 px e 320 sobra.
+// Mas celular a dpr 3 é o comum hoje, e ali a mesma caixa pede 390: baixar
+// para 260 deixaria a capa macia para a maioria das pessoas para agradar o
+// medidor. 320 já é o meio-termo — cobre até dpr 2,46.
+//
+// A qualidade caiu de 72 para 60, que é onde dá para economizar sem custo:
+// medido em sequência nas 12 capas da primeira página, 191,6 KiB viram 168,3
+// (12% menos), e ampliando 3x a arte lado a lado não dá para dizer qual é
+// qual. A diferença média é de 6,5 níveis em 255.
+//
 // UM ÚNICO JOGO DE PARÂMETROS, de propósito: cada querystring diferente é um
 // arquivo novo para o CDN gerar e guardar. Com um só, são 157 variantes no
 // total — uma por capa — e a segunda visita de qualquer pessoa já pega tudo
@@ -41,7 +52,7 @@
 // de 20 KiB no celular, e não compensa.
 const LARGURA = 600;
 const ALTURA = 320;
-const QUALIDADE = 72;
+const QUALIDADE = 60;
 
 // O formato não é pedido: o endpoint devolve WebP sozinho para quem manda
 // `Accept: image/webp`, e JPEG para quem não manda. Conferido nos dois casos.
